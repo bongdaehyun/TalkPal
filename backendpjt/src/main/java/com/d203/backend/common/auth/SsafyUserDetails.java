@@ -19,27 +19,29 @@ public class SsafyUserDetails implements UserDetails {
 	@Autowired
 	User user;
 	boolean accountNonExpired;
-    boolean accountNonLocked;
-    boolean credentialNonExpired;
-    boolean enabled = false;
-    List<GrantedAuthority> roles = new ArrayList<>();
-    
-    public SsafyUserDetails(User user) {
-    		super();
-    		this.user = user;
-    }
-    
-    public User getUser() {
-    		return this.user;
-    }
+	boolean accountNonLocked;
+	boolean credentialNonExpired;
+	boolean enabled = false;
+	List<GrantedAuthority> roles = new ArrayList<>();
+
+	public SsafyUserDetails(User user) {
+		super();
+		this.user = user;
+	}
+
+	public User getUser() {
+		return this.user;
+	}
 	@Override
 	public String getPassword() {
 		return this.user.getPassword();
 	}
+
 	@Override
 	public String getUsername() {
-		return this.user.getId();
+		return this.user.getEmail();
 	}
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return this.accountNonExpired;
@@ -64,3 +66,4 @@ public class SsafyUserDetails implements UserDetails {
 		this.roles = roles;
 	}
 }
+

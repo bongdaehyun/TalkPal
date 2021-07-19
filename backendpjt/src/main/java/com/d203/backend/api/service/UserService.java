@@ -10,5 +10,9 @@ import com.d203.backend.db.entity.User;
  */
 public interface UserService {
 	User createUser(UserRegisterPostReq userRegisterInfo);
-	User getUserByUserId(String userId);
+	User getUserByEamil(String email);
+	//회원 수정
+	boolean updateUser(UserRegisterPostReq userRegisterInfo);
+	//회원 탈퇴
+	boolean deleteUser(String email);
 }
