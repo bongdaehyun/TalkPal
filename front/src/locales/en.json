@@ -2,5 +2,7 @@
   "message": "안녕 i18n !!",
   "main_login": "로그인",
   "main_register": "회원가입",
-  "room_enter": "Enter"
+  "room_enter": "Enter",
+  "room_create": "Create Room",
+  "create_name": "Room Name"
 }

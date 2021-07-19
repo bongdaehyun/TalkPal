@@ -2,5 +2,14 @@
   "message": "hello i18n !!",
   "main_login": "로그인",
   "main_register": "회원가입",
-  "room_enter": "입장하기"
+  "room_enter": "입장하기",
+  "room_create": "방생성",
+  "create_name": "방제목",
+  "create_host": "HOST 언어",
+  "create_guest": "GUEST 언어",
+  "create_subject": "대화 주제",
+  "create_close": "닫기",
+  "create_save": "생성",
+  "create_music": "음악",
+  "create_movie": "영화"
 }
