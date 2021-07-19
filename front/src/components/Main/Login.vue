@@ -26,6 +26,8 @@
 </template>
 
 <script>
+
+
 export default {
   name: "Login",
   data() {
@@ -36,7 +38,13 @@ export default {
   },
   methods: {
     onLogin() {
-      this.$router.push({ name: "room" });
+      this.$store.dispatch("login",{email:this.email,password:this.pwd}).then(()=>{
+        alert("로그인 성공")
+        this.$router.push({ name: "Room" });
+      })
+      
+      
+      
     },
   },
 };

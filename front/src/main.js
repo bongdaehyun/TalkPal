@@ -5,6 +5,13 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import i18n from './i18n'
 import InfiniteLoading from 'vue-infinite-loading';
+import Cookies from "js-cookie";
+
+// const savedToken = Cookies.get("accessToken")
+// if(savedToken)
+// {
+//   store.dispatch('getDataByToken',savedToken)
+// }
 
 Vue.config.productionTip = false;
 
