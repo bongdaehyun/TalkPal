@@ -1,5 +1,6 @@
 {
   "message": "안녕 i18n !!",
-  "mainpage_login":"Login",
-  "mainpage_register":"register"
+  "main_login": "로그인",
+  "main_register": "회원가입",
+  "room_enter": "Enter"
 }

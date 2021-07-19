@@ -16,8 +16,8 @@
         ></v-text-field>
       </v-row>
       <v-row class="text-right">
-        <v-btn class="ma-2" color="primary" dark>
-          {{ $t("mainpage_login") }}
+        <v-btn class="ma-2" color="primary" dark @click="onLogin">
+          {{ $t("main_login") }}
           <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
         </v-btn>
       </v-row>
@@ -33,6 +33,11 @@ export default {
       email: "",
       pwd: "",
     };
+  },
+  methods: {
+    onLogin() {
+      this.$router.push({ name: "room" });
+    },
   },
 };
 </script>

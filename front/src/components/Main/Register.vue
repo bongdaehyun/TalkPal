@@ -24,7 +24,7 @@
       </v-row>
       <v-row>
         <v-text-field
-          label="Nick Name"
+          label="NickName"
           prepend-inner-icon="mdi-text"
           v-model="credentials.nickname"
         ></v-text-field>
@@ -34,7 +34,7 @@
       </v-row>
       <v-row class="text-right">
         <v-btn class="ma-2" color="primary" dark>
-          {{ $t("mainpage_register") }}
+          {{ $t("main_register") }}
           <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
         </v-btn>
       </v-row>
