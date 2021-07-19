@@ -19,7 +19,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2).useDefaultResponseMessages(false)
                 .select()
                 .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.ant("/controller/**"))
+                .paths(PathSelectors.ant("/api/**"))
                 .build()
                 ;
     }
