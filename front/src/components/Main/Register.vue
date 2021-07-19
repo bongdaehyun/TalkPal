@@ -13,7 +13,7 @@
         <v-text-field
           label="Password"
           prepend-inner-icon="mdi-lock"
-          v-model="credentials.pwd"
+          v-model="credentials.password"
           type="password"
         ></v-text-field>
       </v-row>
@@ -21,7 +21,7 @@
         <v-text-field
           label="Password Confirm"
           prepend-inner-icon="mdi-lock"
-          v-model="credentials.pwdconfirm"
+          v-model="credentials.passwordConfirm"
           type="password"
         ></v-text-field>
       </v-row>
@@ -33,15 +33,16 @@
         ></v-text-field>
       </v-row>
       <v-row>
-        <v-select 
-        v-model="credentials.lang"
-        :items="items" 
-        item-text="name"
-        item-value="value"
-        label="Language"></v-select>
+        <v-select
+          v-model="credentials.lang"
+          :items="items"
+          item-text="name"
+          item-value="value"
+          label="Language"
+        ></v-select>
       </v-row>
       <v-row class="text-right">
-        <v-btn class="ma-2" color="primary" dark @click="register">
+        <v-btn class="ma-2" color="primary" dark @click="requestRegister">
           {{ $t("main_register") }}
           <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
         </v-btn>
@@ -56,34 +57,38 @@ export default {
     return {
       credentials: {
         email: "",
-        pwd: "",
-        pwdconfirm: "",
+        password: "",
+        passwordConfirm: "",
         nickname: "",
-        lang:"",
+        lang: "",
       },
-      items: [ {name : "English",value : "en"},{name: "한국어",value:"ko"}],
+      items: [
+        { name: "English", value: "en" },
+        { name: "한국어", value: "ko" },
+      ],
     };
   },
-  methods:{
-    register(){
-      this.$store.dispatch('requestSingup', { 
-        email: this.credentials.email,
-         password: this.credentials.pwd,
-         nickname:this.credentials.nickname,
-          lang:this.credentials.lang
-       })
-          .then(function (result) {
-            //console.log("회원가입"+result)
-            //alert('accessToken: ' + result.data.accessToken)
-            alert("회원 가입 성공")
-            //요것이 왜안되지????
-            this.$router.push({ name: "Main" });
-          })
-          .catch(function (err) {
-            alert(err)
-          })
-    }
-  }
+  methods: {
+    // 회원가입 요청
+    requestRegister() {
+      this.$store
+        .dispatch("userStore/requestRegister", this.credentials)
+        .then(() => {
+          this.credentials = {
+            email: "",
+            password: "",
+            passwordConfirm: "",
+            nickname: "",
+            lang: "",
+          };
+          // 탭 이동 요청 이벤트
+          this.$emit("onRegister");
+        })
+        .catch((err) => {
+          alert("회원가입 실패");
+        });
+    },
+  },
 };
 </script>
 

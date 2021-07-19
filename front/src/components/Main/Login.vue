@@ -16,7 +16,7 @@
         ></v-text-field>
       </v-row>
       <v-row class="text-right">
-        <v-btn class="ma-2" color="primary" dark @click="onLogin">
+        <v-btn class="ma-2" color="primary" dark @click="requestLogin">
           {{ $t("main_login") }}
           <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
         </v-btn>
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-
+import axios from "axios";
 
 export default {
   name: "Login",
@@ -37,14 +37,35 @@ export default {
     };
   },
   methods: {
-    onLogin() {
-      this.$store.dispatch("login",{email:this.email,password:this.pwd}).then(()=>{
-        alert("로그인 성공")
-        this.$router.push({ name: "Room" });
-      })
-      
-      
-      
+    // 로그인 요청
+    requestLogin() {
+      this.$store
+        .dispatch("userStore/requestLogin", {
+          email: this.email,
+          password: this.pwd,
+        })
+        .then((res) => {
+          alert("로그인 성공");
+          console.log(res);
+
+          // 인증 Token
+          let accessToken = res.data.accessToken;
+
+          // Axios 인증 Token 설정
+          axios.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${accessToken}`;
+
+          // 로그인 상태 설정
+          this.$store.dispatch("userStore/login", accessToken);
+
+          // 페이지 이동
+          this.$router.push({ name: "Room" });
+        })
+        .catch((err) => {
+          alert("로그인 실패");
+          // console.log(err);
+        });
     },
   },
 };

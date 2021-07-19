@@ -15,6 +15,9 @@
       <v-btn text>
         <span class="mr-2" @click="goMain">메인 페이지</span>
       </v-btn>
+      <v-btn text>
+        <span class="mr-2" @click="onLogout">로그아웃</span>
+      </v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -27,6 +30,11 @@
 <script>
 export default {
   name: "App",
+  data() {
+    return {
+      loginStatus: this.$store.getters["userStore/getLoginStautus"],
+    };
+  },
   methods: {
     goRoom() {
       this.$router.push({ name: "Room" });
@@ -35,6 +43,10 @@ export default {
       this.$router.push({ name: "Profile" });
     },
     goMain() {
+      this.$router.push({ name: "Main" });
+    },
+    onLogout() {
+      this.$store.dispatch("userStore/logout");
       this.$router.push({ name: "Main" });
     },
   },

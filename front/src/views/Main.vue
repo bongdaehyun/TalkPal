@@ -11,7 +11,7 @@
       </v-tabs>
       <v-tabs-items v-model="tab">
         <Login />
-        <Register />
+        <Register @onRegister="onRegister" />
       </v-tabs-items>
     </v-col>
     <v-col>
@@ -37,6 +37,11 @@ export default {
   components: {
     Login,
     Register,
+  },
+  methods: {
+    onRegister() {
+      this.tab = null;
+    },
   },
 };
 </script>
