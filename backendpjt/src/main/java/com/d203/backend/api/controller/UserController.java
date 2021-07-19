@@ -46,9 +46,21 @@ public class UserController {
 			@RequestBody @ApiParam(value="회원가입 정보", required = true) UserRegisterPostReq registerInfo) {
 
 		//임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
-		User user = userService.createUser(registerInfo);
-
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		
+		
+		//이메일 중복체크 부분
+		if(userService.checkEmail(registerInfo.getEmail()))
+		{
+			System.out.println("User email dup");
+		  return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Duplicate Error"));
+		 
+		}
+		else {
+			User user = userService.createUser(registerInfo);
+			System.out.println("register success");
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		}
+		
 	}
 
 	@GetMapping("/me")
@@ -73,6 +85,8 @@ public class UserController {
 
 	@PutMapping
 	public ResponseEntity<?> updateUser(@RequestBody UserRegisterPostReq userRegisterPostReq){
+		
+		System.out.println(userRegisterPostReq.toString());
 		if(userService.updateUser(userRegisterPostReq)){
 			return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
 		}
@@ -87,4 +101,6 @@ public class UserController {
 		}
 		return new ResponseEntity<String>("FAIL", HttpStatus.NO_CONTENT);
 	}
+	
+	
 }

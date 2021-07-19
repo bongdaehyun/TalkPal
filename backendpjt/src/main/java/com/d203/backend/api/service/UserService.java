@@ -15,4 +15,7 @@ public interface UserService {
 	boolean updateUser(UserRegisterPostReq userRegisterInfo);
 	//회원 탈퇴
 	boolean deleteUser(String email);
+	
+	//이메일 중복체크
+	boolean checkEmail(String email);
 }

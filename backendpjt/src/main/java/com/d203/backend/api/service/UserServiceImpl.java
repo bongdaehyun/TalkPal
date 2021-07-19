@@ -44,8 +44,15 @@ public class UserServiceImpl implements UserService {
 	public boolean updateUser(UserRegisterPostReq userRegisterInfo) {
 		Optional<User> user = userRepository.findByEmail(userRegisterInfo.getEmail());
 		//유저 정보가 있다면
+		User updateUser = user.get();
+		
+		updateUser.setLang(userRegisterInfo.getLang());
+		updateUser.setNickname(userRegisterInfo.getNickname());
+		updateUser.setPassword(passwordEncoder.encode(userRegisterInfo.getPassword()));
+		
 		if(user.isPresent()){
-			userRepository.save(user.get());
+			System.out.println(updateUser.toString());
+			userRepository.save(updateUser);
 			return true;
 		}
 		return false;
@@ -53,11 +60,26 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean deleteUser(String email) {
-		User user = userRepository.findByEmail(email).get();
-		if (user == null) {
+		
+		Optional<User> user = userRepository.findByEmail(email);
+		System.out.println(userRepository.findByEmail(email));
+		if (!user.isPresent()) {
 			return false;
 		} else {
-			userRepository.delete(user);
+			User deluser = userRepository.findByEmail(email).get();
+			userRepository.delete(deluser);
+			return true;
+		}
+	}
+
+	@Override
+	public boolean checkEmail(String email) {
+		System.out.println("param email : " + email);
+		Optional<User> user = userRepository.findByEmail(email);
+		System.out.println(userRepository.findByEmail(email));
+		if (!user.isPresent()) {
+			return false;
+		} else {
 			return true;
 		}
 	}
