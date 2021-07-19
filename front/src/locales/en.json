@@ -3,6 +3,13 @@
   "main_login": "로그인",
   "main_register": "회원가입",
   "room_enter": "Enter",
-  "room_create": "Create Room",
-  "create_name": "Room Name"
+  "room_create": "Room Create",
+  "create_name": "Room Name",
+  "create_host": "HOST Language",
+  "create_guest": "GUEST Language",
+  "create_subject": "Topic",
+  "create_close": "CLOSE",
+  "create_save": "CREATE",
+  "create_music": "MUSIC",
+  "create_movie": "MOVIE"
 }

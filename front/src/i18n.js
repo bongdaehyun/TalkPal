@@ -5,6 +5,7 @@ import ko from '@/locales/ko.json'
 
 Vue.use(VueI18n)
 
+
 export default new VueI18n({
   locale: 'ko',
   fallbackLocale: 'ko',

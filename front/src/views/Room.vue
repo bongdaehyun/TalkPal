@@ -55,6 +55,10 @@ export default {
       });
     },
   },
+  created() {
+    // console.log(this.$store.getters["userStore/getLocale"]);
+    this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
+  },
 };
 </script>
 

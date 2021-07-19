@@ -3,7 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
-import i18n from './i18n'
+import i18n from '@/i18n'
 import InfiniteLoading from 'vue-infinite-loading';
 import Cookies from "js-cookie";
 
@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 // {
 //   store.dispatch('getDataByToken',savedToken)
 // }
+
 
 Vue.config.productionTip = false;
 
@@ -23,3 +24,6 @@ new Vue({
   InfiniteLoading,
   render: (h) => h(App),
 }).$mount("#app");
+
+
+
