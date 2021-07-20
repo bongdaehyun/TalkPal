@@ -78,6 +78,8 @@ import {
   alphaNum,
 } from "vuelidate/lib/validators";
 
+import http from "@/util/http-common";
+
 export default {
   data() {
     return {
@@ -130,18 +132,39 @@ export default {
     },
   },
 
+  /* 
+    유효성 검사 
+    참고 자료
+    1. https://vuetifyjs.com/en/components/forms/#vuelidate
+    2. https://www.notion.so/720e938f8223446996aba3500b12f953#85f87afad3274019bbaadadd98b14088
+  */
   mixins: [validationMixin],
 
   validations: {
-    email: { required, email, maxLength: maxLength(30) },
+    email: {
+      required,
+      email,
+      maxLength: maxLength(30),
+      async isUnique(email) {
+        if (email === "") return true;
+        try {
+          // 중복 검사 통과
+          const res = await http.get(`/users/chekemail/${email}`);
+          return true;
+        } catch (error) {
+          // 중복 검사 실패
+          return false;
+        }
+      },
+    },
     password: {
       required,
       minLength: minLength(9),
       maxLength: maxLength(16),
-      valid: function (value) {
-        const containsLowercase = /[a-z]/.test(value);
-        const containsNumber = /[0-9]/.test(value);
-        const containsSpecial = /[#?!@$%^&*-]/.test(value);
+      valid: (password) => {
+        const containsLowercase = /[a-z]/.test(password);
+        const containsNumber = /[0-9]/.test(password);
+        const containsSpecial = /[#?!@$%^&*-]/.test(password);
         return containsLowercase && containsNumber && containsSpecial;
       },
     },
@@ -151,6 +174,17 @@ export default {
       minLength: minLength(2),
       maxLength: maxLength(16),
       alphaNum,
+      async isUnique(nickname) {
+        if (nickname === "") return true;
+        try {
+          // 중복 검사 통과
+          const res = await http.get(`/users/cheknick/${nickname}`);
+          return true;
+        } catch (error) {
+          // 중복 검사 실패
+          return false;
+        }
+      },
     },
     lang: {
       required,
@@ -165,6 +199,7 @@ export default {
       !this.$v.email.email && errors.push("이메일을 입력하세요.");
       !this.$v.email.maxLength &&
         errors.push("최대 30 글자까지 입력 가능합니다.");
+      !this.$v.email.isUnique && errors.push("이미 존재하는 이메일입니다.");
       return errors;
     },
     passwordErrors() {
@@ -193,6 +228,7 @@ export default {
         errors.push("최소 2 글자 최대 16 글자를 입력해야 합니다.");
       !this.$v.nickname.alphaNum &&
         errors.push("영문 소문자 및 숫자만 입력해야 합니다.");
+      !this.$v.nickname.isUnique && errors.push("이미 존재하는 별명입니다.");
       return errors;
     },
     langErrors() {
