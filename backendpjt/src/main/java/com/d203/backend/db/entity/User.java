@@ -17,6 +17,7 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @ToString
+@Table(name = "USER")
 public class User extends BaseEntity{
     String email;
     String lang;
