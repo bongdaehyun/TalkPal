@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import com.d203.backend.api.request.UserDeleteReq;
 import com.d203.backend.api.request.UserLoginPostReq;
 import com.d203.backend.api.request.UserRegisterPostReq;
 import com.d203.backend.api.response.UserLoginPostRes;
@@ -96,7 +97,7 @@ public class UserController {
 		}
 		  
 	}
-	//브렌치 테스트를 위한 문장 작성
+	
 	@GetMapping("/me")
 	@ApiOperation(value = "회원 본인 정보 조회", notes = "로그인한 회원 본인의 정보를 응답한다.")
 	@ApiResponses({
@@ -128,12 +129,12 @@ public class UserController {
 	}
 
 	//회원 삭제
-	@DeleteMapping("{email}")
-	public ResponseEntity<?> deleteUser(@PathVariable String email){
-		if(userService.deleteUser(email)){
-			return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+	@DeleteMapping()
+	public ResponseEntity<?> deleteUser(@RequestBody UserDeleteReq userDeleteReq){
+		if(userService.deleteUser(userDeleteReq.getEmail() , userDeleteReq.getPassword())){
+			return  ResponseEntity.status(204).body("User delete success");
 		}
-		return new ResponseEntity<String>("FAIL", HttpStatus.NO_CONTENT);
+		return  ResponseEntity.status(404).body("User password not macthed");
 	}
 	
 	

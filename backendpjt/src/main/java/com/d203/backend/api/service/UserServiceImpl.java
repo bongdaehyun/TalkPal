@@ -61,17 +61,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean deleteUser(String email) {
+	public boolean deleteUser(String email , String password) {
 		
-		Optional<User> user = userRepository.findByEmail(email);
+		User user = userRepository.findByEmail(email).get();
 		System.out.println(userRepository.findByEmail(email));
-		if (!user.isPresent()) {
-			return false;
-		} else {
-			User deluser = userRepository.findByEmail(email).get();
-			userRepository.delete(deluser);
+		if (passwordEncoder.matches(password, user.getPassword())) {
+			userRepository.delete(user);
 			return true;
+		} 
+		else {
+			return false;
 		}
+		
+		
 	}
 
 	@Override
