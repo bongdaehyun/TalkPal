@@ -47,21 +47,34 @@ public class UserController {
 
 		//임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
 
-		//이메일 중복체크 부분
-		if(userService.checkEmail(registerInfo.getEmail()))
+	   User user = userService.createUser(registerInfo);
+	   return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		
+		
+	}
+	
+	@GetMapping("/chekemail/{email}")
+	@ApiOperation(value = "이메일 중복 확인조회", notes = "이메일 중복을 확인한다")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 409, message = "이메일 중복")
+	})
+	public ResponseEntity<? extends BaseResponseBody> checkDupEmail(@PathVariable String email) {
+		
+		
+		if(userService.checkEmail(email))
 		{
-			System.out.println("User email dup");
-		  return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Duplicate Error"));
+		  System.out.println("User email dup");
+		  return ResponseEntity.status(409).body(BaseResponseBody.of(409, "Duplicate Error"));
 		 
 		}
 		else {
-			User user = userService.createUser(registerInfo);
-			System.out.println("register success");
+			System.out.println("success");
 			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 		}
-		
+		  
 	}
-
+	
 	@GetMapping("/me")
 	@ApiOperation(value = "회원 본인 정보 조회", notes = "로그인한 회원 본인의 정보를 응답한다.")
 	@ApiResponses({
