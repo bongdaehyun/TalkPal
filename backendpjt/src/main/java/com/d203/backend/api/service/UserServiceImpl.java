@@ -1,5 +1,6 @@
 package com.d203.backend.api.service;
 
+import jdk.nashorn.internal.runtime.options.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,8 +37,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserByEamil(String email) {
 
-		User user = userRepository.findByEmail(email).get();
-		return user;
+		Optional<User> user= userRepository.findByEmail(email);
+
+		return user.orElse(null);
 	}
 
 	@Override
