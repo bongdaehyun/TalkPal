@@ -69,6 +69,8 @@ export default {
     };
   },
   methods: {
+    // 회원가입 유효성 검증
+
     // 회원가입 요청
     requestRegister() {
       this.$store
