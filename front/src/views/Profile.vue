@@ -5,7 +5,6 @@
 </template>
 
 <script>
-// branch test
 export default {
   name: "Profile",
 };
