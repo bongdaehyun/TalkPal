@@ -84,4 +84,16 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@Override
+	public boolean checkNick(String nickname) {
+		System.out.println("param nickname : " + nickname);
+		Optional<User> user = userRepository.findByNickname(nickname);
+		System.out.println(userRepository.findByNickname(nickname));
+		if (!user.isPresent()) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 }

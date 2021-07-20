@@ -18,4 +18,7 @@ public interface UserService {
 	
 	//이메일 중복체크
 	boolean checkEmail(String email);
+	
+	//닉네임 중복체크 
+	boolean checkNick(String nickname);
 }
