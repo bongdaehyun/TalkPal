@@ -55,7 +55,7 @@ public class JwtTokenUtil {
         
         Map<String, String> tokenMap = new HashMap<String, String>();
         tokenMap.put("email", user.getEmail());
-        tokenMap.put("lang", user.getLang());
+        //tokenMap.put("lang", user.getLang());
         tokenMap.put("nickname",user.getNickname());
         return JWT.create()
                 .withClaim("userinfo",tokenMap)

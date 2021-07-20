@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User createUser(UserReq userRegisterInfo) {
 		User user = new User();
-		user.setLang(userRegisterInfo.getLang());
+		//user.setLang(userRegisterInfo.getLang());
 		user.setEmail(userRegisterInfo.getEmail());
 		user.setNickname(userRegisterInfo.getNickname());
 		// 보안을 위해서 유저 패스워드 암호화 하여 디비에 저장.
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 		//유저 정보가 있다면
 		User updateUser = user.get();
 		
-		updateUser.setLang(userUpdateInfo.getLang());
+		//updateUser.setLang(userUpdateInfo.getLang());
 		updateUser.setNickname(userUpdateInfo.getNickname());
 		updateUser.setPassword(passwordEncoder.encode(userUpdateInfo.getPassword()));
 		
