@@ -1,11 +1,9 @@
 package com.d203.backend.api.service;
 
-import jdk.nashorn.internal.runtime.options.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.d203.backend.api.request.UserRegisterPostReq;
+import com.d203.backend.api.request.UserReq;
 import com.d203.backend.db.entity.User;
 import com.d203.backend.db.repository.UserRepository;
 
@@ -24,7 +22,7 @@ public class UserServiceImpl implements UserService {
 	PasswordEncoder passwordEncoder;
 
 	@Override
-	public User createUser(UserRegisterPostReq userRegisterInfo) {
+	public User createUser(UserReq userRegisterInfo) {
 		User user = new User();
 		user.setLang(userRegisterInfo.getLang());
 		user.setEmail(userRegisterInfo.getEmail());
@@ -43,14 +41,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean updateUser(UserRegisterPostReq userRegisterInfo) {
-		Optional<User> user = userRepository.findByEmail(userRegisterInfo.getEmail());
+	public boolean updateUser(UserReq userUpdateInfo) {
+		Optional<User> user = userRepository.findByEmail(userUpdateInfo.getEmail());
 		//유저 정보가 있다면
 		User updateUser = user.get();
 		
-		updateUser.setLang(userRegisterInfo.getLang());
-		updateUser.setNickname(userRegisterInfo.getNickname());
-		updateUser.setPassword(passwordEncoder.encode(userRegisterInfo.getPassword()));
+		updateUser.setLang(userUpdateInfo.getLang());
+		updateUser.setNickname(userUpdateInfo.getNickname());
+		updateUser.setPassword(passwordEncoder.encode(userUpdateInfo.getPassword()));
 		
 		if(user.isPresent()){
 			System.out.println(updateUser.toString());
@@ -61,17 +59,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean deleteUser(String email) {
+	public boolean deleteUser(String email , String password) {
 		
-		Optional<User> user = userRepository.findByEmail(email);
+		User user = userRepository.findByEmail(email).get();
 		System.out.println(userRepository.findByEmail(email));
-		if (!user.isPresent()) {
-			return false;
-		} else {
-			User deluser = userRepository.findByEmail(email).get();
-			userRepository.delete(deluser);
+		if (passwordEncoder.matches(password, user.getPassword())) {
+			userRepository.delete(user);
 			return true;
+		} 
+		else {
+			return false;
 		}
+		
+		
 	}
 
 	@Override

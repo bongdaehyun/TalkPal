@@ -5,7 +5,10 @@
         <v-text-field
           label="Email"
           prepend-inner-icon="mdi-email"
-          v-model="credentials.email"
+          v-model="email"
+          :error-messages="emailErrors"
+          @input="$v.email.$touch()"
+          @blur="$v.email.$touch()"
           type="email"
         ></v-text-field>
       </v-row>
@@ -13,7 +16,10 @@
         <v-text-field
           label="Password"
           prepend-inner-icon="mdi-lock"
-          v-model="credentials.password"
+          v-model="password"
+          :error-messages="passwordErrors"
+          @input="$v.password.$touch()"
+          @blur="$v.password.$touch()"
           type="password"
         ></v-text-field>
       </v-row>
@@ -21,7 +27,10 @@
         <v-text-field
           label="Password Confirm"
           prepend-inner-icon="mdi-lock"
-          v-model="credentials.passwordConfirm"
+          v-model="repeatPassword"
+          :error-messages="repeatPasswordErrors"
+          @input="$v.repeatPassword.$touch()"
+          @blur="$v.repeatPassword.$touch()"
           type="password"
         ></v-text-field>
       </v-row>
@@ -29,20 +38,27 @@
         <v-text-field
           label="NickName"
           prepend-inner-icon="mdi-text"
-          v-model="credentials.nickname"
+          v-model="nickname"
+          :error-messages="nicknameErrors"
+          @input="$v.nickname.$touch()"
+          @blur="$v.nickname.$touch()"
+          type="text"
         ></v-text-field>
       </v-row>
       <v-row>
         <v-select
-          v-model="credentials.lang"
+          v-model="lang"
           :items="items"
           item-text="name"
           item-value="value"
           label="Language"
+          :error-messages="langErrors"
+          @input="$v.lang.$touch()"
+          @blur="$v.lang.$touch()"
         ></v-select>
       </v-row>
       <v-row class="text-right">
-        <v-btn class="ma-2" color="primary" dark @click="requestRegister">
+        <v-btn class="ma-2" color="primary" @click="requestRegister">
           {{ $t("main_register") }}
           <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
         </v-btn>
@@ -52,16 +68,26 @@
 </template>
 
 <script>
+import { validationMixin } from "vuelidate";
+import {
+  required,
+  minLength,
+  maxLength,
+  email,
+  sameAs,
+  alphaNum,
+} from "vuelidate/lib/validators";
+
+import http from "@/util/http-common";
+
 export default {
   data() {
     return {
-      credentials: {
-        email: "",
-        password: "",
-        passwordConfirm: "",
-        nickname: "",
-        lang: "",
-      },
+      email: "",
+      password: "",
+      repeatPassword: "",
+      nickname: "",
+      lang: "",
       items: [
         { name: "English", value: "en" },
         { name: "한국어", value: "ko" },
@@ -69,26 +95,147 @@ export default {
     };
   },
   methods: {
-    // 유효성 체크
+    // Form 초기화 함수
+    resetCredential() {
+      this.email = "";
+      this.password = "";
+      this.repeatPassword = "";
+      this.nickname = "";
+      this.lang = "";
+    },
 
     // 회원가입 요청
     requestRegister() {
-      this.$store
-        .dispatch("userStore/requestRegister", this.credentials)
-        .then(() => {
-          this.credentials = {
-            email: "",
-            password: "",
-            passwordConfirm: "",
-            nickname: "",
-            lang: "",
-          };
-          // 탭 이동 요청 이벤트
-          this.$emit("onRegister");
-        })
-        .catch((err) => {
-          alert("회원가입 실패");
-        });
+      this.$v.$touch();
+      // 유효성 검증 통과 확인
+      if (!this.$v.$invalid) {
+        let credentials = {
+          email: this.email,
+          password: this.password,
+          repeatPassword: this.repeatPassword,
+          nickname: this.nickname,
+          lang: this.lang,
+        };
+        this.$store
+          .dispatch("userStore/requestRegister", credentials)
+          .then(() => {
+            alert("회원가입 성공");
+            // Form 초기화
+            this.resetCredential();
+            // 탭 이동 요청 이벤트 발생
+            this.$emit("onRegister");
+          })
+          .catch((err) => {
+            alert("회원가입 실패");
+          });
+      }
+    },
+  },
+
+  /* 
+    유효성 검사 
+    참고 자료
+    1. https://vuetifyjs.com/en/components/forms/#vuelidate
+    2. https://www.notion.so/720e938f8223446996aba3500b12f953#85f87afad3274019bbaadadd98b14088
+  */
+  mixins: [validationMixin],
+
+  validations: {
+    email: {
+      required,
+      email,
+      maxLength: maxLength(30),
+      async isUnique(email) {
+        if (email === "") return true;
+        try {
+          // 중복 검사 통과
+          const res = await http.get(`/users/chekemail/${email}`);
+          return true;
+        } catch (error) {
+          // 중복 검사 실패
+          return false;
+        }
+      },
+    },
+    password: {
+      required,
+      minLength: minLength(9),
+      maxLength: maxLength(16),
+      valid: (password) => {
+        const containsLowercase = /[a-z]/.test(password);
+        const containsNumber = /[0-9]/.test(password);
+        const containsSpecial = /[#?!@$%^&*-]/.test(password);
+        return containsLowercase && containsNumber && containsSpecial;
+      },
+    },
+    repeatPassword: { required, sameAsPassword: sameAs("password") },
+    nickname: {
+      required,
+      minLength: minLength(2),
+      maxLength: maxLength(16),
+      alphaNum,
+      async isUnique(nickname) {
+        if (nickname === "") return true;
+        try {
+          // 중복 검사 통과
+          const res = await http.get(`/users/cheknick/${nickname}`);
+          return true;
+        } catch (error) {
+          // 중복 검사 실패
+          return false;
+        }
+      },
+    },
+    lang: {
+      required,
+    },
+  },
+
+  computed: {
+    emailErrors() {
+      const errors = [];
+      if (!this.$v.email.$dirty) return errors;
+      !this.$v.email.required && errors.push("필수 항목입니다.");
+      !this.$v.email.email && errors.push("이메일을 입력하세요.");
+      !this.$v.email.maxLength &&
+        errors.push("최대 30 글자까지 입력 가능합니다.");
+      !this.$v.email.isUnique && errors.push("이미 존재하는 이메일입니다.");
+      return errors;
+    },
+    passwordErrors() {
+      const errors = [];
+      if (!this.$v.password.$dirty) return errors;
+      !this.$v.password.required && errors.push("필수 항목입니다.");
+      (!this.$v.password.minLength || !this.$v.password.maxLength) &&
+        errors.push("최소 9 글자 최대 16 글자를 입력해야 합니다.");
+      !this.$v.password.valid &&
+        errors.push("영문 소문자, 숫자, 특수문자를 조합해서 사용해야 합니다.");
+      return errors;
+    },
+    repeatPasswordErrors() {
+      const errors = [];
+      if (!this.$v.repeatPassword.$dirty) return errors;
+      !this.$v.repeatPassword.required && errors.push("필수 항목입니다.");
+      !this.$v.repeatPassword.sameAsPassword &&
+        errors.push("비밀번호가 다릅니다.");
+      return errors;
+    },
+    nicknameErrors() {
+      const errors = [];
+      if (!this.$v.nickname.$dirty) return errors;
+      !this.$v.nickname.required && errors.push("필수 항목입니다.");
+      (!this.$v.nickname.minLength || !this.$v.password.maxLength) &&
+        errors.push("최소 2 글자 최대 16 글자를 입력해야 합니다.");
+      !this.$v.nickname.alphaNum &&
+        errors.push("영문 소문자 및 숫자만 입력해야 합니다.");
+      !this.$v.nickname.isUnique && errors.push("이미 존재하는 별명입니다.");
+      return errors;
+    },
+    langErrors() {
+      const errors = [];
+      if (!this.$v.lang.$dirty) return errors;
+      !this.$v.lang.required && errors.push("필수 항목입니다.");
+      return errors;
     },
   },
 };
