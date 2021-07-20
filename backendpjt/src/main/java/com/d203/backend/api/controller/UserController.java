@@ -74,6 +74,28 @@ public class UserController {
 		}
 		  
 	}
+	
+	@GetMapping("/cheknick/{nickname}")
+	@ApiOperation(value = "닉네임 중복 확인조회", notes = "닉네임 중복을 확인한다")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 409, message = "닉네임 중복")
+	})
+	public ResponseEntity<? extends BaseResponseBody> checkDupNickname(@PathVariable String nickname) {
+		
+		//check branch
+		if(userService.checkNick(nickname))
+		{
+		  System.out.println("User nickname dup");
+		  return ResponseEntity.status(409).body(BaseResponseBody.of(409, "Duplicate Error"));
+		 
+		}
+		else {
+			System.out.println("success");
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		}
+		  
+	}
 	//브렌치 테스트를 위한 문장 작성
 	@GetMapping("/me")
 	@ApiOperation(value = "회원 본인 정보 조회", notes = "로그인한 회원 본인의 정보를 응답한다.")
