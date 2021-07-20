@@ -28,7 +28,7 @@ public class UserRes{
 	public static UserRes of(User user) {
 		UserRes res = new UserRes();
 		res.setEmail(user.getEmail());
-		res.setLang(user.getLang());
+		//res.setLang(user.getLang());
 		res.setNickname(user.getNickname());
 		return res;
 	}

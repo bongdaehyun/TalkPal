@@ -16,7 +16,7 @@ public class UserReq {
 	@ApiModelProperty(name="유저 Password", example="your_password")
 	String password;
 	@ApiModelProperty(name="유저 language", example="your_language")
-	String lang;
+	Long lang;
 	@ApiModelProperty(name="유저 nickname", example="your_nickname")
 	String nickname;
 }
