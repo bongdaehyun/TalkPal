@@ -61,7 +61,7 @@ public class UserController {
 	})
 	public ResponseEntity<? extends BaseResponseBody> checkDupEmail(@PathVariable String email) {
 		
-		
+		//check branch
 		if(userService.checkEmail(email))
 		{
 		  System.out.println("User email dup");
