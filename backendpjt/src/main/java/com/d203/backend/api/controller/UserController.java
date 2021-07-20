@@ -8,8 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.d203.backend.api.request.UserDeleteReq;
-import com.d203.backend.api.request.UserLoginPostReq;
-import com.d203.backend.api.request.UserRegisterPostReq;
+import com.d203.backend.api.request.UserReq;
 import com.d203.backend.api.response.UserLoginPostRes;
 import com.d203.backend.api.response.UserRes;
 import com.d203.backend.api.service.UserService;
@@ -44,7 +43,7 @@ public class UserController {
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
 	public ResponseEntity<? extends BaseResponseBody> register(
-			@RequestBody @ApiParam(value="회원가입 정보", required = true) UserRegisterPostReq registerInfo) {
+			@RequestBody @ApiParam(value="회원가입 정보", required = true) UserReq registerInfo) {
 
 		//임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
 
@@ -119,10 +118,9 @@ public class UserController {
 	}
 
 	@PutMapping
-	public ResponseEntity<?> updateUser(@RequestBody UserRegisterPostReq userRegisterPostReq){
-		
-		System.out.println(userRegisterPostReq.toString());
-		if(userService.updateUser(userRegisterPostReq)){
+	public ResponseEntity<?> updateUser(@RequestBody UserReq userReq){
+		System.out.println(userReq.toString());
+		if(userService.updateUser(userReq)){
 			return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("FAIL", HttpStatus.NO_CONTENT);
