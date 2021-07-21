@@ -53,7 +53,7 @@ public class UserController {
 		
 	}
 	
-	@GetMapping("/chekemail/{email}")
+	@GetMapping("/checkemail/{email}")
 	@ApiOperation(value = "이메일 중복 확인조회", notes = "이메일 중복을 확인한다")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
@@ -75,7 +75,7 @@ public class UserController {
 		  
 	}
 	
-	@GetMapping("/cheknick/{nickname}")
+	@GetMapping("/checknick/{nickname}")
 	@ApiOperation(value = "닉네임 중복 확인조회", notes = "닉네임 중복을 확인한다")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
