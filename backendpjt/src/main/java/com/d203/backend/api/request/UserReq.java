@@ -1,5 +1,7 @@
 package com.d203.backend.api.request;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -19,4 +21,6 @@ public class UserReq {
 	Long lang;
 	@ApiModelProperty(name="유저 nickname", example="your_nickname")
 	String nickname;
+	
+	
 }
