@@ -3,6 +3,8 @@ package com.d203.backend.common.auth;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.FilterChain;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.d203.backend.api.service.UserService;
 import com.d203.backend.db.entity.User;
@@ -78,13 +81,16 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             JWTVerifier verifier = JwtTokenUtil.getVerifier();
             JwtTokenUtil.handleError(token);
             DecodedJWT decodedJWT = verifier.verify(token.replace(JwtTokenUtil.TOKEN_PREFIX, ""));
-            String email = decodedJWT.getSubject();
-
+           
+            Map<String, Claim> claim = decodedJWT.getClaims();
+            System.out.println(claim.get("userinfo").asMap().get("email").toString());
+            String email = claim.get("userinfo").asMap().get("email").toString();
             // Search in the DB if we find the user by token subject (username)
             // If so, then grab user details and create spring auth token using username, pass, authorities/roles
             if (email != null) {
                 // jwt 토큰에 포함된 계정 정보(userId) 통해 실제 디비에 해당 정보의 계정이 있는지 조회.
                 User user = userService.getUserByEamil(email);
+              
                 if(user != null) {
                     // 식별된 정상 유저인 경우, 요청 context 내에서 참조 가능한 인증 정보(jwtAuthentication) 생성.
                     SsafyUserDetails userDetails = new SsafyUserDetails(user);
