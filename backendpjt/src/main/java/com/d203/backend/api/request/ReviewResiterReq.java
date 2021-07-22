@@ -12,11 +12,11 @@ import lombok.ToString;
 @ApiModel("ReviewResiterRequest")
 public class ReviewResiterReq {
 	
-	@ApiModelProperty(name="작성하는 유저 email", example="ssafy_web")
-	String to_user_id;
+	@ApiModelProperty(name="작성하는 유저 id", example="1")
+	Long to_user_id;
 	
-	@ApiModelProperty(name="작성받는 유저 email", example="ssafy_web")
-	String from_user_id;
+	@ApiModelProperty(name="작성받는 유저 id", example="2")
+	Long from_user_id;
 	
 	@ApiModelProperty(name="평가하는 유저의 점수", example="4.5")
 	Long score;

@@ -29,13 +29,13 @@ public class ReviewServiceImpl implements ReviewService{
 		Review review = new Review();
 		review.setContent(reviewInfo.getContent());
 		
-		User fromUser =userRepository.findByEmail(reviewInfo.getFrom_user_id()).get();
-		System.out.println("fromUser : "+ fromUser.getEmail() + " " + fromUser.getId());
-		review.setFromuserid(fromUser );
+		Optional<User> fromUser =userRepository.findById(reviewInfo.getFrom_user_id());
+		System.out.println("fromUser : "+ fromUser.get().getEmail() + " " + fromUser.get().getId());
+		review.setFromuserid(fromUser.get() );
 		
-		User toUser =userRepository.findByEmail(reviewInfo.getTo_user_id()).get();
-		review.setTouserid(toUser);
-		System.out.println("toUser : "+ toUser.getEmail() + " " + toUser.getId());
+		Optional<User> toUser =userRepository.findById(reviewInfo.getTo_user_id());
+		review.setTouserid(toUser.get());
+		System.out.println("toUser : "+ toUser.get().getEmail() + " " + toUser.get().getId());
 		
 		review.setScore(reviewInfo.getScore());
 		
