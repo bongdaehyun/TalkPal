@@ -1,73 +1,60 @@
 <template>
-  <v-tab-item>
-    <v-container>
-      <v-row>
-        <v-text-field
-          label="Email"
-          prepend-inner-icon="mdi-email"
-          v-model="email"
-          :error-messages="emailErrors"
-          @input="$v.email.$touch()"
-          @blur="$v.email.$touch()"
-          type="email"
-        ></v-text-field>
-      </v-row>
-      <v-row>
-        <v-text-field
-          label="Password"
-          prepend-inner-icon="mdi-lock"
-          v-model="password"
-          :error-messages="passwordErrors"
-          @input="$v.password.$touch()"
-          @blur="$v.password.$touch()"
-          type="password"
-        ></v-text-field>
-      </v-row>
-      <v-row>
-        <v-text-field
-          label="Password Confirm"
-          prepend-inner-icon="mdi-lock"
-          v-model="repeatPassword"
-          :error-messages="repeatPasswordErrors"
-          @input="$v.repeatPassword.$touch()"
-          @blur="$v.repeatPassword.$touch()"
-          type="password"
-        ></v-text-field>
-      </v-row>
-      <v-row>
-        <v-text-field
-          label="NickName"
-          prepend-inner-icon="mdi-text"
-          v-model="nickname"
-          :error-messages="nicknameErrors"
-          @input="$v.nickname.$touch()"
-          @blur="$v.nickname.$touch()"
-          type="text"
-        ></v-text-field>
-      </v-row>
-      <v-row>
-        <v-select
-          v-model="lang"
-          :items="items"
-          item-text="name"
-          item-value="value"
-          label="Language"
-          :error-messages="langErrors"
-          @input="$v.lang.$touch()"
-          @blur="$v.lang.$touch()"
-        ></v-select>
-      </v-row>
-      <v-row class="text-right">
-        <v-btn class="ma-2" color="primary" @click="requestRegister">
-          {{ $t("main_register") }}
-          <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
-        </v-btn>
-      </v-row>
-    </v-container>
-  </v-tab-item>
+  <v-container>
+    <v-text-field
+      label="Email"
+      prepend-inner-icon="mdi-email"
+      v-model="email"
+      :error-messages="emailErrors"
+      @input="$v.email.$touch()"
+      @blur="$v.email.$touch()"
+      type="email"
+    ></v-text-field>
+    <v-text-field
+      label="Password"
+      prepend-inner-icon="mdi-lock"
+      v-model="password"
+      :error-messages="passwordErrors"
+      @input="$v.password.$touch()"
+      @blur="$v.password.$touch()"
+      type="password"
+    ></v-text-field>
+    <v-text-field
+      label="Password Confirm"
+      prepend-inner-icon="mdi-lock"
+      v-model="repeatPassword"
+      :error-messages="repeatPasswordErrors"
+      @input="$v.repeatPassword.$touch()"
+      @blur="$v.repeatPassword.$touch()"
+      type="password"
+    ></v-text-field>
+    <v-text-field
+      label="NickName"
+      prepend-inner-icon="mdi-text"
+      v-model="nickname"
+      :error-messages="nicknameErrors"
+      @input="$v.nickname.$touch()"
+      @blur="$v.nickname.$touch()"
+      type="text"
+    ></v-text-field>
+    <v-select
+      v-model="lang"
+      :items="items"
+      item-text="name"
+      item-value="value"
+      label="Language"
+      :error-messages="langErrors"
+      @input="$v.lang.$touch()"
+      @blur="$v.lang.$touch()"
+    ></v-select>
+    <v-btn class="ma-2" color="primary" @click="requestRegister">
+      {{ $t("main_register") }}
+      <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
+    </v-btn>
+  </v-container>
 </template>
 
 <script>
+import langItems from "@/assets/data/lang.json";
 import { validationMixin } from "vuelidate";
 import {
   required,
@@ -83,15 +70,18 @@ import http from "@/util/http-common";
 export default {
   data() {
     return {
-      email: "",
-      password: "",
-      repeatPassword: "",
-      nickname: "",
+      // email: "",
+      // password: "",
+      // repeatPassword: "",
+      // nickname: "",
+      // lang: "",
+      email: "test@gmail.com",
+      password: "1q2w3e4r!",
+      repeatPassword: "1q2w3e4r!",
+      nickname: "test",
       lang: "",
-      items: [
-        { name: "English", value: "en" },
-        { name: "한국어", value: "ko" },
-      ],
+
+      items: langItems,
     };
   },
   methods: {
@@ -119,7 +109,7 @@ export default {
         this.$store
           .dispatch("userStore/requestRegister", credentials)
           .then(() => {
-            alert("회원가입 성공");
+            alert("인증메일을 발송했습니다.");
             // Form 초기화
             this.resetCredential();
             // 탭 이동 요청 이벤트 발생
@@ -149,7 +139,7 @@ export default {
         if (email === "") return true;
         try {
           // 중복 검사 통과
-          const res = await http.get(`/users/chekemail/${email}`);
+          const res = await http.get(`/users/checkemail/${email}`);
           return true;
         } catch (error) {
           // 중복 검사 실패
@@ -178,7 +168,7 @@ export default {
         if (nickname === "") return true;
         try {
           // 중복 검사 통과
-          const res = await http.get(`/users/cheknick/${nickname}`);
+          const res = await http.get(`/users/checknick/${nickname}`);
           return true;
         } catch (error) {
           // 중복 검사 실패
