@@ -4,20 +4,28 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.d203.backend.api.request.ReviewResiterReq;
+import com.d203.backend.api.request.ReviewUpdateReq;
+import com.d203.backend.api.request.UserDeleteReq;
+import com.d203.backend.api.request.UserReq;
 import com.d203.backend.api.response.ReviewItemRes;
 import com.d203.backend.api.response.ReviewListRes;
 import com.d203.backend.api.response.UserRes;
 import com.d203.backend.api.service.ReviewService;
 import com.d203.backend.api.service.UserService;
+import com.d203.backend.common.auth.SsafyUserDetails;
 import com.d203.backend.common.model.response.BaseResponseBody;
 import com.d203.backend.db.entity.Review;
 import com.d203.backend.db.entity.User;
@@ -27,6 +35,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Api(value = "유저간 ReView API", tags = {"Review"})
 @RestController
@@ -56,20 +65,39 @@ public class ReviewController {
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 		
 	}
-			
 	
-	@GetMapping("{user_id}")
-	@ApiOperation(value = "리뷰 조회", notes = "요청하는 유저 pk값에 대응하는 리뷰를 조회한다.")
+	@GetMapping("/from/{from_user_id}")
+	@ApiOperation(value = "작성한 리뷰 조회", notes = "요청하는 유저 pk값에 대응하는 작성한 리뷰를 조회한다.")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<ReviewListRes> getReviewFrom (@PathVariable Long from_user_id) {
+		
+		System.out.println("ReqUser : try" );
+		User user = userService.getUserByuserId(from_user_id);
+		System.out.println("ReqUser : " + user.toString());
+		
+		System.out.println("ReqUser : " + user.getId().longValue());
+		
+		List<Review> review = reviewService.getWriteReviewById(user.getId().longValue());
+		
+		return ResponseEntity.status(200).body(ReviewListRes.getlist(review));
+		  
+	}
+	
+	@GetMapping("/to/{to_user_id}")
+	@ApiOperation(value = "리뷰 조회", notes = "요청하는 유저 pk값에 대응하는 작성된 리뷰를 조회한다.")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
 			@ApiResponse(code = 401, message = "인증 실패"),
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<ReviewListRes> getReview (@PathVariable Long user_id) {
+	public ResponseEntity<ReviewListRes> getReviewTo (@PathVariable Long to_user_id) {
 		
 		System.out.println("ReqUser : try" );
-		User user = userService.getUserByuserId(user_id);
+		User user = userService.getUserByuserId(to_user_id);
 		System.out.println("ReqUser : " + user.toString());
 		
 		System.out.println("ReqUser : " + user.getId().longValue());
@@ -80,5 +108,37 @@ public class ReviewController {
 		  
 	}
 	
+	@PutMapping("{review_id}")
+	@ApiOperation(value = "리뷰 작성 수정", notes = "review의 pk 값을 받아와 수정한다.")
+	@ApiResponses({
+		@ApiResponse(code = 200, message = "성공")
+	})
+	public ResponseEntity<?> updateReview(
+			@RequestBody @ApiParam(value="평가 작성 수정 정보", required = true) ReviewUpdateReq updateReviewInfo,
+			@PathVariable Long review_id)
+			{
+		
+		System.out.println(updateReviewInfo.toString());
+		if(reviewService.updateReview(review_id,updateReviewInfo))
+		{
+			return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<String>("FAIL", HttpStatus.NO_CONTENT);
+	}
 	
+	@DeleteMapping("{review_id}")
+	public ResponseEntity<?> deleteUser(
+			@PathVariable Long review_id,
+			@ApiIgnore Authentication authentication
+			){
+		
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+		Long tokenUserId = userDetails.getUser().getId();
+		if(reviewService.deleteReview(review_id,tokenUserId)) {
+			return  ResponseEntity.status(204).body("Review delete success");
+		}
+		
+		return  ResponseEntity.status(401).body("User not macthed");
+	}
 }

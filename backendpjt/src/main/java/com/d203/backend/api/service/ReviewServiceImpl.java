@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.d203.backend.api.request.ReviewResiterReq;
+import com.d203.backend.api.request.ReviewUpdateReq;
 import com.d203.backend.db.entity.Review;
 import com.d203.backend.db.entity.User;
 import com.d203.backend.db.repository.ReviewRepository;
@@ -42,7 +43,7 @@ public class ReviewServiceImpl implements ReviewService{
 		return reviewRepository.save(review);
 	}
 
-	//이메일로 리뷰 조회
+	//요청된 사용자에게 작성된 사용자 pk로 리뷰 조회
 	@Override
 	public List<Review> getReviewById(Long userid) {
 		
@@ -54,4 +55,48 @@ public class ReviewServiceImpl implements ReviewService{
 		return review;
 	}
 
+	//
+	@Override
+	public boolean updateReview(Long reviewId, ReviewUpdateReq reviwUpdateInfo) {
+		
+		Optional<Review> review = reviewRepository.findById(reviewId);
+		
+		Review updateReview = review.get();
+		
+		updateReview.setContent(reviwUpdateInfo.getContent());
+		updateReview.setScore(reviwUpdateInfo.getScore());
+		
+		if(review.isPresent()) {
+			reviewRepository.save(updateReview);
+			return true;
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean deleteReview(Long review_id, Long tokenUserId) {
+		
+		Review delReview = reviewRepository.getOne(review_id);
+		Long isAcceptId = delReview.getFromuserid().getId();
+		
+		if(isAcceptId == tokenUserId)
+		{
+			reviewRepository.delete(delReview);	
+			return true;
+		}
+		return false;
+	}
+
+	//요청한 사용자가 작성한 리뷰 보기
+	@Override
+	public List<Review> getWriteReviewById(Long userid) {
+		System.out.println("Review Service : try userid: " +" "+ userid);
+		
+		List<Review> review = reviewRepository.findAllByFromuserid(userid);
+		
+		System.out.println("Review Service : done reviewSize()" +" "+ review.size());
+		return review;
+	}
+	
 }

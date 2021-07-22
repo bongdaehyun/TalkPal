@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
 		//유저 정보가 있다면
 		User updateUser = user.get();
 		
-		//updateUser.setLang(userUpdateInfo.getLang());
+		updateUser.setLang(langRepository.getOne(userUpdateInfo.getLang()));
 		updateUser.setNickname(userUpdateInfo.getNickname());
 		updateUser.setPassword(passwordEncoder.encode(userUpdateInfo.getPassword()));
 		
