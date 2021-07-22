@@ -55,7 +55,7 @@ export default {
           this.$store.dispatch("userStore/login", accessToken);
 
           // 페이지 이동
-          this.$router.push({ name: "Room" });
+          this.$router.push({ name: "Rooms" });
         })
         .catch((err) => {
           alert("로그인 실패");

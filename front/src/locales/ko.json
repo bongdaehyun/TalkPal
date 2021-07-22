@@ -11,5 +11,6 @@
   "create_close": "닫기",
   "create_save": "생성",
   "create_music": "음악",
-  "create_movie": "영화"
+  "create_movie": "영화",
+  "error_404":"페이지를 찾을 수 없습니다."
 }
