@@ -41,6 +41,10 @@ export default {
     },
   },
   methods: {
+    /*
+    무한스크롤 함수
+    https://www.npmjs.com/package/vue-infinite-loading
+     */
     infiniteHandler($state) {
       axios.get(api + this.page).then((res) => {
         const data = res.data.data;
