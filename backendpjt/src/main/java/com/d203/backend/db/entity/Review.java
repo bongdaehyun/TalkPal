@@ -18,14 +18,14 @@ import lombok.ToString;
 public class Review extends BaseEntity{
 
 	String content;
-	int score;
+	Long score;
 	
 	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_user_id")
-    private User from_user_id;
+    private User fromuserid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_user_id")
-    private User to_user_id;
+    private User touserid;
 }

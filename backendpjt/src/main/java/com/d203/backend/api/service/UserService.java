@@ -21,5 +21,7 @@ public interface UserService {
 	
 	//닉네임 중복체크 
 	boolean checkNick(String nickname);
+	
+	User getUserByuserId(Long user_id);
 
 }
