@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 
+
 	@Override
 	public User createUser(UserReq userRegisterInfo) {
 		
@@ -58,7 +59,7 @@ public class UserServiceImpl implements UserService {
 		updateUser.setPassword(passwordEncoder.encode(userUpdateInfo.getPassword()));
 		
 		if(user.isPresent()){
-			System.out.println(updateUser.toString());
+			//System.out.println(updateUser.toString());
 			userRepository.save(updateUser);
 			return true;
 		}
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
 	public boolean deleteUser(String email , String password) {
 		
 		User user = userRepository.findByEmail(email).get();
-		System.out.println(userRepository.findByEmail(email));
+		//System.out.println(userRepository.findByEmail(email));
 		if (passwordEncoder.matches(password, user.getPassword())) {
 			userRepository.delete(user);
 			return true;
@@ -83,9 +84,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean checkEmail(String email) {
-		System.out.println("param email : " + email);
+		//System.out.println("param email : " + email);
 		Optional<User> user = userRepository.findByEmail(email);
-		System.out.println(userRepository.findByEmail(email));
+		//System.out.println(userRepository.findByEmail(email));
 		if (!user.isPresent()) {
 			return false;
 		} else {
@@ -95,14 +96,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean checkNick(String nickname) {
-		System.out.println("param nickname : " + nickname);
+		//System.out.println("param nickname : " + nickname);
 		Optional<User> user = userRepository.findByNickname(nickname);
-		System.out.println(userRepository.findByNickname(nickname));
+		//System.out.println(userRepository.findByNickname(nickname));
 		if (!user.isPresent()) {
 			return false;
 		} else {
 			return true;
 		}
 	}
+
 
 }

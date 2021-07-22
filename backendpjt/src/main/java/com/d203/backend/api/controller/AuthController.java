@@ -1,12 +1,11 @@
 package com.d203.backend.api.controller;
 
+import com.d203.backend.api.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.d203.backend.api.request.UserLoginReq;
 import com.d203.backend.api.request.UserReq;
@@ -58,6 +57,31 @@ public class AuthController {
 		}
 		// 유효하지 않는 패스워드인 경우, 로그인 실패로 응답.
 		return ResponseEntity.status(401).body(UserLoginPostRes.of(401, "Invalid Password", null));
+	}
+
+	@Autowired
+	private AuthService authService;
+
+	@PostMapping
+	public ResponseEntity<?> sendEmail(String email){
+
+		try{
+			User user=userService.getUserByEamil(email);
+			authService.sendVerificationMail(user);
+			return new ResponseEntity<String>("성공",HttpStatus.OK);
+		}catch (Exception e){
+			return new ResponseEntity<String>("오류", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@GetMapping("confirm/{token}")
+	public ResponseEntity<?> checkEmail(@PathVariable String token){
+		try {
+			authService.verifyEmail(token);
+			return new ResponseEntity<String>("회원 인증 성공!!!!!!", HttpStatus.OK);
+		}catch (Exception e){
+			return new ResponseEntity<String>("회원 인증에 실패!?!!!", HttpStatus.BAD_REQUEST);
+		}
 	}
 }
 
