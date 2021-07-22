@@ -31,9 +31,14 @@ public class User extends BaseEntity{
     
     String nickname;
 
+    //이메일 인증한 여부
+    boolean valid;
+
     @JsonIgnore
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String password;
-    //이메일 인증한 여부
-    boolean isValid;
+
+    public boolean getValid(){
+        return valid;
+    }
 }

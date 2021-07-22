@@ -25,7 +25,7 @@ public class AuthService {
     //Email토큰 생성
     public String createToken(User user){
         EmailToken emailToken=new EmailToken();
-        emailToken.setToken("token");
+        emailToken.setToken("token" + user.getId());
         emailToken.setEmail(user.getEmail());
         emailRepository.save(emailToken);
 
