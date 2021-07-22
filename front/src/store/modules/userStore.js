@@ -58,7 +58,7 @@ const userStore = {
     getAccessToken(state) {
       return state.accessToken;
     },
-    getLoginStautus(state) {
+    getLoginStatus(state) {
       return state.loginStatus;
     },
     getLocale(state) {

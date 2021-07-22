@@ -48,7 +48,6 @@ export default {
     infiniteHandler($state) {
       axios.get(api + this.page).then((res) => {
         const data = res.data.data;
-
         if (data.length) {
           this.page += 1;
           this.list.push(...data);

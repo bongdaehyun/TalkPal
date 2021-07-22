@@ -32,7 +32,7 @@ export default {
   },
   computed: {
     loginStatus() {
-      return this.$store.getters["userStore/getLoginStautus"];
+      return this.$store.getters["userStore/getLoginStatus"];
     },
   },
   methods: {

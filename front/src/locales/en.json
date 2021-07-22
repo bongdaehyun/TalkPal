@@ -11,5 +11,6 @@
   "create_close": "CLOSE",
   "create_save": "CREATE",
   "create_music": "MUSIC",
-  "create_movie": "MOVIE"
+  "create_movie": "MOVIE",
+  "error_404": "NOT FOUND PAGE."
 }
