@@ -36,6 +36,8 @@ public class ReviewListRes {
 		for (int i = 0; i < review.size(); i++) {
 			
 			ReviewItemRes res = new ReviewItemRes();
+			// 응답 변수에 review_id 추가
+			res.setId(review.get(i).getId());
 			res.setContent(review.get(i).getContent());
 			res.setFrom_user_id(review.get(i).getFromuserid().getId());
 			res.setTo_user_id(review.get(i).getTouserid().getId());

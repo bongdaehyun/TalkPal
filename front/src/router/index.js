@@ -25,7 +25,7 @@ const routes = [
     meta: { auth: true },
   },
   {
-    path: "/profie",
+    path: "/profie/:userId",
     name: "Profile",
     component: Profile,
     meta: { auth: true },
@@ -45,8 +45,14 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const loginStatus = store.getters["userStore/getLoginStatus"]
   if (to.meta.auth && !loginStatus) {
-    console.log('인증이 필요합니다');
+    // TODO: Toast 처리
+    console.log('로그인이 필요합니다');
     next('/');
+  }
+  if (!to.meta.auth && loginStatus) {
+    // TODO: Toast 처리
+    console.log('로그인한 상태입니다.');
+    next('/rooms');
   }
 
   next()

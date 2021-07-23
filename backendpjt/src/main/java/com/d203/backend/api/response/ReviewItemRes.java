@@ -15,6 +15,9 @@ import lombok.ToString;
 @ApiModel("ReviewResponse")
 @ToString
 public class ReviewItemRes {
+	// 응답변수에 review_id 추가
+	@ApiModelProperty(name="review_id")
+	Long id;
 
 	@ApiModelProperty(name="score")
 	double score;

@@ -42,7 +42,7 @@ public class ReviewServiceImpl implements ReviewService{
 		return reviewRepository.save(review);
 	}
 
-	//이메일로 리뷰 조회
+	//유저PK 리뷰 조회
 	@Override
 	public List<Review> getReviewById(Long userid) {
 		

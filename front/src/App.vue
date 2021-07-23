@@ -7,7 +7,7 @@
       <!-- 중간 여백 -->
       <v-spacer></v-spacer>
       <v-btn text>
-        <span class="mr-2" @click="goRoom">방 목록</span>
+        <span class="mr-2" @click="goRooms">방 목록</span>
       </v-btn>
       <v-btn text>
         <span class="mr-2" @click="goProfile">내 정보</span>
@@ -28,7 +28,9 @@
 export default {
   name: "App",
   data() {
-    return {};
+    return {
+      userId: this.$store.getters["userStore/getUserId"],
+    };
   },
   computed: {
     loginStatus() {
@@ -36,11 +38,11 @@ export default {
     },
   },
   methods: {
-    goRoom() {
-      this.$router.push({ name: "Room" });
+    goRooms() {
+      this.$router.push({ name: "Rooms" });
     },
     goProfile() {
-      this.$router.push({ name: "Profile" });
+      this.$router.push({ name: "Profile", params: { userId: this.userId } });
     },
     goMain() {
       this.$router.push({ name: "Main" });

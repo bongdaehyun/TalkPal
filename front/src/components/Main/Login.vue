@@ -28,7 +28,7 @@ export default {
       // email: "",
       // password: "",
       email: "test@gmail.com",
-      password: "1q2w3e4r",
+      password: "1q2w3e4r!",
     };
   },
   methods: {
@@ -40,8 +40,8 @@ export default {
           password: this.password,
         })
         .then((res) => {
+          // TODO Toast 구현
           alert("로그인 성공");
-          // console.log(res);
 
           // 인증 Token
           let accessToken = res.data.accessToken;

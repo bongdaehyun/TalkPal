@@ -13,13 +13,13 @@
 </template>
 
 <script>
-import Item from "@/components/Room/Item";
-import Create from "@/components/Room/Create";
+import Item from "@/components/Rooms/Item";
+import Create from "@/components/Rooms/Create";
 
 import InfiniteLoading from "vue-infinite-loading";
 import axios from "axios";
 
-// 인피니티 스크롤 테스트 API 주소
+// NOTE: 인피니티 스크롤 테스트 API 주소
 let api = "https://api.instantwebtools.net/v1/passenger?size=20&page=";
 
 export default {
@@ -42,8 +42,8 @@ export default {
   },
   methods: {
     /*
-    무한스크롤 함수
-    https://www.npmjs.com/package/vue-infinite-loading
+    NOTE: 무한스크롤 기능 함수
+    NOTE: https://www.npmjs.com/package/vue-infinite-loading
      */
     infiniteHandler($state) {
       axios.get(api + this.page).then((res) => {
@@ -60,6 +60,7 @@ export default {
   },
   created() {
     // console.log(this.$store.getters["userStore/getLocale"]);
+    // TODO: 언어 설정 다른 방식이 필요해보임
     this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
   },
 };

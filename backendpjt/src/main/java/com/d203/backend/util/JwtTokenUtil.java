@@ -54,6 +54,9 @@ public class JwtTokenUtil {
         Date expires = JwtTokenUtil.getTokenExpiration(expirationTime);
         
         Map<String, String> tokenMap = new HashMap<String, String>();
+        // user_id 가 필요해서 추가함.
+        // Long -> String 변환
+        tokenMap.put("id",String.valueOf(user.getId()));
         tokenMap.put("email", user.getEmail());
         tokenMap.put("lang", user.getLang().getName());
         tokenMap.put("nickname",user.getNickname());
