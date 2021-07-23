@@ -39,8 +39,13 @@ public class ReviewListRes {
 			// 응답 변수에 review_id 추가
 			res.setId(review.get(i).getId());
 			res.setContent(review.get(i).getContent());
+			
 			res.setFrom_user_id(review.get(i).getFromuserid().getId());
+			res.setFrom_user_nickname(review.get(i).getFromuserid().getNickname());
+			
 			res.setTo_user_id(review.get(i).getTouserid().getId());
+			res.setTo_user_nickname(review.get(i).getTouserid().getNickname());
+			
 			res.setScore(review.get(i).getScore());
 			avg+= review.get(i).getScore();
 			
