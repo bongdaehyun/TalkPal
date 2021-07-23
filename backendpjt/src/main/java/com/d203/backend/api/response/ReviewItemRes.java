@@ -19,6 +19,9 @@ public class ReviewItemRes {
 	@ApiModelProperty(name="review_id")
 	Long id;
 
+	@ApiModelProperty(name="review_id")
+	Long id;
+	
 	@ApiModelProperty(name="score")
 	double score;
 	
