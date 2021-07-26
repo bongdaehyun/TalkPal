@@ -58,11 +58,21 @@ const userStore = {
       context.commit('LOGOUT')
       axios.defaults.headers.common['Authorization'] = undefined
     },
+    // NOTE: 유저 정보 요청
     requestUserInfo(context, userId) {
       return http.get('/users/' + userId)
     },
+    // NOTE: 만난 사람들 요청
+    requestUserHistory(context, userId) {
+      return http.get()
+    },
+    // NOTE: 작성한 리뷰 요청
+    requestGiveReviews(context, userId) {
+      return http.get('/review/from/' + userId)
+    },
+    // NOTE: 받은 리뷰 요청
     requestReceivedReviews(context, userId) {
-      return http.get('/review/' + userId)
+      return http.get('/review/to/' + userId)
     },
   },
   getters: {
