@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -28,7 +29,7 @@ public class Room extends BaseEntity{
 	
 	Date start_time;
 
-	String title;
+	String name;
 
 	Long maxnum;
 	Long curnum;
@@ -42,7 +43,7 @@ public class Room extends BaseEntity{
 	Lang guset_lang;
 
 	//카테고리 테이블은 따로 필요하지 않은지?
-	String category;
-	
+	String topic;
+
 	
 }

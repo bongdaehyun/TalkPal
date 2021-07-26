@@ -27,11 +27,11 @@ public class RoomReq {
 	Long guset_lang;
 
 	@ApiModelProperty(name="Room 이름", example="room_title")
-	String title;
+	String name;
 	
 	@ApiModelProperty(name="Room 카테고리", example="room_category")
 	//카테고리 테이블은 따로 필요하지 않은지?
-	String category;
+	String topic;
 
 	@ApiModelProperty(name="방 허용 최대 인원", example="maxnum")
 	Long maxnum;
