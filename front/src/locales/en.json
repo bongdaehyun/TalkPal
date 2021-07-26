@@ -7,7 +7,7 @@
   "create_name": "Room Name",
   "create_host": "HOST Language",
   "create_guest": "GUEST Language",
-  "create_subject": "Topic",
+  "create_topic": "Topic",
   "create_close": "CLOSE",
   "create_save": "CREATE",
   "create_music": "MUSIC",
