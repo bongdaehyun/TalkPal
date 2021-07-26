@@ -128,7 +128,7 @@ public class ReviewController {
 	}
 	
 	@DeleteMapping("{review_id}")
-	public ResponseEntity<?> deleteUser(
+	public ResponseEntity<?> deleteReview(
 			@PathVariable Long review_id,
 			@ApiIgnore Authentication authentication
 			){

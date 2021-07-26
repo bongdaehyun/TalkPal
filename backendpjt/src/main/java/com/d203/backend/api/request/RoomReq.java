@@ -21,15 +21,21 @@ public class RoomReq {
 	Date start_time;
 	
 	@ApiModelProperty(name="Room 호스트사용언어", example="host_lang")
-	int host_lnag;
+	Long host_lnag;
 	
 	@ApiModelProperty(name="Room 게스트사용언어", example="guest_lang")
-	int guset_lang;
-	
+	Long guset_lang;
+
 	@ApiModelProperty(name="Room 이름", example="room_title")
 	String title;
 	
 	@ApiModelProperty(name="Room 카테고리", example="room_category")
 	//카테고리 테이블은 따로 필요하지 않은지?
 	String category;
+
+	@ApiModelProperty(name="방 허용 최대 인원", example="maxnum")
+	Long maxnum;
+
+	@ApiModelProperty(name="방 현재 인원", example="curnum")
+	Long curnum;
 }
