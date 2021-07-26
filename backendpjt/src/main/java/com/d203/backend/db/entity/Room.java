@@ -27,6 +27,11 @@ public class Room extends BaseEntity{
 	User hostId;
 	
 	Date start_time;
+
+	String title;
+
+	Long maxnum;
+	Long curnum;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "host_lnag")
@@ -35,8 +40,7 @@ public class Room extends BaseEntity{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "guset_lang")
 	Lang guset_lang;
-	
-	String title;
+
 	//카테고리 테이블은 따로 필요하지 않은지?
 	String category;
 	
