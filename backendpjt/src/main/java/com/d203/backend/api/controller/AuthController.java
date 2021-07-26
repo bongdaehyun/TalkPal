@@ -1,16 +1,15 @@
 package com.d203.backend.api.controller;
 
-import com.d203.backend.api.service.AuthService;
+import com.d203.backend.api.service.Auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import com.d203.backend.api.request.UserLoginReq;
-import com.d203.backend.api.request.UserReq;
-import com.d203.backend.api.response.UserLoginPostRes;
-import com.d203.backend.api.service.UserService;
+import com.d203.backend.api.request.User.UserLoginReq;
+import com.d203.backend.api.response.User.UserLoginPostRes;
+import com.d203.backend.api.service.User.UserService;
 import com.d203.backend.common.model.response.BaseResponseBody;
 import com.d203.backend.db.entity.User;
 import com.d203.backend.util.JwtTokenUtil;

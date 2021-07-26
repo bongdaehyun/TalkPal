@@ -1,7 +1,6 @@
 package com.d203.backend.api.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,15 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.d203.backend.api.request.ReviewResiterReq;
-import com.d203.backend.api.request.ReviewUpdateReq;
-import com.d203.backend.api.request.UserDeleteReq;
-import com.d203.backend.api.request.UserReq;
-import com.d203.backend.api.response.ReviewItemRes;
-import com.d203.backend.api.response.ReviewListRes;
-import com.d203.backend.api.response.UserRes;
-import com.d203.backend.api.service.ReviewService;
-import com.d203.backend.api.service.UserService;
+import com.d203.backend.api.request.Review.ReviewResiterReq;
+import com.d203.backend.api.request.Review.ReviewUpdateReq;
+import com.d203.backend.api.response.Review.ReviewListRes;
+import com.d203.backend.api.service.Review.ReviewService;
+import com.d203.backend.api.service.User.UserService;
 import com.d203.backend.common.auth.SsafyUserDetails;
 import com.d203.backend.common.model.response.BaseResponseBody;
 import com.d203.backend.db.entity.Review;

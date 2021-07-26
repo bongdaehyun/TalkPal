@@ -1,4 +1,4 @@
-package com.d203.backend.api.response;
+package com.d203.backend.api.response.Review;
 
 import java.util.List;
 

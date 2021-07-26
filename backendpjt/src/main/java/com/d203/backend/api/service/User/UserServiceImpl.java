@@ -1,9 +1,9 @@
-package com.d203.backend.api.service;
+package com.d203.backend.api.service.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.d203.backend.api.request.UserReq;
+import com.d203.backend.api.request.User.UserReq;
 import com.d203.backend.db.entity.Lang;
 import com.d203.backend.db.entity.User;
 import com.d203.backend.db.repository.LangRepository;

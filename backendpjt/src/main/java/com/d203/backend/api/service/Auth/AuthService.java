@@ -1,5 +1,6 @@
-package com.d203.backend.api.service;
+package com.d203.backend.api.service.Auth;
 
+import com.d203.backend.api.service.Email.EmailSenderService;
 import com.d203.backend.db.entity.EmailToken;
 import com.d203.backend.db.entity.User;
 import com.d203.backend.db.repository.EmailRepository;

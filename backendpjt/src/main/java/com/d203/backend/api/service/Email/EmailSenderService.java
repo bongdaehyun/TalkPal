@@ -1,4 +1,4 @@
-package com.d203.backend.api.service;
+package com.d203.backend.api.service.Email;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;

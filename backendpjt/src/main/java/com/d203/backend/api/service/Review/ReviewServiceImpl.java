@@ -1,4 +1,4 @@
-package com.d203.backend.api.service;
+package com.d203.backend.api.service.Review;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.d203.backend.api.request.ReviewResiterReq;
-import com.d203.backend.api.request.ReviewUpdateReq;
+import com.d203.backend.api.request.Review.ReviewResiterReq;
+import com.d203.backend.api.request.Review.ReviewUpdateReq;
 import com.d203.backend.db.entity.Review;
 import com.d203.backend.db.entity.User;
 import com.d203.backend.db.repository.ReviewRepository;

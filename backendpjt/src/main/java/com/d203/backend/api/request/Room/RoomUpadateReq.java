@@ -1,4 +1,4 @@
-package com.d203.backend.api.request;
+package com.d203.backend.api.request.Room;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
