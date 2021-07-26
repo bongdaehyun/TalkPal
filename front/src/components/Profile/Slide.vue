@@ -4,7 +4,7 @@
 <template>
   <swiper class="swiper" :options="swiperOption">
     <swiper-slide v-for="item in items" :key="item.id">
-      <Item :item="item" />
+      <Item :item="item" :category="category" />
     </swiper-slide>
   </swiper>
 </template>
@@ -31,6 +31,9 @@ export default {
     },
     items: {
       type: Array,
+    },
+    category: {
+      type: String,
     },
   },
   components: {
