@@ -40,9 +40,9 @@
               </v-col>
               <v-col class="d-flex" cols="12">
                 <v-select
-                  :items="subjects | subjectsi18n"
-                  :label="$t('create_subject')"
-                  v-model="inputs.subject"
+                  :items="topics | topicsi18n"
+                  :label="$t('create_topic')"
+                  v-model="inputs.topic"
                 ></v-select>
               </v-col>
             </v-row>
@@ -73,8 +73,8 @@ export default {
       names: ["누구누구의 방"],
       hosts: ["한국어", "English"],
       guests: ["한국어", "English"],
-      subjects: ["create_music", "create_movie"],
-      inputs: { name: "", subject: "", host: "", guest: "" },
+      topics: ["create_music", "create_movie"],
+      inputs: { name: "", topic: "", host: "", guest: "" },
     };
   },
   methods: {
@@ -84,7 +84,7 @@ export default {
     },
   },
   filters: {
-    subjectsi18n(values) {
+    topicsi18n(values) {
       return values.map((value) => i18n.t(value));
     },
   },

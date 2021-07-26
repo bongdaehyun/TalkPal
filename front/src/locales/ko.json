@@ -7,10 +7,10 @@
   "create_name": "방제목",
   "create_host": "HOST 언어",
   "create_guest": "GUEST 언어",
-  "create_subject": "대화 주제",
+  "create_topic": "대화 주제",
   "create_close": "닫기",
   "create_save": "생성",
   "create_music": "음악",
   "create_movie": "영화",
-  "error_404":"페이지를 찾을 수 없습니다."
+  "error_404": "페이지를 찾을 수 없습니다."
 }
