@@ -16,10 +16,10 @@ public class RoomUpadateReq {
     //인원
 
     @ApiModelProperty(name="방 제목", example="~의 대화방")
-    String title;
+    String name;
 
     @ApiModelProperty(name="회화 카테고리", example="음악.")
-    String category;
+    String topic;
 
     @ApiModelProperty(name="현재 인원", example="방 현재인원")
     Long curnum;

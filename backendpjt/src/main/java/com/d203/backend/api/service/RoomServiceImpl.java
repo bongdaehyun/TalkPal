@@ -2,6 +2,7 @@ package com.d203.backend.api.service;
 
 import com.d203.backend.api.request.RoomReq;
 import com.d203.backend.api.request.RoomUpadateReq;
+import com.d203.backend.api.response.RoomRes;
 import com.d203.backend.db.entity.Room;
 import com.d203.backend.db.repository.LangRepository;
 import com.d203.backend.db.repository.RoomRepository;
@@ -27,14 +28,22 @@ public class RoomServiceImpl implements RoomService{
     public Room createRoom(RoomReq roomInfo) {
         Room room = new Room();
 
-        room.setHostId(userRepository.getOne(roomInfo.getHostId()));
-        room.setCategory(roomInfo.getCategory());
-        room.setMaxnum(roomInfo.getMaxnum());
-        room.setCurnum(roomInfo.getCurnum());
-        room.setTitle(roomInfo.getTitle());
+        //room.setHostId(userRepository.getOne(roomInfo.getHostId()));
+        room.setHostId(userRepository.getOne(1L));
+        //room.setCategory(roomInfo.getCategory());
+        room.setTopic("음악");
+       // room.setMaxnum(roomInfo.getMaxnum());
+        room.setMaxnum(2L);
+       // room.setCurnum(roomInfo.getCurnum());
+        room.setCurnum(1L);
 
-        room.setGuset_lang(langRepository.getOne(roomInfo.getGuset_lang()));
-        room.setHost_lnag(langRepository.getOne(roomInfo.getHost_lnag()));
+       // room.setTitle(roomInfo.getTitle());
+        room.setName(roomInfo.getName());
+
+        //room.setGuset_lang(langRepository.getOne(roomInfo.getGuset_lang()));
+        room.setGuset_lang(langRepository.getOne(1L));
+        //room.setHost_lnag(langRepository.getOne(roomInfo.getHost_lnag()));
+        room.setHost_lnag(langRepository.getOne(1L));
 
         return roomRepository.save(room);
     }
@@ -45,8 +54,8 @@ public class RoomServiceImpl implements RoomService{
 
         Room updateRoom = room.get();
 
-        updateRoom.setTitle(updateRoomInfo.getTitle());
-        updateRoom.setCategory(updateRoomInfo.getCategory());
+        updateRoom.setName(updateRoomInfo.getName());
+        updateRoom.setTopic(updateRoomInfo.getTopic());
         updateRoom.setCurnum(updateRoomInfo.getCurnum());
 
         if(room.isPresent()){
@@ -71,11 +80,14 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     public List<Room> getRoomList() {
-        return null;
+
+        List<Room> roomList = roomRepository.findAll();
+        return roomList;
     }
 
     @Override
     public Room getRoom(Long room_id) {
-        return null;
+       Room room = roomRepository.findById(room_id).get();
+        return room;
     }
 }
