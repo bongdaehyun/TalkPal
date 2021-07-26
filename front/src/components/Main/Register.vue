@@ -110,6 +110,14 @@ export default {
           .dispatch("userStore/requestRegister", credentials)
           .then(() => {
             alert("인증메일을 발송했습니다.");
+            console.log(credentials)
+            //인증 메일 보내기 --> post는 params를 못보낸다..
+            let email=credentials.email
+            http.post(`/auth/send/${email}`).then((res)=>{
+              console.log("result",res)
+            }).catch((err)=>{
+              console.log("error",err)
+            })
             // Form 초기화
             this.resetCredential();
             // 탭 이동 요청 이벤트 발생

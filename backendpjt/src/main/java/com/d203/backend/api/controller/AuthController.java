@@ -67,16 +67,12 @@ public class AuthController {
 			// 유효하지 않는 패스워드인 경우, 로그인 실패로 응답.
 			return ResponseEntity.status(401).body(UserLoginPostRes.of(401, "Invalid Password", null));
 		}
-
-
-
 	}
 
 
-
-	@PostMapping
-	public ResponseEntity<?> sendEmail(String email){
-
+	@PostMapping("/send/{email}")
+	public ResponseEntity<?> sendEmail(@PathVariable String email){
+		
 		try{
 			User user=userService.getUserByEamil(email);
 			authService.sendVerificationMail(user);
