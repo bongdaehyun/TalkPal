@@ -1,4 +1,4 @@
-package com.d203.backend.api.request;
+package com.d203.backend.api.request.Room;
 
 import java.sql.Date;
 

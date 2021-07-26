@@ -1,13 +1,6 @@
-package com.d203.backend.api.response;
+package com.d203.backend.api.response.User;
 
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.d203.backend.common.model.response.BaseResponseBody;
-import com.d203.backend.db.entity.Lang;
 import com.d203.backend.db.entity.User;
-import com.d203.backend.db.repository.LangRepository;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

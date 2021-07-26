@@ -1,19 +1,16 @@
 package com.d203.backend.api.controller;
 
-import com.d203.backend.api.service.EmailSenderService;
+import com.d203.backend.api.service.Email.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import com.d203.backend.api.request.UserDeleteReq;
-import com.d203.backend.api.request.UserReq;
-import com.d203.backend.api.response.UserLoginPostRes;
-import com.d203.backend.api.response.UserRes;
-import com.d203.backend.api.service.UserService;
+import com.d203.backend.api.request.User.UserDeleteReq;
+import com.d203.backend.api.request.User.UserReq;
+import com.d203.backend.api.response.User.UserRes;
+import com.d203.backend.api.service.User.UserService;
 import com.d203.backend.common.auth.SsafyUserDetails;
 import com.d203.backend.common.model.response.BaseResponseBody;
 import com.d203.backend.db.entity.User;

@@ -1,7 +1,7 @@
 package com.d203.backend.api.controller;
 
-import com.d203.backend.api.request.*;
-import com.d203.backend.api.response.RoomRes;
+import com.d203.backend.api.request.Room.RoomReq;
+import com.d203.backend.api.request.Room.RoomUpadateReq;
 import com.d203.backend.common.auth.SsafyUserDetails;
 import com.d203.backend.db.entity.Room;
 import io.swagger.annotations.*;
@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import com.d203.backend.api.service.RoomService;
+import com.d203.backend.api.service.Room.RoomService;
 import com.d203.backend.common.model.response.BaseResponseBody;
 import springfox.documentation.annotations.ApiIgnore;
 

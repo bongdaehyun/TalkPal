@@ -1,4 +1,4 @@
-package com.d203.backend.api.request;
+package com.d203.backend.api.request.User;
 
 import org.springframework.web.multipart.MultipartFile;
 

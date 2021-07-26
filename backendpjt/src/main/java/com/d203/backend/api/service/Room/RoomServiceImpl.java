@@ -1,8 +1,7 @@
-package com.d203.backend.api.service;
+package com.d203.backend.api.service.Room;
 
-import com.d203.backend.api.request.RoomReq;
-import com.d203.backend.api.request.RoomUpadateReq;
-import com.d203.backend.api.response.RoomRes;
+import com.d203.backend.api.request.Room.RoomReq;
+import com.d203.backend.api.request.Room.RoomUpadateReq;
 import com.d203.backend.db.entity.Room;
 import com.d203.backend.db.repository.LangRepository;
 import com.d203.backend.db.repository.RoomRepository;

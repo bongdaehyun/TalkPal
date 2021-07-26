@@ -14,7 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.d203.backend.api.service.UserService;
+import com.d203.backend.api.service.User.UserService;
 import com.d203.backend.common.auth.JwtAuthenticationFilter;
 import com.d203.backend.common.auth.SsafyUserDetailService;
 

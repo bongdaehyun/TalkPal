@@ -1,6 +1,6 @@
-package com.d203.backend.api.service;
+package com.d203.backend.api.service.User;
 
-import com.d203.backend.api.request.UserReq;
+import com.d203.backend.api.request.User.UserReq;
 import com.d203.backend.db.entity.User;
 
 
