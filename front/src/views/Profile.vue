@@ -1,5 +1,5 @@
 <template>
-  <div v-if="getUser && getReceivedReview">
+  <div v-if="user && receivedReviews && giveReviews">
     <!-- NOTE: 사용자 정보 -->
     <!-- TODO: 레이아웃 생각 중... -->
     <v-row justify="center">
@@ -7,8 +7,8 @@
         <v-img src="@/assets/image/flag/en.png"> </v-img>
       </v-col>
       <v-col>
-        <h1>{{ getUser.nickname }}</h1>
-        <h3>{{ getAvgScore }}</h3>
+        <h1>{{ user.nickname }}</h1>
+        <h3>{{ receivedReviews.avgScore }}</h3>
       </v-col>
       <v-col> 팔로워</v-col>
       <v-col> 팔로우</v-col>
@@ -33,11 +33,19 @@
           </v-tab-item>
           <!-- NOTE: 받은 평가 탭 -->
           <v-tab-item>
-            <Slide :isDesktop="isDesktop" :items="getReceivedReviews" />
+            <Slide
+              :isDesktop="isDesktop"
+              :items="receivedReviews.reviewList"
+              :category="`receive`"
+            />
           </v-tab-item>
           <!-- NOTE: 작성한 평가 탭 -->
           <v-tab-item>
-            <Slide :isDesktop="isDesktop" />
+            <Slide
+              :isDesktop="isDesktop"
+              :items="giveReviews.reviewList"
+              :category="`give`"
+            />
           </v-tab-item>
         </v-tabs-items>
       </v-col>
@@ -53,23 +61,12 @@ export default {
   data() {
     return {
       user: null,
-      receivedReviews: null,
       tab: null,
+      giveReviews: null,
+      receivedReviews: null,
     };
   },
   computed: {
-    getUser() {
-      return this.user;
-    },
-    getReceivedReview() {
-      return this.receivedReviews;
-    },
-    getReceivedReviews() {
-      return this.receivedReviews.reviewList;
-    },
-    getAvgScore() {
-      return this.receivedReviews.avgScore;
-    },
     isDesktop() {
       switch (this.$vuetify.breakpoint.name) {
         case "xs":
@@ -94,11 +91,25 @@ export default {
           console.log(err);
         });
     },
+    // NOTE: 작성한 평가 요청
+    requestGiveReviews(userId) {
+      this.$store
+        .dispatch("userStore/requestGiveReviews", userId)
+        .then((res) => {
+          this.giveReviews = res.data;
+          // console.log(this.giveReviews);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    // NOTE: 받은 평가 요청
     requestReceivedReviews(userId) {
       this.$store
         .dispatch("userStore/requestReceivedReviews", userId)
         .then((res) => {
           this.receivedReviews = res.data;
+          // console.log(this.receivedReviews);
         })
         .catch((err) => {
           console.log(err);
@@ -108,6 +119,7 @@ export default {
   mounted() {
     let userId = this.$route.params.userId;
     this.requestUserInfo(userId);
+    this.requestGiveReviews(userId);
     this.requestReceivedReviews(userId);
   },
   components: {

@@ -13,8 +13,11 @@
             >
             </v-rating>
           </div>
-          <v-list-item-title class="text-h5 mb-1">
-            {{ this.item.from_user_id }}
+          <v-list-item-title class="text-h5 mb-1" v-if="category === `receive`">
+            {{ this.item.from_user_nickname }}
+          </v-list-item-title>
+          <v-list-item-title class="text-h5 mb-1" v-if="category === `give`">
+            {{ this.item.to_user_nickname }}
           </v-list-item-title>
           <v-list-item-subtitle class="cursor" @click="dialog = true">
             {{ this.item.content }}
@@ -64,6 +67,9 @@ export default {
   props: {
     item: {
       type: Object,
+    },
+    category: {
+      type: String,
     },
   },
   methods: {
