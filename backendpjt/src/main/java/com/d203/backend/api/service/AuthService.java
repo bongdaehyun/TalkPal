@@ -8,6 +8,7 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,14 +26,16 @@ public class AuthService {
     //Email토큰 생성
     public String createToken(User user){
         EmailToken emailToken=new EmailToken();
-        emailToken.setToken("token" + user.getId());
+        //보안을 위한 uuid 사용
+        UUID uuid = UUID.randomUUID();
+        emailToken.setToken(uuid.toString());
         emailToken.setEmail(user.getEmail());
         emailRepository.save(emailToken);
 
         return emailToken.getToken();
     }
     //Email에게 이메일 인증 보내기
-    public void sendVerificationMail(User user)throws NotFoundException {
+    public void sendVerificationMail(User user) throws NotFoundException, MessagingException {
         String link="http://localhost:8080/api/v1/auth/confirm/";
         if(user==null) throw new NotFoundException("사용자 조회 없음");
         String token=createToken(user);
