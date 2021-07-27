@@ -40,9 +40,9 @@ public class RoomServiceImpl implements RoomService{
         room.setName(roomInfo.getName());
 
         //room.setGuset_lang(langRepository.getOne(roomInfo.getGuset_lang()));
-        room.setGuset_lang(langRepository.getOne(1L));
+        room.setGuest_lang(langRepository.getOne(1L));
         //room.setHost_lnag(langRepository.getOne(roomInfo.getHost_lnag()));
-        room.setHost_lnag(langRepository.getOne(1L));
+        room.setHost_lang(langRepository.getOne(1L));
 
         return roomRepository.save(room);
     }

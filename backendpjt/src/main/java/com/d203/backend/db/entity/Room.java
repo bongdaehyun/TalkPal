@@ -1,12 +1,12 @@
 package com.d203.backend.db.entity;
 
 import java.sql.Date;
+import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Builder;
@@ -35,15 +35,15 @@ public class Room extends BaseEntity{
 	Long curnum;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "host_lnag")
-	Lang host_lnag;
+	@JoinColumn(name = "host_lang")
+	 Lang host_lang;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "guset_lang")
-	Lang guset_lang;
+	@JoinColumn(name = "guest_lang")
+	Lang guest_lang;
 
+	UUID uuid;
 	//카테고리 테이블은 따로 필요하지 않은지?
 	String topic;
 
-	
 }

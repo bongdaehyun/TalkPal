@@ -21,10 +21,10 @@ public class RoomReq {
 	Date start_time;
 	
 	@ApiModelProperty(name="Room 호스트사용언어", example="host_lang")
-	Long host_lnag;
+	Long host_lang;
 	
 	@ApiModelProperty(name="Room 게스트사용언어", example="guest_lang")
-	Long guset_lang;
+	Long guest_lang;
 
 	@ApiModelProperty(name="Room 이름", example="room_title")
 	String name;
