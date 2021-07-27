@@ -15,6 +15,5 @@ import com.d203.backend.db.entity.User;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long>{
 
-    List<Room> findAllByCreateDate(Long id, Pageable pageable);
 
 }

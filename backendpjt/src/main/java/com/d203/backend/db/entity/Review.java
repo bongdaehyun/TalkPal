@@ -22,10 +22,10 @@ public class Review extends BaseEntity{
 	
 	
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_user_id")
+    @JoinColumn(name = "fromuserid")
     private User fromuserid;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_user_id")
+    @JoinColumn(name = "touserid")
     private User touserid;
 }
