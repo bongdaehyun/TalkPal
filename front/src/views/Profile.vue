@@ -116,7 +116,7 @@ export default {
         });
     },
   },
-  mounted() {
+  created() {
     let userId = this.$route.params.userId;
     this.requestUserInfo(userId);
     this.requestGiveReviews(userId);

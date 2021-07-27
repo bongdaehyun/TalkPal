@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Main from "@/views/Main.vue";
 import Rooms from "@/views/Rooms.vue";
+import Room from "@/views/Room.vue";
 import Profile from "@/views/Profile.vue";
 import ERROR404 from '@/views/ERROR404.vue';
 
@@ -22,6 +23,12 @@ const routes = [
     path: "/rooms",
     name: "Rooms",
     component: Rooms,
+    meta: { auth: true },
+  },
+  {
+    path: "/room/:UUID",
+    name: "Room",
+    component: Room,
     meta: { auth: true },
   },
   {

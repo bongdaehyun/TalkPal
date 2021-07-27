@@ -15,9 +15,16 @@ const roomStore = {
   },
 
   mutations: {
+
   },
 
   actions: {
+    requestRooms(context) {
+      return http.get('/rooms')
+    },
+    requestCreate(context, payload) {
+      return http.post('/rooms/create', payload)
+    }
   },
 }
 export default roomStore

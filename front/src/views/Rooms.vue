@@ -8,7 +8,7 @@
         <Item :item="item" />
       </v-col>
     </v-row>
-    <infinite-loading @infinite="infiniteHandler"></infinite-loading>
+    <!-- <infinite-loading @infinite="infiniteHandler"></infinite-loading> -->
   </div>
 </template>
 
@@ -33,7 +33,7 @@ export default {
   components: {
     Item,
     Create,
-    InfiniteLoading,
+    // InfiniteLoading,
   },
   computed: {
     listLength() {
@@ -41,27 +41,36 @@ export default {
     },
   },
   methods: {
+    // NOTE: 방 목록 요청
+    requestRooms() {
+      this.$store.dispatch("roomStore/requestRooms").then((res) => {
+        console.log(res);
+        this.list = res.data;
+      });
+    },
+
     /*
     NOTE: 무한스크롤 기능 함수
     NOTE: https://www.npmjs.com/package/vue-infinite-loading
      */
-    infiniteHandler($state) {
-      axios.get(api + this.page).then((res) => {
-        const data = res.data.data;
-        if (data.length) {
-          this.page += 1;
-          this.list.push(...data);
-          $state.loaded();
-        } else {
-          $state.complete();
-        }
-      });
-    },
+    // infiniteHandler($state) {
+    //   axios.get(api + this.page).then((res) => {
+    //     const data = res.data.data;
+    //     if (data.length) {
+    //       this.page += 1;
+    //       this.list.push(...data);
+    //       $state.loaded();
+    //     } else {
+    //       $state.complete();
+    //     }
+    //   });
+    // },
   },
   created() {
     // console.log(this.$store.getters["userStore/getLocale"]);
     // TODO: 언어 설정 다른 방식이 필요해보임
     this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
+    this.requestRooms();
   },
 };
 </script>

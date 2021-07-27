@@ -35,9 +35,7 @@
 export default {
   name: "App",
   data() {
-    return {
-      userId: this.$store.getters["userStore/getUserId"],
-    };
+    return {};
   },
   computed: {
     loginStatus() {
@@ -49,7 +47,10 @@ export default {
       this.$router.push({ name: "Rooms" });
     },
     goProfile() {
-      this.$router.push({ name: "Profile", params: { userId: this.userId } });
+      this.$router.push({
+        name: "Profile",
+        params: { userId: this.$store.getters["userStore/getUserId"] },
+      });
     },
     goMain() {
       this.$router.push({ name: "Main" });

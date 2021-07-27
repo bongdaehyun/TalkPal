@@ -17,7 +17,5 @@ import lombok.ToString;
 @ToString
 @Table(name = "LANG")
 public class Lang extends BaseEntity{
-
 	String name;
-	
 }

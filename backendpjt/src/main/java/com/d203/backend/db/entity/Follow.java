@@ -12,7 +12,6 @@ import javax.persistence.*;
 @ToString
 @Table(name = "FOLLOW")
 public class Follow extends BaseEntity {
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_user_id")
     private User from_user_id;
