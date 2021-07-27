@@ -3,10 +3,8 @@ package com.d203.backend.db.entity;
 import java.sql.Date;
 import java.util.UUID;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Builder;
@@ -27,7 +25,7 @@ public class Room extends BaseEntity{
 	@JoinColumn(name = "hostId")
 	User hostId;
 	
-	Date start_time;
+	String start_time;
 
 	String name;
 
@@ -42,7 +40,8 @@ public class Room extends BaseEntity{
 	@JoinColumn(name = "guest_lang")
 	Lang guest_lang;
 
-	UUID uuid;
+	@Column(name = "uuid")
+	String uuid;
 	//카테고리 테이블은 따로 필요하지 않은지?
 	String topic;
 

@@ -16,6 +16,7 @@ import com.d203.backend.common.model.response.BaseResponseBody;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
+import java.util.UUID;
 
 @Api(value = "방(회화 방) API", tags = {"Room"})
 @RestController
@@ -39,11 +40,12 @@ public class RoomController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<? extends BaseResponseBody> register(
+	public ResponseEntity<String> register(
 			@RequestBody @ApiParam(value = "방생성 정보", required = true) RoomReq registerInfo) {
 
 		Room room = roomService.createRoom(registerInfo);
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		String uuid = room.getUuid();
+		return ResponseEntity.status(200).body(uuid);
 	}
 
 	@PutMapping("{room_id}")

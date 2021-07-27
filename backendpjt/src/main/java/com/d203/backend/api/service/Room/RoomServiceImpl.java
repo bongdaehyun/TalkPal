@@ -9,8 +9,8 @@ import com.d203.backend.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service("roomService")
 public class RoomServiceImpl implements RoomService{
@@ -43,6 +43,15 @@ public class RoomServiceImpl implements RoomService{
         room.setGuest_lang(langRepository.getOne(1L));
         //room.setHost_lnag(langRepository.getOne(roomInfo.getHost_lnag()));
         room.setHost_lang(langRepository.getOne(1L));
+
+        room.setUuid(UUID.randomUUID().toString());
+
+        long time = System.currentTimeMillis();
+        System.out.println(time);
+        SimpleDateFormat simpl = new SimpleDateFormat("yyyy년 MM월 dd일 aa hh시 mm분 ss초");
+        String start_time = simpl.format(time); // System.out.println(s);
+
+        room.setStart_time(start_time);
 
         return roomRepository.save(room);
     }
