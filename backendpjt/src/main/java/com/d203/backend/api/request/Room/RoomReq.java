@@ -17,9 +17,6 @@ public class RoomReq {
 	@ApiModelProperty(name="Room 호스트 아이디", example="Room host_id")
 	Long hostId;
 	
-	@ApiModelProperty(name="Room 시작시간", example="start_time")
-	Date start_time;
-	
 	@ApiModelProperty(name="Room 호스트사용언어", example="host_lang")
 	Long host_lang;
 	
