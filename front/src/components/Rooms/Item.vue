@@ -14,7 +14,9 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="orange" text> {{ $t("room_enter") }} </v-btn>
+      <v-btn color="orange" @click="goRoom" text>
+        {{ $t("room_enter") }}
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -25,6 +27,11 @@ export default {
   props: {
     item: {
       type: Object,
+    },
+  },
+  methods: {
+    goRoom() {
+      this.$router.push({ name: "Room", params: { UUID: this.item.uuid } });
     },
   },
 };
