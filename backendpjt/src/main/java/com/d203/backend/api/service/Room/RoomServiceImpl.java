@@ -7,9 +7,13 @@ import com.d203.backend.db.repository.LangRepository;
 import com.d203.backend.db.repository.RoomRepository;
 import com.d203.backend.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service("roomService")
@@ -36,7 +40,7 @@ public class RoomServiceImpl implements RoomService{
        // room.setCurnum(roomInfo.getCurnum());
         room.setCurnum(1L);
 
-       // room.setTitle(roomInfo.getTitle());
+        room.setTopic(roomInfo.getTopic());
         room.setName(roomInfo.getName());
 
         //room.setGuset_lang(langRepository.getOne(roomInfo.getGuset_lang()));
@@ -46,12 +50,6 @@ public class RoomServiceImpl implements RoomService{
 
         room.setUuid(UUID.randomUUID().toString());
 
-        long time = System.currentTimeMillis();
-        System.out.println(time);
-        SimpleDateFormat simpl = new SimpleDateFormat("yyyy년 MM월 dd일 aa hh시 mm분 ss초");
-        String start_time = simpl.format(time); // System.out.println(s);
-
-        room.setStart_time(start_time);
 
         return roomRepository.save(room);
     }
@@ -87,15 +85,15 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Override
-    public List<Room> getRoomList() {
+    public Page<Room> getRoomList(int pageno) {
 
-        List<Room> roomList = roomRepository.findAll();
-        return roomList;
+        Pageable  firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
+        return roomRepository.findAll(firstPageWithTwoElements);
     }
 
     @Override
     public Room getRoom(Long room_id) {
-       Room room = roomRepository.findById(room_id).get();
+        Room room = roomRepository.findById(room_id).get();
         return room;
     }
 }
