@@ -16,10 +16,6 @@ import lombok.Setter;
 public class ReviewListRes {
 
 	
-	@ApiModelProperty(name="score")
-	double avgScore;
-	
-	
 	@ApiModelProperty(name="Review List")
 	List<ReviewItemRes> reviewList;
 
@@ -29,7 +25,7 @@ public class ReviewListRes {
 	public static ReviewListRes getlist(List<Review> review) {
 
 		ReviewListRes reviewListRes = new ReviewListRes();
-		double avg = 0;
+
 		List<ReviewItemRes> resList = new ArrayList<ReviewItemRes>();
 		for (int i = 0; i < review.size(); i++) {
 			
@@ -45,16 +41,16 @@ public class ReviewListRes {
 			res.setTo_user_nickname(review.get(i).getTouserid().getNickname());
 			
 			res.setScore(review.get(i).getScore());
-			avg+= review.get(i).getScore();
+
 			
 			resList.add(res);
 			
 		}
-		avg /= review.size();
-		reviewListRes.setAvgScore(avg);
+
+
 		reviewListRes.setReviewList(resList);
 		
-		System.out.println("Avg : " + reviewListRes.getAvgScore());
+
 		System.out.println("List : "+ reviewListRes.getReviewList().toString());
 		return reviewListRes;
 		

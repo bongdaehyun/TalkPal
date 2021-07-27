@@ -3,7 +3,11 @@ package com.d203.backend.api.service.Review;
 import java.util.List;
 import java.util.Optional;
 
+import com.d203.backend.db.entity.Room;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.d203.backend.api.request.Review.ReviewResiterReq;
@@ -45,14 +49,11 @@ public class ReviewServiceImpl implements ReviewService{
 
 	//유저PK 리뷰 조회
 	@Override
-	public List<Review> getReviewById(Long userid) {
+	public Page<Review> getReviewById(User touserid,int pageno) {
 		
-		System.out.println("Review Service : try userid: " +" "+ userid);
-		
-		List<Review> review = reviewRepository.findAllByTouserid(userid);
-		
-		System.out.println("Review Service : done reviewSize()" +" "+ review.size());
-		return review;
+		System.out.println("Review Service : try userid: " +" "+ touserid);
+		Pageable  firstPageWithTwoElements = PageRequest.of(pageno-1, 5);
+		return reviewRepository.findAllByTouserid(touserid,firstPageWithTwoElements);
 	}
 
 	//
@@ -88,15 +89,27 @@ public class ReviewServiceImpl implements ReviewService{
 		return false;
 	}
 
+	@Override
+	public double avgReview(Long touserid) {
+
+		double reviewAvg = 0;
+		System.out.println("Review Service : try userid: " +" "+ touserid);
+		reviewAvg = reviewRepository.getReviewAvgByTouserid(touserid);
+		System.out.println("Review Done : : " +" "+ reviewAvg);
+		return reviewAvg;
+	}
+
 	//요청한 사용자가 작성한 리뷰 보기
 	@Override
-	public List<Review> getWriteReviewById(Long userid) {
-		System.out.println("Review Service : try userid: " +" "+ userid);
-		
-		List<Review> review = reviewRepository.findAllByFromuserid(userid);
-		
-		System.out.println("Review Service : done reviewSize()" +" "+ review.size());
-		return review;
+	public Page<Review> getWriteReviewById(User fromuserid , int pageno) {
+		System.out.println("Review Service : try userid: " +" "+ fromuserid);
+
+
+		Pageable firstPageWithTwoElements = PageRequest.of(pageno-1, 5);
+
+		System.out.println("Review Service" +" "+ firstPageWithTwoElements.getPageSize());
+
+		return reviewRepository.findAllByFromuserid(fromuserid ,firstPageWithTwoElements);
 	}
 	
 }
