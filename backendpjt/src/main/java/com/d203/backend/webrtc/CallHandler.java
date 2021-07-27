@@ -81,16 +81,16 @@ public class CallHandler extends TextWebSocketHandler {
         final String name = params.get("name").getAsString();
         log.info("PARTICIPANT {}: trying to join room {}", name, roomName);
 
-        Room room = roomManager.getRoom(roomName);
-        final UserSession user = room.join(name, session);
+        RoomSession roomSession = roomManager.getRoom(roomName);
+        final UserSession user = roomSession.join(name, session);
         registry.register(user);
     }
 
     private void leaveRoom(UserSession user) throws IOException {
-        final Room room = roomManager.getRoom(user.getRoomName());
-        room.leave(user);
-        if (room.getParticipants().isEmpty()) {
-            roomManager.removeRoom(room);
+        final RoomSession roomSession = roomManager.getRoom(user.getRoomName());
+        roomSession.leave(user);
+        if (roomSession.getParticipants().isEmpty()) {
+            roomManager.removeRoom(roomSession);
         }
     }
 }

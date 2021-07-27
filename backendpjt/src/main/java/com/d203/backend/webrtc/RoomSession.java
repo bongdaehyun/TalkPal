@@ -23,8 +23,8 @@ import java.util.concurrent.ConcurrentMap;
  * @author Ivan Gracia (izanmail@gmail.com)
  * @since 4.3.1
  */
-public class Room implements Closeable {
-    private final Logger log = LoggerFactory.getLogger(Room.class);
+public class RoomSession implements Closeable {
+    private final Logger log = LoggerFactory.getLogger(RoomSession.class);
 
     private final ConcurrentMap<String, UserSession> participants = new ConcurrentHashMap<>();
     private final MediaPipeline pipeline;
@@ -34,7 +34,7 @@ public class Room implements Closeable {
         return name;
     }
 
-    public Room(String roomName, MediaPipeline pipeline) {
+    public RoomSession(String roomName, MediaPipeline pipeline) {
         this.name = roomName;
         this.pipeline = pipeline;
         log.info("ROOM {} has been created", roomName);
@@ -149,12 +149,12 @@ public class Room implements Closeable {
 
             @Override
             public void onSuccess(Void result) throws Exception {
-                log.trace("ROOM {}: Released Pipeline", Room.this.name);
+                log.trace("ROOM {}: Released Pipeline", RoomSession.this.name);
             }
 
             @Override
             public void onError(Throwable cause) throws Exception {
-                log.warn("PARTICIPANT {}: Could not release Pipeline", Room.this.name);
+                log.warn("PARTICIPANT {}: Could not release Pipeline", RoomSession.this.name);
             }
         });
 

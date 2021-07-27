@@ -20,7 +20,7 @@ public class RoomManager {
     @Autowired
     private KurentoClient kurento;
 
-    private final ConcurrentMap<String, Room> rooms = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, RoomSession> rooms = new ConcurrentHashMap<>();
 
     /**
      * Looks for a room in the active room list.
@@ -29,28 +29,28 @@ public class RoomManager {
      * @return the room if it was already created, or a new one if it is the first time this room is
      * accessed
      */
-    public Room getRoom(String roomName) {
+    public RoomSession getRoom(String roomName) {
         log.debug("Searching for room {}", roomName);
-        Room room = rooms.get(roomName);
+        RoomSession roomSession = rooms.get(roomName);
 
-        if (room == null) {
+        if (roomSession == null) {
             log.debug("Room {} not existent. Will create now!", roomName);
-            room = new Room(roomName, kurento.createMediaPipeline());
-            rooms.put(roomName, room);
+            roomSession = new RoomSession(roomName, kurento.createMediaPipeline());
+            rooms.put(roomName, roomSession);
         }
         log.debug("Room {} found!", roomName);
-        return room;
+        return roomSession;
     }
 
     /**
      * Removes a room from the list of available rooms.
      *
-     * @param room the room to be removed
+     * @param roomSession the room to be removed
      */
-    public void removeRoom(Room room) {
-        this.rooms.remove(room.getName());
-        room.close();
-        log.info("Room {} removed and closed", room.getName());
+    public void removeRoom(RoomSession roomSession) {
+        this.rooms.remove(roomSession.getName());
+        roomSession.close();
+        log.info("Room {} removed and closed", roomSession.getName());
     }
 
 }
