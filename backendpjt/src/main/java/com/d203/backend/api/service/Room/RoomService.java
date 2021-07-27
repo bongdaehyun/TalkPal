@@ -3,6 +3,7 @@ package com.d203.backend.api.service.Room;
 import com.d203.backend.api.request.Room.RoomReq;
 import com.d203.backend.api.request.Room.RoomUpadateReq;
 import com.d203.backend.db.entity.Room;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -13,10 +14,8 @@ public interface RoomService {
 
     boolean deleteRoom(Long room_id, Long tokenUserId);
 
-    List<Room> getRoomList();
+    Page<Room> getRoomList(int pageno);
 
     Room getRoom(Long room_id);
-
-
 
 }

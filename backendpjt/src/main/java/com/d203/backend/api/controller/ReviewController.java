@@ -2,7 +2,10 @@ package com.d203.backend.api.controller;
 
 import java.util.List;
 
+import com.d203.backend.api.response.Review.ReviewAvgRes;
+import com.d203.backend.db.entity.Room;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -61,27 +64,29 @@ public class ReviewController {
 		
 	}
 	
-	@GetMapping("/from/{from_user_id}")
+	@GetMapping("/from/{from_user_id}/{pageno}")
 	@ApiOperation(value = "작성한 리뷰 조회", notes = "요청하는 유저 pk값에 대응하는 작성한 리뷰를 조회한다.")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<ReviewListRes> getReviewFrom (@PathVariable Long from_user_id) {
+	public ResponseEntity<ReviewListRes> getReviewFrom (@PathVariable Long from_user_id ,@PathVariable int pageno) {
 		
 		System.out.println("ReqUser : try" );
 		User user = userService.getUserByuserId(from_user_id);
 		System.out.println("ReqUser : " + user.toString());
 		
-		System.out.println("ReqUser : " + user.getId().longValue());
-		
-		List<Review> review = reviewService.getWriteReviewById(user.getId().longValue());
+		System.out.println("ReqUser : " + user.getId());
+
+		Page<Review> firstPage = reviewService.getWriteReviewById(user, pageno);
+
+		List<Review> review = firstPage.getContent();
 		
 		return ResponseEntity.status(200).body(ReviewListRes.getlist(review));
 		  
 	}
 	
-	@GetMapping("/to/{to_user_id}")
+	@GetMapping("/to/{to_user_id}/{pageno}")
 	@ApiOperation(value = "리뷰 조회", notes = "요청하는 유저 pk값에 대응하는 작성된 리뷰를 조회한다.")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
@@ -89,16 +94,17 @@ public class ReviewController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<ReviewListRes> getReviewTo (@PathVariable Long to_user_id) {
+	public ResponseEntity<ReviewListRes> getReviewTo (@PathVariable Long to_user_id , @PathVariable int pageno) {
 		
 		System.out.println("ReqUser : try" );
 		User user = userService.getUserByuserId(to_user_id);
 		System.out.println("ReqUser : " + user.toString());
 		
 		System.out.println("ReqUser : " + user.getId().longValue());
-		
-		List<Review> review = reviewService.getReviewById(user.getId().longValue());
-		
+
+		Page<Review> firstPage = reviewService.getReviewById(user , pageno);
+		List<Review> review = firstPage.getContent();
+
 		return ResponseEntity.status(200).body(ReviewListRes.getlist(review));
 		  
 	}
@@ -136,4 +142,12 @@ public class ReviewController {
 		
 		return  ResponseEntity.status(401).body("User not macthed");
 	}
+
+	@GetMapping("/avg/{touserid}")
+	public ResponseEntity<ReviewAvgRes> getReviewAvg(@PathVariable Long touserid){
+
+		double avg = reviewService.avgReview(touserid);
+		return ResponseEntity.status(200).body(ReviewAvgRes.of(avg));
+	}
+
 }
