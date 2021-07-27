@@ -2,10 +2,14 @@ package com.d203.backend.api.controller;
 
 import com.d203.backend.api.request.Room.RoomReq;
 import com.d203.backend.api.request.Room.RoomUpadateReq;
+import com.d203.backend.api.response.Review.ReviewListRes;
+import com.d203.backend.api.response.Room.RoomListRes;
+import com.d203.backend.api.response.Room.RoomRes;
 import com.d203.backend.common.auth.SsafyUserDetails;
 import com.d203.backend.db.entity.Room;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,9 +30,13 @@ public class RoomController {
 	@Autowired
 	RoomService roomService;
 
-	@GetMapping()
-	public List<Room> findAll() {
-		return roomService.getRoomList();
+	@GetMapping("{pageno}")
+	public ResponseEntity<RoomListRes> findAll(@PathVariable int pageno) {
+		Page<Room> firstPage = roomService.getRoomList(pageno);
+		List<Room> pageContents = firstPage.getContent();
+
+		return ResponseEntity.status(200).body(RoomListRes.getList(pageContents));
+
 	}
 
 	//CRUD
@@ -40,12 +48,12 @@ public class RoomController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<String> register(
+	public ResponseEntity<RoomRes> register(
 			@RequestBody @ApiParam(value = "방생성 정보", required = true) RoomReq registerInfo) {
 
 		Room room = roomService.createRoom(registerInfo);
-		String uuid = room.getUuid();
-		return ResponseEntity.status(200).body(uuid);
+
+		return ResponseEntity.status(200).body(RoomRes.of(room));
 	}
 
 	@PutMapping("{room_id}")
