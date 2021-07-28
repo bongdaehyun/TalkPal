@@ -26,7 +26,7 @@ export default {
   name: "Room",
   data() {
     return {
-      url: "ws://192.168.0.2:8080/groupcall",
+      url: process.env.VUE_APP_SOCKET_URL,
       // url: "ws://localhost:8080/groupcall",
       UUID: this.$route.params.UUID,
       userId: this.$store.getters["userStore/getUserId"],

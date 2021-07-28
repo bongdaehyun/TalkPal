@@ -4,11 +4,11 @@
     <Create />
     <!-- 방 목록 -->
     <v-row>
-      <v-col v-for="item in list" :key="item.id" lg="4" md="3" sm="2" xs="1">
+      <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
         <Item :item="item" />
       </v-col>
     </v-row>
-    <!-- <infinite-loading @infinite="infiniteHandler"></infinite-loading> -->
+    <infinite-loading @infinite="infiniteHandler"></infinite-loading>
   </div>
 </template>
 
@@ -26,51 +26,45 @@ export default {
   name: "Room",
   data() {
     return {
-      page: 0,
-      list: [],
+      page: 1,
+      rooms: [],
     };
-  },
-  components: {
-    Item,
-    Create,
-    // InfiniteLoading,
-  },
-  computed: {
-    listLength() {
-      return this.list.length;
-    },
   },
   methods: {
     // NOTE: 방 목록 요청
-    requestRooms() {
-      this.$store.dispatch("roomStore/requestRooms").then((res) => {
-        console.log(res);
-        this.list = res.data;
-      });
-    },
-
-    /*
-    NOTE: 무한스크롤 기능 함수
-    NOTE: https://www.npmjs.com/package/vue-infinite-loading
-     */
-    // infiniteHandler($state) {
-    //   axios.get(api + this.page).then((res) => {
-    //     const data = res.data.data;
-    //     if (data.length) {
-    //       this.page += 1;
-    //       this.list.push(...data);
-    //       $state.loaded();
-    //     } else {
-    //       $state.complete();
-    //     }
+    // requestRooms() {
+    //   this.$store.dispatch("roomStore/requestRooms", this.page).then((res) => {
+    //     console.log(res);
+    //     this.list = res.data;
     //   });
     // },
+
+    /*
+    NOTE: 무한스크롤 처리 함수
+    NOTE: https://www.npmjs.com/package/vue-infinite-loading
+     */
+    infiniteHandler($state) {
+      this.$store.dispatch("roomStore/requestRooms", this.page).then((res) => {
+        const data = res.data.roomResList;
+        if (data.length) {
+          this.rooms.push(...data);
+          this.page += 1;
+          $state.loaded();
+        } else {
+          $state.complete();
+        }
+      });
+    },
   },
   created() {
     // console.log(this.$store.getters["userStore/getLocale"]);
     // TODO: 언어 설정 다른 방식이 필요해보임
     this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
-    this.requestRooms();
+  },
+  components: {
+    Item,
+    Create,
+    InfiniteLoading,
   },
 };
 </script>
