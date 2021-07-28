@@ -32,9 +32,14 @@ public class RoomRes {
     @ApiModelProperty(name="topic")
     String topic;
 
+    @ApiModelProperty(name="name")
+    String name;
+
     public static RoomRes of(Room room) {
         RoomRes roomRes= new RoomRes();
 
+        roomRes.setTopic(room.getTopic());
+        roomRes.setName(room.getName());
         roomRes.setHostId(room.getHostId().getId());
         roomRes.setGuest_lang(room.getGuest_lang().getName());
         roomRes.setHost_lang(room.getGuest_lang().getName());

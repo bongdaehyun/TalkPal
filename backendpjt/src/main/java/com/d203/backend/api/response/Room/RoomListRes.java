@@ -24,6 +24,8 @@ public class RoomListRes {
         for (int i = 0; i < room.size(); i++) {
             RoomRes res = new RoomRes();
 
+            res.setName(room.get(i).getName());
+            res.setTopic(room.get(i).getTopic());
             res.setHostId(room.get(i).getHostId().getId());
             res.setGuest_lang(room.get(i).getGuest_lang().getName());
             res.setHost_lang(room.get(i).getGuest_lang().getName());
