@@ -36,7 +36,6 @@ const userStore = {
   actions: {
     requestRegister(context, payload) {
       let body = payload
-      
       return http.post('/users', body)
     },
     requestLogin(context, payload) {
@@ -88,6 +87,9 @@ const userStore = {
     },
     getUserId(state) {
       return state.userId;
+    },
+    getNickName(state) {
+      return state.nickname;
     }
   },
 }

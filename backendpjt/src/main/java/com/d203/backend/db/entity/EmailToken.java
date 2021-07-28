@@ -17,7 +17,7 @@ public class EmailToken {
     private Long id;
 
     //email값값
-   private String email;
+    private String email;
     //토큰
     private String token;
 

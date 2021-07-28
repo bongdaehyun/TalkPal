@@ -20,7 +20,6 @@ public class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id = null;
 
-
     @CreatedDate
     @Column(updatable = false)
     LocalDateTime createDate;

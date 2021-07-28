@@ -25,13 +25,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 public class Room extends BaseEntity{
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hostId")
 	User hostId;
-
-
-
 
 	String name;
 
@@ -40,7 +36,7 @@ public class Room extends BaseEntity{
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "host_lang")
-	 Lang host_lang;
+	Lang host_lang;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "guest_lang")
@@ -50,5 +46,4 @@ public class Room extends BaseEntity{
 	String uuid;
 	//카테고리 테이블은 따로 필요하지 않은지?
 	String topic;
-
 }

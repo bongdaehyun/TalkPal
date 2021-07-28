@@ -26,16 +26,20 @@
               </v-col>
               <v-col class="d-flex" cols="12">
                 <v-select
-                  :items="hosts"
+                  :items="langItems"
                   :label="$t('create_host')"
-                  v-model="inputs.host"
+                  item-text="name"
+                  item-value="value"
+                  v-model="inputs.host_lang"
                 ></v-select>
               </v-col>
               <v-col class="d-flex" cols="12">
                 <v-select
-                  :items="guests"
+                  :items="langItems"
                   :label="$t('create_guest')"
-                  v-model="inputs.guest"
+                  item-text="name"
+                  item-value="value"
+                  v-model="inputs.guest_lang"
                 ></v-select>
               </v-col>
               <v-col class="d-flex" cols="12">
@@ -53,7 +57,7 @@
           <v-btn color="blue darken-1" text @click="dialog = false">
             {{ $t("create_close") }}
           </v-btn>
-          <v-btn color="blue darken-1" text @click="onCreateRoom">
+          <v-btn color="blue darken-1" text @click="reqeustCreateRoom">
             {{ $t("create_save") }}
           </v-btn>
         </v-card-actions>
@@ -64,6 +68,7 @@
 
 <script>
 import i18n from "@/i18n.js";
+import langItems from "@/assets/data/lang.json";
 
 export default {
   name: "Create",
@@ -71,16 +76,33 @@ export default {
     return {
       dialog: false,
       names: ["누구누구의 방"],
-      hosts: ["한국어", "English"],
-      guests: ["한국어", "English"],
+      langItems: langItems,
       topics: ["create_music", "create_movie"],
-      inputs: { name: "", topic: "", host: "", guest: "" },
+      inputs: {
+        name: "",
+        topic: "",
+        hostId: "",
+        host_lang: "",
+        guest_lang: "",
+        // start_time: null,
+        maxnum: 2,
+        curnum: 0,
+      },
     };
   },
   methods: {
-    onCreateRoom() {
+    reqeustCreateRoom() {
       this.dialog = false;
+      let hostId = this.$store.getters["userStore/getUserId"];
+      this.inputs.hostId = hostId;
+
       console.log(this.inputs);
+
+      this.$store
+        .dispatch("roomStore/requestCreate", this.inputs)
+        .then((res) => {
+          console.log(res);
+        });
     },
   },
   filters: {
