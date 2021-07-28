@@ -31,22 +31,24 @@ public class RoomServiceImpl implements RoomService{
     public Room createRoom(RoomReq roomInfo) {
         Room room = new Room();
 
-        //room.setHostId(userRepository.getOne(roomInfo.getHostId()));
-        room.setHostId(userRepository.getOne(1L));
-        //room.setCategory(roomInfo.getCategory());
-        room.setTopic("음악");
-       // room.setMaxnum(roomInfo.getMaxnum());
-        room.setMaxnum(2L);
-       // room.setCurnum(roomInfo.getCurnum());
-        room.setCurnum(1L);
+        room.setHostId(userRepository.getOne(roomInfo.getHostId()));
+        //room.setHostId(userRepository.getOne(1L));
+        room.setTopic(roomInfo.getTopic());
+        //room.setTopic("음악");
+        room.setMaxnum(roomInfo.getMaxnum());
+        //room.setMaxnum(2L);
+        room.setCurnum(roomInfo.getCurnum());
+        //room.setCurnum(1L);
 
         room.setTopic(roomInfo.getTopic());
         room.setName(roomInfo.getName());
+        System.out.println(room.getName());
 
-        //room.setGuset_lang(langRepository.getOne(roomInfo.getGuset_lang()));
-        room.setGuest_lang(langRepository.getOne(1L));
-        //room.setHost_lnag(langRepository.getOne(roomInfo.getHost_lnag()));
-        room.setHost_lang(langRepository.getOne(1L));
+
+        room.setGuest_lang(langRepository.getOne(roomInfo.getGuest_lang()));
+        //room.setGuest_lang(langRepository.getOne(1L));
+        room.setHost_lang(langRepository.getOne(roomInfo.getHost_lang()));
+        //room.setHost_lang(langRepository.getOne(1L));
 
         room.setUuid(UUID.randomUUID().toString());
 

@@ -19,8 +19,8 @@ const roomStore = {
   },
 
   actions: {
-    requestRooms(context) {
-      return http.get('/rooms')
+    requestRooms(context, page) {
+      return http.get(`/rooms/${page}`)
     },
     requestCreate(context, payload) {
       return http.post('/rooms/create', payload)
