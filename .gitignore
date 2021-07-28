@@ -36,3 +36,4 @@ out/
 
 ### VS Code ###
 .vscode/
+backendpjt/src/main/resources/application.properties
