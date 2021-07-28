@@ -29,11 +29,11 @@
         <v-tabs-items v-model="tab" :touchless="true">
           <!-- NOTE: 만난 사람들 -->
           <v-tab-item>
-            <Slide :isDesktop="isDesktop" />
+            <HistorySlide :isDesktop="isDesktop" :histories="histories" />
           </v-tab-item>
           <!-- NOTE: 받은 평가 -->
           <v-tab-item>
-            <Slide
+            <ReviewSlide
               :isDesktop="isDesktop"
               :reviews="receivedReviews"
               @onSlideEnd="requestReviews"
@@ -41,7 +41,7 @@
           </v-tab-item>
           <!-- NOTE: 작성한 평가 -->
           <v-tab-item>
-            <Slide
+            <ReviewSlide
               :isDesktop="isDesktop"
               :reviews="giveReviews"
               @onSlideEnd="requestReviews"
@@ -57,7 +57,8 @@
 </template>
 
 <script>
-import Slide from "../components/Profile/Slide.vue";
+import ReviewSlide from "../components/Profile/ReviewSlide.vue";
+import HistorySlide from "../components/Profile/HistorySlide.vue";
 
 export default {
   name: "Profile",
@@ -67,6 +68,7 @@ export default {
       userId: this.$route.params.userId,
       user: null,
       tab: null,
+      histories: [],
       giveReviews: {
         items: [],
         page: 1,
@@ -99,7 +101,7 @@ export default {
   methods: {
     // NOTE: 응답 리뷰 목록 추가
     pushReviews(reviews, res) {
-      console.log(res);
+      // console.log(res);
       if (res.length) {
         reviews.items.push(...res);
         reviews.page = reviews.page + 1;
@@ -138,14 +140,28 @@ export default {
           console.log(err);
         });
     },
+    // NOTE: 만난 사람들 요청
+    async reuqestHistoryUser() {
+      try {
+        const res = await this.$store.dispatch(
+          "userStore/requestUserHistories",
+          this.userId
+        );
+        this.histories = res.data.historyList;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   created() {
     this.requestUserInfo();
     this.requestReviews(this.receivedReviews);
     this.requestReviews(this.giveReviews);
+    this.reuqestHistoryUser();
   },
   components: {
-    Slide,
+    ReviewSlide,
+    HistorySlide,
   },
 };
 </script>
