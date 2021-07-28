@@ -18,7 +18,7 @@ import java.util.List;
 
 @Api(value = "사용자가 만났던 사람들 API", tags = {"History"})
 @RestController
-@RequestMapping("/api/v1//history")
+@RequestMapping("/api/v1/history")
 public class HistoryController {
 
     @Autowired
