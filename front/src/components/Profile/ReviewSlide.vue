@@ -17,10 +17,10 @@
 <script>
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
-import Item from "./Slide/Item.vue";
+import Item from "./ReviewSlide/Item.vue";
 
 export default {
-  name: "SlideDesktop",
+  name: "ReviewSlide",
   data() {
     return {
       swiperOption: {

@@ -76,6 +76,10 @@ const userStore = {
     requestReceivedReviews(context, payload) {
       return http.get(`/review/to/${payload.userId}/${payload.page}`)
     },
+    // NOTE: 만난 사람들 요청
+    requestUserHistories(context, userId) {
+      return http.get(`/history/${userId}`)
+    }
   },
   getters: {
     getAccessToken(state) {
