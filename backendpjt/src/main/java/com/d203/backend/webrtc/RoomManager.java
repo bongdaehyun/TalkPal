@@ -9,10 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * @author Ivan Gracia (izanmail@gmail.com)
- * @since 4.3.1
- */
 public class RoomManager {
 
     private final Logger log = LoggerFactory.getLogger(RoomManager.class);
@@ -22,35 +18,30 @@ public class RoomManager {
 
     private final ConcurrentMap<String, RoomSession> rooms = new ConcurrentHashMap<>();
 
-    /**
-     * Looks for a room in the active room list.
-     *
-     * @param roomName the name of the room
-     * @return the room if it was already created, or a new one if it is the first time this room is
-     * accessed
-     */
-    public RoomSession getRoom(String roomName) {
-        log.debug("Searching for room {}", roomName);
-        RoomSession roomSession = rooms.get(roomName);
-
-        if (roomSession == null) {
-            log.debug("Room {} not existent. Will create now!", roomName);
-            roomSession = new RoomSession(roomName, kurento.createMediaPipeline());
-            rooms.put(roomName, roomSession);
-        }
-        log.debug("Room {} found!", roomName);
+    public RoomSession createRoom(String uuid) {
+        log.debug("Room {} not existent. Will create now!", uuid);
+        RoomSession roomSession = new RoomSession(uuid, kurento.createMediaPipeline());
+        rooms.put(uuid, roomSession);
         return roomSession;
     }
 
-    /**
-     * Removes a room from the list of available rooms.
-     *
-     * @param roomSession the room to be removed
-     */
+    public RoomSession getRoom(String uuid) {
+        log.debug("Searching for room {}", uuid);
+        RoomSession roomSession = rooms.get(uuid);
+
+//        if (roomSession == null) {
+//            log.debug("Room {} not existent. Will create now!", roomName);
+//            roomSession = new RoomSession(roomName, kurento.createMediaPipeline());
+//            rooms.put(roomName, roomSession);
+//        }
+        log.debug("Room {} found!", uuid);
+        return roomSession;
+    }
+
     public void removeRoom(RoomSession roomSession) {
-        this.rooms.remove(roomSession.getName());
+        this.rooms.remove(roomSession.getUuid());
         roomSession.close();
-        log.info("Room {} removed and closed", roomSession.getName());
+        log.info("Room {} removed and closed", roomSession.getUuid());
     }
 
 }
