@@ -1,7 +1,7 @@
 {
   "message": "안녕 i18n !!",
-  "main_login": "로그인",
-  "main_register": "회원가입",
+  "main_login": "Login",
+  "main_register": "Register",
   "nav_rooms": "Rooms",
   "nav_profile": "Profile",
   "nav_logout": "Logout",
@@ -18,5 +18,8 @@
   "create_game": "GAME",
   "create_food": "FOOD",
   "create_free": "FREE",
-  "error_404": "NOT FOUND PAGE."
-}
+  "error_404": "NOT FOUND PAGE.",
+  "search_topic" : "Topic",
+  "search_name" : "Room Name",
+  "search_classification" :"classification"
+} 
