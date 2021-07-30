@@ -2,6 +2,10 @@
   <v-container>
     <!-- 방 생성 -->
     <Create @onCreateRoom="onCreateRoom" :ws="ws" />
+    <!-- 방 목록 검색 -->
+    <Search />
+    
+    
     <!-- 방 목록 -->
     <v-row>
       <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
@@ -15,6 +19,7 @@
 <script>
 import Item from "@/components/Rooms/Item";
 import Create from "@/components/Rooms/Create";
+import Search from "@/components/Rooms/Search";
 import InfiniteLoading from "vue-infinite-loading";
 
 export default {
@@ -75,6 +80,7 @@ export default {
   components: {
     Item,
     Create,
+    Search,
     InfiniteLoading,
   },
 };
