@@ -1,0 +1,22 @@
+[
+  {
+    "name": "create_music",
+    "value": "create_music"
+  },
+  {
+    "name": "create_movie",
+    "value": "create_movie"
+  },
+  {
+    "name": "create_game",
+    "value": "create_game"
+  },
+  {
+    "name": "create_food",
+    "value": "create_food"
+  },
+  {
+    "name": "create_free",
+    "value": "create_free"
+  }
+]

@@ -92,7 +92,7 @@ public class CallHandler extends TextWebSocketHandler {
         userManager.register(user);
     }
 
-    private void joinRequest(JsonObject params, WebSocketSession session) throws  IOException {
+    private void joinRequest(JsonObject params, WebSocketSession session) throws IOException {
         // 호스트에게 현재 입장 요청한 클라이언트 userId 전송
         final String uuid = params.get("uuid").getAsString();
         final String requestUserId = params.get("requestUserId").getAsString(); // 제이슨객체 수정 (id)
@@ -115,7 +115,7 @@ public class CallHandler extends TextWebSocketHandler {
         userManager.register(requestUser);
     }
 
-    private void joinResponse(JsonObject params, WebSocketSession session) throws  IOException {
+    private void joinResponse(JsonObject params, WebSocketSession session) throws IOException {
         // 입장 요청한 클라이언트에게 수락/거절여부 + uuid 전송
         final String requestUserId = params.get("requestUserId").getAsString();
         final String uuid = params.get("uuid").getAsString();

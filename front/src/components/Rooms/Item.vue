@@ -5,12 +5,12 @@
       height="200px"
       src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
     >
-      <v-card-title>{{ item.topic }}</v-card-title>
+      <v-card-title>{{ item.name }}</v-card-title>
     </v-img>
-    <v-card-subtitle class="pb-0"> {{ item.topic }} </v-card-subtitle>
+    <v-card-subtitle class="pb-0"> {{ $t(item.topic) }} </v-card-subtitle>
     <v-card-text class="text--primary">
-      <div>{{ item.topic }}</div>
-      <div>{{ item.topic }}</div>
+      <div>{{ item.host_lang }}</div>
+      <div>{{ item.guest_lang }}</div>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>

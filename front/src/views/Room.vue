@@ -1,19 +1,29 @@
 <template>
   <div>
-    <h1>Room</h1>
-    <div class="row" v-if="participants">
-      <div
-        class="col"
-        v-for="participant in participants"
-        :key="participant.userId"
-      >
-        <Participant
-          :ref="`participant-${participant.userId}`"
-          :userId="participant.userId"
-          :ws="ws"
-        />
+    <v-container fluid>
+      <div class="row" v-if="participants">
+        <!-- NOTE: 화상 구역 -->
+        <div
+          style="background-color: green"
+          class="col-9"
+          v-for="participant in participants"
+          :key="participant.userId"
+        >
+          <Participant
+            :ref="`participant-${participant.userId}`"
+            :userId="participant.userId"
+            :ws="ws"
+          />
+        </div>
+        <!-- NOTE:가이드 & 기타 버튼 구역 -->
+        <div class="col-3" style="background-color: red"></div>
       </div>
-    </div>
+    </v-container>
+    <v-bottom-navigation app>
+      <v-btn @click="leaveRoom">
+        <v-icon>mdi-location-exit</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
   </div>
 </template>
 
@@ -26,8 +36,8 @@ export default {
   name: "Room",
   data() {
     return {
-      url: process.env.VUE_APP_SOCKET_URL,
-      // url: "ws://localhost:8080/groupcall",
+      socketUrl: process.env.VUE_APP_SOCKET_URL,
+      // socketUrl: "wss://192.168.0.2:8080/groupcall",
       UUID: this.$route.params.UUID,
       userId: this.$store.getters["userStore/getUserId"],
       participants: [],
@@ -35,20 +45,20 @@ export default {
       ws: null,
     };
   },
+  // TODO: leaveroom 메세지 보낼 때 hostUserId
+  // TODO: Host가 방 나갈 때 방 삭제 API도 호출
   methods: {
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
-        console.log(
-          "[errMessage] Skip, WebSocket session isn't open" + message
-        );
+        this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
         return;
       }
       const jsonMessage = JSON.stringify(message);
-      console.log("[sendMessage] message: " + jsonMessage);
+      this.$log("[sendMessage] message: " + jsonMessage);
       this.ws.send(jsonMessage);
     },
     sendError(message) {
-      console.error("[errMessage] " + message);
+      this.$log("[errMessage] " + message);
       this.sendMessage({
         id: "ERROR",
         message: message,
@@ -58,37 +68,38 @@ export default {
       video.play();
     },
     onNewParticipant(request) {
-      console.log(request);
-      this.receiveVideo(request.name);
+      this.$log(request);
+      this.receiveVideo(request.userId);
     },
     onParticipantLeft(request) {
-      // console.log("Participant " + request.name + " left");
-      // let participant = this.participants[request.name];
-      // participant.dispose();
-      // delete this.participants[request.name];
+      this.$log("Participant " + request.userId + " left");
+      let participant = this.participants[request.userId];
+      participant.dispose();
+      delete this.participants[request.userId];
     },
     receiveVideoResponse(result) {
-      console.log("receiveVideoResponse");
-      console.log(this.participantComponents[result.name]);
-      // this.participantComponents[result.name].rtcPeer.processAnswer(
-      //   result.sdpAnswer,
-      //   (error) => {
-      //     if (error) return console.error(error);
-      //   }
-      // );
+      this.$log("receiveVideoResponse");
+      this.$log(this.participantComponents[result.userId]);
+
+      this.participantComponents[result.userId].rtcPeer.processAnswer(
+        result.sdpAnswer,
+        (error) => {
+          if (error) return this.$error(error);
+        }
+      );
     },
     callResponse(message) {
       if (message.response != "accepted") {
-        console.info("Call not accepted by peer. Closing call");
+        this.$log("Call not accepted by peer. Closing call");
         stop();
       } else {
         this.webRtcPeer.processAnswer(message.sdpAnswer, (error) => {
-          if (error) return console.error(error);
+          if (error) return this.$error(error);
         });
       }
     },
     async receiveVideo(senderId) {
-      console.log(senderId);
+      this.$log(senderId);
       let res = await this.$store.dispatch(
         "userStore/requestUserInfo",
         senderId
@@ -98,14 +109,9 @@ export default {
       this.participants.push(userInfo);
 
       this.$nextTick(() => {
-        // NOTE: 접속사 participant 컴포넌트 생성
         let participant = this.$refs[`participant-${senderId}`][0];
-
-        //  NOTE: 접속자 비디오 컴포넌트 추가
         this.participantComponents[senderId] = participant;
-
         let video = participant.getVideoElement();
-
         let options = {
           remoteVideo: video,
           onicecandidate: participant.onIceCandidate.bind(participant),
@@ -115,7 +121,7 @@ export default {
           options,
           function (error) {
             if (error) {
-              return console.error(error);
+              return this.$error(error);
             }
             this.generateOffer(
               participant.offerToReceiveVideo.bind(participant)
@@ -135,8 +141,7 @@ export default {
           },
         },
       };
-      console.log(this.userId + " registered in room " + this.UUID);
-      // NOTE: 유저 정보 요청
+      this.$log(this.userId + " registered in room " + this.UUID);
       let res = await this.$store.dispatch(
         "userStore/requestUserInfo",
         this.userId
@@ -165,7 +170,7 @@ export default {
           options,
           function (error) {
             if (error) {
-              return console.error(error);
+              return this.$error(error);
             }
             this.generateOffer(
               participant.offerToReceiveVideo.bind(participant)
@@ -175,10 +180,10 @@ export default {
       });
     },
     connect() {
-      this.ws = new WebSocket(this.url);
+      this.ws = new WebSocket(this.socketUrl);
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
-        console.log(parsedMessage);
+        this.$info(`[parsedMessage] : ${parsedMessage}`);
         switch (parsedMessage.id) {
           case "existingParticipants":
             this.onExistingParticipants(parsedMessage);
@@ -194,34 +199,46 @@ export default {
             break;
           case "iceCandidate":
             this.participantComponents[
-              parsedMessage.name
+              parsedMessage.userId
             ].rtcPeer.addIceCandidate(parsedMessage.candidate, (error) => {
               if (error) {
-                console.error("Error adding candidate: " + error);
+                this.$error("Error adding candidate: " + error);
                 return;
               }
             });
             break;
           default:
-            console.error("Unrecognized message", parsedMessage);
+            this.$error("Unrecognized message", parsedMessage);
         }
       };
       this.ws.onopen = () => {
-        console.log(this.ws);
+        this.$log(this.ws);
         this.join();
       };
     },
     join() {
       let message = {
         id: "joinRoom",
-        name: this.userId,
-        room: this.UUID,
+        userId: this.userId,
+        uuid: this.UUID,
       };
       this.sendMessage(message);
+    },
+    leaveRoom() {
+      this.$log("leaveRoom");
+      this.$destroy();
     },
   },
   created() {
     this.connect();
+  },
+  beforeDestroy() {
+    this.$log("Room Destory");
+    this.sendMessage({
+      id: "leaveRoom",
+    });
+    this.ws.close();
+    this.$router.push({ name: "Rooms" });
   },
   components: {
     Participant,
@@ -229,5 +246,6 @@ export default {
 };
 </script>
 
-<style>
+
+<style scoped>
 </style>

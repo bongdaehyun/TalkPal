@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user && receivedReviews && giveReviews">
+  <v-container v-if="user && receivedReviews && giveReviews">
     <!-- NOTE: 사용자 정보 -->
     <!-- TODO: 레이아웃 생각 중... -->
     <v-row justify="center">
@@ -53,7 +53,7 @@
         <v-progress-circular indeterminate size="256"></v-progress-circular>
       </v-overlay>
     </v-row>
-  </div>
+  </v-container>
 </template>
 
 <script>
