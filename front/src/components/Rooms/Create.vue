@@ -44,8 +44,10 @@
               </v-col>
               <v-col class="d-flex" cols="12">
                 <v-select
-                  :items="topics | topicsi18n"
+                  :items="topicItems | topicsi18n"
                   :label="$t('create_topic')"
+                  item-text="name"
+                  item-value="value"
                   v-model="inputs.topic"
                 ></v-select>
               </v-col>
@@ -69,6 +71,7 @@
 <script>
 import i18n from "@/i18n.js";
 import langItems from "@/assets/data/lang.json";
+import topicItems from "@/assets/data/topic.json";
 
 export default {
   name: "Create",
@@ -77,7 +80,13 @@ export default {
       dialog: false,
       names: ["누구누구의 방"],
       langItems: langItems,
-      topics: ["create_music", "create_movie"],
+      topicItems: [
+        "create_music",
+        "create_movie",
+        "create_game",
+        "create_food",
+        "create_free",
+      ],
       inputs: {
         name: "",
         topic: "",
@@ -87,7 +96,13 @@ export default {
         maxnum: 2,
         curnum: 0,
       },
+      socketUrl: process.env.VUE_APP_SOCKET_URL,
     };
+  },
+  props: {
+    ws: {
+      type: WebSocket,
+    },
   },
   methods: {
     reqeustCreateRoom() {
@@ -96,17 +111,22 @@ export default {
       this.inputs.hostId = hostId;
 
       console.log(this.inputs);
-
       this.$store
         .dispatch("roomStore/requestCreate", this.inputs)
         .then((res) => {
-          console.log(res);
+          const uuid = res.data.uuid;
+          this.$emit("onCreateRoom", uuid);
         });
     },
   },
   filters: {
-    topicsi18n(values) {
-      return values.map((value) => i18n.t(value));
+    topicsi18n(items) {
+      return items.map((item) => {
+        return {
+          name: i18n.t(item),
+          value: item,
+        };
+      });
     },
   },
 };

@@ -4,9 +4,8 @@
       ref="video"
       controls="false"
       autoplay="true"
-      playsinline
-      width="480px"
-      height="360px"
+      width="100%"
+      height="100%"
     ></video>
   </div>
 </template>

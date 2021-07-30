@@ -4,6 +4,11 @@ const Console = {
       console.log(meesage)
     }
   },
+  info(meesage) {
+    if (process.env.VUE_APP_CONSOLE === "true") {
+      console.info(meesage)
+    }
+  },
   error(meesage) {
     if (process.env.VUE_APP_CONSOLE === "true") {
       console.error(meesage)

@@ -14,10 +14,10 @@ import java.util.List;
 @Setter
 @ApiModel("RoomListResponse")
 public class RoomListRes {
-    @ApiModelProperty(name="Room List")
+    @ApiModelProperty(name = "Room List")
     List<RoomRes> roomResList;
 
-    public static RoomListRes getList(List<Room> room){
+    public static RoomListRes getList(List<Room> room) {
         RoomListRes roomListRes = new RoomListRes();
         List<RoomRes> roomList = new ArrayList<>();
 
@@ -28,7 +28,7 @@ public class RoomListRes {
             res.setTopic(room.get(i).getTopic());
             res.setHostId(room.get(i).getHostId().getId());
             res.setGuest_lang(room.get(i).getGuest_lang().getName());
-            res.setHost_lang(room.get(i).getGuest_lang().getName());
+            res.setHost_lang(room.get(i).getHost_lang().getName());
             res.setUuid(room.get(i).getUuid());
 
             roomList.add(res);

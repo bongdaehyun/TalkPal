@@ -26,65 +26,65 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/rooms")
 public class RoomController {
-	
-	@Autowired
-	RoomService roomService;
 
-	@GetMapping("{pageno}")
-	public ResponseEntity<RoomListRes> findAll(@PathVariable int pageno) {
-		Page<Room> firstPage = roomService.getRoomList(pageno);
-		List<Room> pageContents = firstPage.getContent();
+    @Autowired
+    RoomService roomService;
 
-		return ResponseEntity.status(200).body(RoomListRes.getList(pageContents));
+    @GetMapping("{pageno}")
+    public ResponseEntity<RoomListRes> findAll(@PathVariable int pageno) {
+        Page<Room> firstPage = roomService.getRoomList(pageno);
+        List<Room> pageContents = firstPage.getContent();
 
-	}
+        return ResponseEntity.status(200).body(RoomListRes.getList(pageContents));
 
-	//CRUD
-	@PostMapping("/create")
-	@ApiOperation(value = "방생성", notes = "방생성 작업")
-	@ApiResponses({
-			@ApiResponse(code = 200, message = "성공"),
-			@ApiResponse(code = 401, message = "인증 실패"),
-			@ApiResponse(code = 404, message = "사용자 없음"),
-			@ApiResponse(code = 500, message = "서버 오류")
-	})
-	public ResponseEntity<RoomRes> register(
-			@RequestBody @ApiParam(value = "방생성 정보", required = true) RoomReq registerInfo) {
+    }
 
-		Room room = roomService.createRoom(registerInfo);
+    //CRUD
+    @PostMapping("/create")
+    @ApiOperation(value = "방생성", notes = "방생성 작업")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<RoomRes> register(
+            @RequestBody @ApiParam(value = "방생성 정보", required = true) RoomReq registerInfo) {
 
-		return ResponseEntity.status(200).body(RoomRes.of(room));
-	}
+        Room room = roomService.createRoom(registerInfo);
 
-	@PutMapping("{room_id}")
-	@ApiOperation(value = "방 정보 수정", notes = "방정보의 값을 받아와 수정한다.")
-	@ApiResponses({
-			@ApiResponse(code = 200, message = "성공")
-	})
-	public ResponseEntity<?> updateRoom(
-			@RequestBody @ApiParam(value="평가 작성 수정 정보", required = true) RoomUpadateReq updateRoomInfo,
-			@PathVariable Long room_id) {
+        return ResponseEntity.status(200).body(RoomRes.of(room));
+    }
 
-		if(roomService.updateRoom(room_id,updateRoomInfo)){
-			return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
-		}
+    @PutMapping("{room_id}")
+    @ApiOperation(value = "방 정보 수정", notes = "방정보의 값을 받아와 수정한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공")
+    })
+    public ResponseEntity<?> updateRoom(
+            @RequestBody @ApiParam(value = "평가 작성 수정 정보", required = true) RoomUpadateReq updateRoomInfo,
+            @PathVariable Long room_id) {
 
-		return new ResponseEntity<String>("FAIL", HttpStatus.NO_CONTENT);
-	}
+        if (roomService.updateRoom(room_id, updateRoomInfo)) {
+            return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+        }
 
-	@DeleteMapping("{room_id}")
-	public ResponseEntity<?> deleteRoom(
-			@PathVariable Long room_id,
-			@ApiIgnore Authentication authentication
-	) {
-		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
-		Long tokenUserId = userDetails.getUser().getId();
+        return new ResponseEntity<String>("FAIL", HttpStatus.NO_CONTENT);
+    }
 
-		if(roomService.deleteRoom(room_id,tokenUserId)) {
-			return  ResponseEntity.status(204).body("Room delete success");
-		}
+    @DeleteMapping("{room_id}")
+    public ResponseEntity<?> deleteRoom(
+            @PathVariable Long room_id,
+            @ApiIgnore Authentication authentication
+    ) {
+        SsafyUserDetails userDetails = (SsafyUserDetails) authentication.getDetails();
+        Long tokenUserId = userDetails.getUser().getId();
 
-		return  ResponseEntity.status(401).body("User not macthed");
-	}
+        if (roomService.deleteRoom(room_id, tokenUserId)) {
+            return ResponseEntity.status(204).body("Room delete success");
+        }
+
+        return ResponseEntity.status(401).body("User not macthed");
+    }
 
 }

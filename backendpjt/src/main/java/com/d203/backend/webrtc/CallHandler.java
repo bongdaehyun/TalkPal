@@ -15,10 +15,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 
-/**
- * @author Ivan Gracia (izanmail@gmail.com)
- * @since 4.3.1
- */
 public class CallHandler extends TextWebSocketHandler {
 
     private static final Logger log = LoggerFactory.getLogger(CallHandler.class);
@@ -29,32 +25,42 @@ public class CallHandler extends TextWebSocketHandler {
     private RoomManager roomManager;
 
     @Autowired
-    private UserRegistry registry;
+    private UserManager userManager;
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         final JsonObject jsonMessage = gson.fromJson(message.getPayload(), JsonObject.class);
 
-        final UserSession user = registry.getBySession(session);
+        final UserSession user = userManager.getBySession(session);
 
         if (user != null) {
-            log.debug("Incoming message from user '{}': {}", user.getName(), jsonMessage);
+            log.debug("Incoming message from user '{}': {}", user.getUserId(), jsonMessage);
         } else {
             log.debug("Incoming message from new user: {}", jsonMessage);
         }
 
         switch (jsonMessage.get("id").getAsString()) {
+            case "createRoom":
+                createRoom(jsonMessage, session);
+                break;
+            case "joinRequest":
+                joinRequest(jsonMessage, session);
+                break;
+            case "joinResponse":
+                joinResponse(jsonMessage, session);
+                break;
             case "joinRoom":
                 joinRoom(jsonMessage, session);
                 break;
             case "receiveVideoFrom":
                 final String senderName = jsonMessage.get("sender").getAsString();
-                final UserSession sender = registry.getByName(senderName);
+                final UserSession sender = userManager.getByUserId(senderName);
                 final String sdpOffer = jsonMessage.get("sdpOffer").getAsString();
                 user.receiveVideoFrom(sender, sdpOffer);
                 break;
             case "leaveRoom":
-                leaveRoom(user);
+                final String hostId = jsonMessage.get("hostId").getAsString();
+                leaveRoom(user, hostId);
                 break;
             case "onIceCandidate":
                 JsonObject candidate = jsonMessage.get("candidate").getAsJsonObject();
@@ -72,25 +78,83 @@ public class CallHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        UserSession user = registry.removeBySession(session);
-        roomManager.getRoom(user.getRoomName()).leave(user);
+        UserSession user = userManager.removeBySession(session);
+        roomManager.getRoom(user.getUuid()).leave(user);
+    }
+
+    private void createRoom(JsonObject params, WebSocketSession session) throws IOException {
+        final String uuid = params.get("uuid").getAsString();
+        final String userId = params.get("userId").getAsString();
+        log.info("PARTICIPANT {}: trying to create room {}", userId, uuid);
+
+        RoomSession roomSession = roomManager.createRoom(uuid);
+        final UserSession user = roomSession.join(userId, session);
+        userManager.register(user);
+    }
+
+    private void joinRequest(JsonObject params, WebSocketSession session) throws IOException {
+        // 호스트에게 현재 입장 요청한 클라이언트 userId 전송
+        final String uuid = params.get("uuid").getAsString();
+        final String requestUserId = params.get("requestUserId").getAsString(); // 제이슨객체 수정 (id)
+        final String hostId = params.get("hostId").getAsString();
+
+        final JsonObject requestMsg = new JsonObject();
+        requestMsg.addProperty("id", "joinQuestion");
+        requestMsg.addProperty("uuid", uuid);
+        requestMsg.addProperty("requestUserId", requestUserId);
+        requestMsg.addProperty("hostId", hostId);
+
+        UserSession hostSession = userManager.getByUserId(hostId);
+
+        synchronized (hostSession) {
+            hostSession.sendMessage(requestMsg);
+        }
+
+        // 여기서 입장 요청자의 세션정보 등록 (uuid, pipeline은 없어서 임시 보류)
+        UserSession requestUser = new UserSession("tmp", null, session, null);
+        userManager.register(requestUser);
+    }
+
+    private void joinResponse(JsonObject params, WebSocketSession session) throws IOException {
+        // 입장 요청한 클라이언트에게 수락/거절여부 + uuid 전송
+        final String requestUserId = params.get("requestUserId").getAsString();
+        final String uuid = params.get("uuid").getAsString();
+        final String answer = params.get("answer").getAsString();
+
+        final JsonObject responseMsg = new JsonObject();
+        responseMsg.addProperty("id", "joinAnswer");
+        responseMsg.addProperty("uuid", uuid);
+        responseMsg.addProperty("answer", answer);
+
+        UserSession requestSession = userManager.getByUserId(requestUserId);
+
+        synchronized (requestSession) {
+            requestSession.sendMessage(responseMsg);
+        }
+        userManager.removeBySession(requestSession.getSession());
     }
 
     private void joinRoom(JsonObject params, WebSocketSession session) throws IOException {
-        final String roomName = params.get("room").getAsString();
-        final String name = params.get("name").getAsString();
-        log.info("PARTICIPANT {}: trying to join room {}", name, roomName);
+        final String uuid = params.get("uuid").getAsString();
+        final String userId = params.get("userId").getAsString();
+        log.info("PARTICIPANT {}: trying to join room {}", userId, uuid);
 
-        RoomSession roomSession = roomManager.getRoom(roomName);
-        final UserSession user = roomSession.join(name, session);
-        registry.register(user);
+        RoomSession roomSession = roomManager.getRoom(uuid);
+        final UserSession user = roomSession.join(userId, session);
+        userManager.register(user);
     }
 
-    private void leaveRoom(UserSession user) throws IOException {
-        final RoomSession roomSession = roomManager.getRoom(user.getRoomName());
-        roomSession.leave(user);
-        if (roomSession.getParticipants().isEmpty()) {
+    private void leaveRoom(UserSession user, String hostId) throws IOException {
+        final RoomSession roomSession = roomManager.getRoom(user.getUuid());
+
+        if (user.getUserId().equals(hostId)) { // 타입 체크
+            for (UserSession participant : roomSession.getParticipants()) {
+                roomSession.hostLeave(participant, hostId);
+            }
             roomManager.removeRoom(roomSession);
+            return;
         }
+
+        roomSession.leave(user);
     }
 }
