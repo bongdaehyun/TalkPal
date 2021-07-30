@@ -1,28 +1,21 @@
 <template>
-  <v-tab-item>
-    <v-container>
-      <v-row>
-        <v-text-field
-          label="Email"
-          prepend-inner-icon="mdi-email"
-          v-model="email"
-        ></v-text-field>
-      </v-row>
-      <v-row>
-        <v-text-field
-          label="Password"
-          prepend-inner-icon="mdi-lock"
-          v-model="pwd"
-        ></v-text-field>
-      </v-row>
-      <v-row class="text-right">
-        <v-btn class="ma-2" color="primary" dark @click="requestLogin">
-          {{ $t("main_login") }}
-          <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
-        </v-btn>
-      </v-row>
-    </v-container>
-  </v-tab-item>
+  <v-container>
+    <v-text-field
+      label="Email"
+      prepend-inner-icon="mdi-email"
+      v-model="email"
+    ></v-text-field>
+    <v-text-field
+      label="Password"
+      prepend-inner-icon="mdi-lock"
+      v-model="password"
+      type="password"
+    ></v-text-field>
+    <v-btn class="ma-2" color="primary" dark @click="requestLogin">
+      {{ $t("main_login") }}
+      <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
+    </v-btn>
+  </v-container>
 </template>
 
 <script>
@@ -32,8 +25,10 @@ export default {
   name: "Login",
   data() {
     return {
-      email: "",
-      pwd: "",
+      // email: "",
+      // password: "",
+      email: "test@gmail.com",
+      password: "1q2w3e4r!",
     };
   },
   methods: {
@@ -42,11 +37,11 @@ export default {
       this.$store
         .dispatch("userStore/requestLogin", {
           email: this.email,
-          password: this.pwd,
+          password: this.password,
         })
         .then((res) => {
+          // TODO Toast 구현
           alert("로그인 성공");
-          console.log(res);
 
           // 인증 Token
           let accessToken = res.data.accessToken;
@@ -60,7 +55,7 @@ export default {
           this.$store.dispatch("userStore/login", accessToken);
 
           // 페이지 이동
-          this.$router.push({ name: "Room" });
+          this.$router.push({ name: "Rooms" });
         })
         .catch((err) => {
           alert("로그인 실패");

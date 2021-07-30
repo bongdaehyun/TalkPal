@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.*;
+import com.d203.backend.db.entity.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -47,10 +50,18 @@ public class JwtTokenUtil {
                 .build();
     }
 
-    public static String getToken(String email) {
+    public static String getToken(User user) {
         Date expires = JwtTokenUtil.getTokenExpiration(expirationTime);
+        
+        Map<String, String> tokenMap = new HashMap<String, String>();
+        // user_id 가 필요해서 추가함.
+        // Long -> String 변환
+        tokenMap.put("id",String.valueOf(user.getId()));
+        tokenMap.put("email", user.getEmail());
+        tokenMap.put("lang", user.getLang().getName());
+        tokenMap.put("nickname",user.getNickname());
         return JWT.create()
-                .withSubject(email)
+                .withClaim("userinfo",tokenMap)
                 .withExpiresAt(expires)
                 .withIssuer(ISSUER)
                 .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))

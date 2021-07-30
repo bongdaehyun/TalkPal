@@ -2,14 +2,21 @@
   "message": "안녕 i18n !!",
   "main_login": "로그인",
   "main_register": "회원가입",
+  "nav_rooms": "Rooms",
+  "nav_profile": "Profile",
+  "nav_logout": "Logout",
   "room_enter": "Enter",
   "room_create": "Room Create",
   "create_name": "Room Name",
   "create_host": "HOST Language",
   "create_guest": "GUEST Language",
-  "create_subject": "Topic",
+  "create_topic": "Topic",
   "create_close": "CLOSE",
   "create_save": "CREATE",
   "create_music": "MUSIC",
-  "create_movie": "MOVIE"
+  "create_movie": "MOVIE",
+  "create_game": "GAME",
+  "create_food": "FOOD",
+  "create_free": "FREE",
+  "error_404": "NOT FOUND PAGE."
 }

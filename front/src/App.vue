@@ -1,28 +1,30 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
+    <v-app-bar app color="white" v-if="loginStatus">
       <div class="d-flex align-center">
-        <!-- 네비게이션바 왼쪽 -->
+        <!-- NOTE: 네비게이션바 왼쪽 -->
+        <v-img src="@/assets/image/logo.png" max-width="224px" contain></v-img>
       </div>
-      <!-- 중간 여백 -->
       <v-spacer></v-spacer>
       <v-btn text>
-        <span class="mr-2" @click="goRoom">방 목록 페이지</span>
+        <span class="mr-2" color="secondary" @click="goRooms">
+          {{ $t("nav_rooms") }}
+        </span>
       </v-btn>
       <v-btn text>
-        <span class="mr-2" @click="goProfile">내 정보</span>
+        <span class="mr-2" color="secondary" @click="goProfile">
+          {{ $t("nav_profile") }}
+        </span>
       </v-btn>
       <v-btn text>
-        <span class="mr-2" @click="goMain">메인 페이지</span>
-      </v-btn>
-      <v-btn text>
-        <span class="mr-2" @click="onLogout">로그아웃</span>
+        <span class="mr-2" color="secondary" @click="onLogout">
+          {{ $t("nav_logout") }}
+        </span>
       </v-btn>
     </v-app-bar>
     <v-main>
-      <v-container>
-        <router-view />
-      </v-container>
+      <!-- NOTE: 대화방 페이지일 때 -->
+      <router-view />
     </v-main>
   </v-app>
 </template>
@@ -31,16 +33,22 @@
 export default {
   name: "App",
   data() {
-    return {
-      loginStatus: this.$store.getters["userStore/getLoginStautus"],
-    };
+    return {};
+  },
+  computed: {
+    loginStatus() {
+      return this.$store.getters["userStore/getLoginStatus"];
+    },
   },
   methods: {
-    goRoom() {
-      this.$router.push({ name: "Room" });
+    goRooms() {
+      this.$router.push({ name: "Rooms" });
     },
     goProfile() {
-      this.$router.push({ name: "Profile" });
+      this.$router.push({
+        name: "Profile",
+        params: { userId: this.$store.getters["userStore/getUserId"] },
+      });
     },
     goMain() {
       this.$router.push({ name: "Main" });
@@ -52,3 +60,5 @@ export default {
   },
 };
 </script>
+<style scoped>
+</style>

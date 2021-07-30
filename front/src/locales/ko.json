@@ -2,14 +2,21 @@
   "message": "hello i18n !!",
   "main_login": "로그인",
   "main_register": "회원가입",
+  "nav_rooms": "방 목록",
+  "nav_profile": "내 정보",
+  "nav_logout": "로그아웃",
   "room_enter": "입장하기",
   "room_create": "방생성",
   "create_name": "방제목",
   "create_host": "HOST 언어",
   "create_guest": "GUEST 언어",
-  "create_subject": "대화 주제",
+  "create_topic": "대화 주제",
   "create_close": "닫기",
   "create_save": "생성",
   "create_music": "음악",
-  "create_movie": "영화"
+  "create_movie": "영화",
+  "create_game": "게임",
+  "create_food": "요리",
+  "create_free": "자유",
+  "error_404": "페이지를 찾을 수 없습니다."
 }
