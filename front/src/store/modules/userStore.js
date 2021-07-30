@@ -42,6 +42,7 @@ const userStore = {
       let body = payload
       return http.post('/auth/login', body)
     },
+    // NOTE: 로그인
     login(context, accessToken) {
       const decoded = jwt_decode(accessToken);
       const userInfo = decoded.userinfo;
@@ -54,6 +55,7 @@ const userStore = {
       console.log(decoded);
       context.commit('LOGIN', payload)
     },
+    // NOTE: 로그아웃
     logout(context) {
       context.commit('LOGOUT')
       axios.defaults.headers.common['Authorization'] = undefined
@@ -67,13 +69,17 @@ const userStore = {
       return http.get()
     },
     // NOTE: 작성한 리뷰 요청
-    requestGiveReviews(context, userId) {
-      return http.get('/review/from/' + userId)
+    requestGiveReviews(context, payload) {
+      return http.get(`/review/from/${payload.userId}/${payload.page}`)
     },
     // NOTE: 받은 리뷰 요청
-    requestReceivedReviews(context, userId) {
-      return http.get('/review/to/' + userId)
+    requestReceivedReviews(context, payload) {
+      return http.get(`/review/to/${payload.userId}/${payload.page}`)
     },
+    // NOTE: 만난 사람들 요청
+    requestUserHistories(context, userId) {
+      return http.get(`/history/${userId}`)
+    }
   },
   getters: {
     getAccessToken(state) {

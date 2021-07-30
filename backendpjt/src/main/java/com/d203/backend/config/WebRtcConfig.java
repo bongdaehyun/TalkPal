@@ -2,7 +2,7 @@ package com.d203.backend.config;
 
 import com.d203.backend.webrtc.CallHandler;
 import com.d203.backend.webrtc.RoomManager;
-import com.d203.backend.webrtc.UserRegistry;
+import com.d203.backend.webrtc.UserManager;
 import org.kurento.client.KurentoClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +15,8 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @EnableWebSocket
 public class WebRtcConfig implements WebSocketConfigurer {
     @Bean
-    public UserRegistry registry() {
-        return new UserRegistry();
+    public UserManager registry() {
+        return new UserManager();
     }
 
     @Bean

@@ -13,6 +13,8 @@
             >
             </v-rating>
           </div>
+          <!-- NOTE: 받은 평가는 작성한 사람 이름 표시 -->
+          <!-- NOTE: 작성한 평가는 받은 사람 이름 표시 -->
           <v-list-item-title class="text-h5 mb-1" v-if="category === `receive`">
             {{ this.item.from_user_nickname }}
           </v-list-item-title>
@@ -20,7 +22,7 @@
             {{ this.item.to_user_nickname }}
           </v-list-item-title>
           <v-list-item-subtitle class="cursor" @click="dialog = true">
-            {{ this.item.content }}
+            {{ this.item.id }}-{{ this.item.content }}
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-avatar tile size="80" color="grey"></v-list-item-avatar>

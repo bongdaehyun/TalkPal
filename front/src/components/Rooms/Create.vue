@@ -84,7 +84,6 @@ export default {
         hostId: "",
         host_lang: "",
         guest_lang: "",
-        // start_time: null,
         maxnum: 2,
         curnum: 0,
       },

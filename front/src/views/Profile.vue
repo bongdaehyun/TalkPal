@@ -8,7 +8,7 @@
       </v-col>
       <v-col>
         <h1>{{ user.nickname }}</h1>
-        <h3>{{ receivedReviews.avgScore }}</h3>
+        <h3>평균 평점</h3>
       </v-col>
       <v-col> 팔로워</v-col>
       <v-col> 팔로우</v-col>
@@ -27,43 +27,62 @@
           <v-tab>작성한 평가</v-tab>
         </v-tabs>
         <v-tabs-items v-model="tab" :touchless="true">
-          <!-- NOTE: 만난 사람들 탭 -->
+          <!-- NOTE: 만난 사람들 -->
           <v-tab-item>
-            <Slide :isDesktop="isDesktop" />
+            <HistorySlide :isDesktop="isDesktop" :histories="histories" />
           </v-tab-item>
-          <!-- NOTE: 받은 평가 탭 -->
+          <!-- NOTE: 받은 평가 -->
           <v-tab-item>
-            <Slide
+            <ReviewSlide
               :isDesktop="isDesktop"
-              :items="receivedReviews.reviewList"
-              :category="`receive`"
+              :reviews="receivedReviews"
+              @onSlideEnd="requestReviews"
             />
           </v-tab-item>
-          <!-- NOTE: 작성한 평가 탭 -->
+          <!-- NOTE: 작성한 평가 -->
           <v-tab-item>
-            <Slide
+            <ReviewSlide
               :isDesktop="isDesktop"
-              :items="giveReviews.reviewList"
-              :category="`give`"
+              :reviews="giveReviews"
+              @onSlideEnd="requestReviews"
             />
           </v-tab-item>
         </v-tabs-items>
       </v-col>
+      <v-overlay :value="overlay">
+        <v-progress-circular indeterminate size="256"></v-progress-circular>
+      </v-overlay>
     </v-row>
   </div>
 </template>
 
 <script>
-import Slide from "../components/Profile/Slide.vue";
+import ReviewSlide from "../components/Profile/ReviewSlide.vue";
+import HistorySlide from "../components/Profile/HistorySlide.vue";
 
 export default {
   name: "Profile",
   data() {
     return {
+      overlay: false,
+      userId: this.$route.params.userId,
       user: null,
       tab: null,
-      giveReviews: null,
-      receivedReviews: null,
+      histories: [],
+      giveReviews: {
+        items: [],
+        page: 1,
+        category: "give",
+        url: "requestGiveReviews",
+        isEnd: false,
+      },
+      receivedReviews: {
+        items: [],
+        page: 1,
+        category: "receive",
+        url: "requestReceivedReviews",
+        isEnd: false,
+      },
     };
   },
   computed: {
@@ -80,10 +99,40 @@ export default {
   },
 
   methods: {
-    // NOTE: 유저 정보 요청
-    requestUserInfo(userId) {
+    // NOTE: 응답 리뷰 목록 추가
+    pushReviews(reviews, res) {
+      // console.log(res);
+      if (res.length) {
+        reviews.items.push(...res);
+        reviews.page = reviews.page + 1;
+      } else {
+        reviews.isEnd = true;
+      }
+      this.overlay = false;
+    },
+    // NOTE: 평가 목록 요청
+    requestReviews(reviews) {
+      if (reviews.isEnd === true) {
+        return;
+      }
+      this.overlay = true;
+      let url = "userStore/" + reviews.url;
       this.$store
-        .dispatch("userStore/requestUserInfo", userId)
+        .dispatch(url, {
+          userId: this.userId,
+          page: reviews.page,
+        })
+        .then((res) => {
+          this.pushReviews(reviews, res.data.reviewList);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    // NOTE: 유저 정보 요청
+    requestUserInfo() {
+      this.$store
+        .dispatch("userStore/requestUserInfo", this.userId)
         .then((res) => {
           this.user = res.data;
         })
@@ -91,39 +140,28 @@ export default {
           console.log(err);
         });
     },
-    // NOTE: 작성한 평가 요청
-    requestGiveReviews(userId) {
-      this.$store
-        .dispatch("userStore/requestGiveReviews", userId)
-        .then((res) => {
-          this.giveReviews = res.data;
-          // console.log(this.giveReviews);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    // NOTE: 받은 평가 요청
-    requestReceivedReviews(userId) {
-      this.$store
-        .dispatch("userStore/requestReceivedReviews", userId)
-        .then((res) => {
-          this.receivedReviews = res.data;
-          // console.log(this.receivedReviews);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    // NOTE: 만난 사람들 요청
+    async reuqestHistoryUser() {
+      try {
+        const res = await this.$store.dispatch(
+          "userStore/requestUserHistories",
+          this.userId
+        );
+        this.histories = res.data.historyList;
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
   created() {
-    let userId = this.$route.params.userId;
-    this.requestUserInfo(userId);
-    this.requestGiveReviews(userId);
-    this.requestReceivedReviews(userId);
+    this.requestUserInfo();
+    this.requestReviews(this.receivedReviews);
+    this.requestReviews(this.giveReviews);
+    this.reuqestHistoryUser();
   },
   components: {
-    Slide,
+    ReviewSlide,
+    HistorySlide,
   },
 };
 </script>
