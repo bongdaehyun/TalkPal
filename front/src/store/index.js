@@ -16,10 +16,11 @@ export default new Vuex.Store({
     userStore,
     roomStore
   },
+  
   plugins: [
     createPersistedState({
+      // TODO: secure 값 문제인듯 확인해봐야함
       // paths: ["userStore"], 
-      // secure 값 문제인듯 확인해봐야함
       storage: {
         getItem: (key) => Cookies.get(key),
         setItem: (key, value) => Cookies.set(key, value, { secure: false }),

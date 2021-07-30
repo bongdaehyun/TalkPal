@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service("roomService")
-public class RoomServiceImpl implements RoomService{
+public class RoomServiceImpl implements RoomService {
 
     @Autowired
     RoomRepository roomRepository;
@@ -26,7 +26,8 @@ public class RoomServiceImpl implements RoomService{
     UserRepository userRepository;
 
     @Autowired
-    LangRepository langRepository ;
+    LangRepository langRepository;
+
     @Override
     public Room createRoom(RoomReq roomInfo) {
         Room room = new Room();
@@ -66,7 +67,7 @@ public class RoomServiceImpl implements RoomService{
         updateRoom.setTopic(updateRoomInfo.getTopic());
         updateRoom.setCurnum(updateRoomInfo.getCurnum());
 
-        if(room.isPresent()){
+        if (room.isPresent()) {
             roomRepository.save(updateRoom);
             return true;
         }
@@ -78,7 +79,7 @@ public class RoomServiceImpl implements RoomService{
         Room delRoom = roomRepository.getOne(room_id);
         Long isAcceptId = delRoom.getHostId().getId();
 
-        if(isAcceptId == tokenUserId) {
+        if (isAcceptId == tokenUserId) {
             roomRepository.delete(delRoom);
             return true;
         }
@@ -89,7 +90,7 @@ public class RoomServiceImpl implements RoomService{
     @Override
     public Page<Room> getRoomList(int pageno) {
 
-        Pageable  firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
         return roomRepository.findAll(firstPageWithTwoElements);
     }
 

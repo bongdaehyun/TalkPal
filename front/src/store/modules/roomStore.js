@@ -4,6 +4,8 @@ import http from '@/util/http-common'
 
 const getDefaultState = () => {
   return {
+    webSocket: null,
+    socketUrl: process.env.VUE_APP_SOCKET_URL,
   }
 }
 
@@ -12,10 +14,18 @@ const roomStore = {
   state: getDefaultState(),
 
   getters: {
+    getWebSocket(state) {
+      return state.webSocket
+    },
+    getSocketUrl(state) {
+      return state.socketUrl
+    },
   },
 
   mutations: {
-
+    CONNECT_WEB_SOCKET(state) {
+      state.webSocket = new WebSocket(state.socketUrl)
+    }
   },
 
   actions: {
@@ -24,6 +34,10 @@ const roomStore = {
     },
     requestCreate(context, payload) {
       return http.post('/rooms/create', payload)
+    },
+    connectWebSocket(context) {
+      context.commit("CONNECT_WEB_SOCKET");
+      return context.state.webSocket
     }
   },
 }

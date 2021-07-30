@@ -29,11 +29,11 @@ public class RoomManager {
         log.debug("Searching for room {}", uuid);
         RoomSession roomSession = rooms.get(uuid);
 
-//        if (roomSession == null) {
-//            log.debug("Room {} not existent. Will create now!", roomName);
+        if (roomSession == null) {
+            log.debug("Room not existent");
 //            roomSession = new RoomSession(roomName, kurento.createMediaPipeline());
 //            rooms.put(roomName, roomSession);
-//        }
+        }
         log.debug("Room {} found!", uuid);
         return roomSession;
     }
