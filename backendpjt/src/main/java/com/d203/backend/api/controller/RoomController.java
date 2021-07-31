@@ -87,4 +87,28 @@ public class RoomController {
         return ResponseEntity.status(401).body("User not macthed");
     }
 
+    //방 조건 검색
+    @GetMapping("search")
+    public ResponseEntity<?> ConditionSearch(String condition,String text){
+
+        List<Room> rooms=null;
+        if(condition.equals("Topic") || condition.equals("주제")){
+           rooms=roomService.getTopicList(text);
+        }else if (condition.equals("Room Name") || condition.equals("방 제목")) {
+            rooms = roomService.getNameList(text);
+        }else if(condition.equals("Lang") || condition.equals("언어")){
+            if (text.equals("영어") || text.equals("English")){
+                rooms=roomService.getLangList("en");
+            }
+            else if (text.equals("한글") || text.equals("한국어") || text.equals("korean")){
+                rooms=roomService.getLangList("ko");
+            }
+        }
+        if(rooms==null){
+            return ResponseEntity.status(401).body("No Room");
+        }
+        else{
+            return  ResponseEntity.status(200).body(RoomListRes.getList(rooms));
+        }
+    }
 }

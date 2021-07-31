@@ -18,4 +18,10 @@ public interface RoomService {
 
     Room getRoom(Long room_id);
 
+    //방 제목로 검색
+    List<Room> getNameList(String name);
+    //방 주제로 검색
+    List<Room> getTopicList(String topic);
+    //방 언어로 검색
+    List<Room> getLangList(String lang);
 }

@@ -15,5 +15,8 @@ import com.d203.backend.db.entity.User;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long>{
 
-
+    List<Room> findAllByNameLike(String name);
+    List<Room> findAllByTopic(String topic);
+    @Query(value = "select r.* from room r where r.guest_lang = ?1", nativeQuery = true)
+    List<Room> findAllByGuest_lang(Long lang);
 }
