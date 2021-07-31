@@ -2,6 +2,7 @@ package com.d203.backend.api.service.Room;
 
 import com.d203.backend.api.request.Room.RoomReq;
 import com.d203.backend.api.request.Room.RoomUpadateReq;
+import com.d203.backend.db.entity.Lang;
 import com.d203.backend.db.entity.Room;
 import com.d203.backend.db.repository.LangRepository;
 import com.d203.backend.db.repository.RoomRepository;
@@ -99,4 +100,24 @@ public class RoomServiceImpl implements RoomService {
         Room room = roomRepository.findById(room_id).get();
         return room;
     }
+
+    @Override
+    public List<Room> getNameList(String name) {
+        List<Room> rooms=roomRepository.findAllByNameLike("%"+name+"%");
+        return rooms;
+    }
+
+    @Override
+    public List<Room> getTopicList(String topic) {
+        List<Room> rooms=roomRepository.findAllByTopic(topic);
+        return rooms;
+    }
+
+    @Override
+    public List<Room> getLangList(String lang) {
+        Lang findlang = langRepository.findByName(lang);
+        List<Room> rooms=roomRepository.findAllByGuest_lang(findlang.getId());
+        return rooms;
+    }
+
 }

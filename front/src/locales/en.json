@@ -21,5 +21,6 @@
   "error_404": "NOT FOUND PAGE.",
   "search_topic" : "Topic",
   "search_name" : "Room Name",
+  "search_lang" : "Lang",
   "search_classification" :"classification"
 } 

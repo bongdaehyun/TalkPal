@@ -10,7 +10,7 @@
             :label="$t('search_classification')"
             item-text="name"
             item-value="value"
-            v-model="category"
+            v-model="input.category"
             return-object
             single-line
         ></v-select>
@@ -26,9 +26,10 @@
             filled
             rounded
             dense
-            v-model="searchText"
+            v-model="input.text"
             clearable
             clear-icon="mdi-close-circle"
+            @keyup.enter="search"
           ></v-text-field>
         </v-col>
     </v-row>
@@ -40,20 +41,39 @@ import i18n from "@/i18n.js";
 export default {
     data(){
         return{
-            searchText:"",
-            category:"",
+            input:{
+              category:"",
+              text:"",
+            },
             searchItem: [
                "search_topic",
                "search_name",
+               'search_lang'
             ],
+
         };
+    },
+    methods:{
+        search(){
+          //상위에 데이터 전달
+          let changeData={
+            category:this.input.category.name,
+            text:this.input.text
+          }
+          console.log('데이터 전달')
+          console.log(changeData)
+          this.$emit('setSearchData',changeData)
+        },
+        showparent(){
+          console.log(this.searchData)
+        }
     },
     filters:{
         searchi18n(items){
              return items.map((item) => {
                 return {
-                name: i18n.t(item),
-                value: item,
+                  name: i18n.t(item),
+                  value: item,
                 };
             });
         }
