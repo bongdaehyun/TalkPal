@@ -21,5 +21,6 @@
   "error_404": "페이지를 찾을 수 없습니다.",
   "search_topic" : "주제",
   "search_name" : "방 제목",
+  "search_lang" : "언어",
   "search_classification" :"분류"
 }

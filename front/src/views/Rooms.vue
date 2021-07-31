@@ -2,10 +2,8 @@
   <v-container>
     <!-- 방 생성 -->
     <Create @onCreateRoom="onCreateRoom" :ws="ws" />
-    <!-- 방 목록 검색 -->
-    <Search />
-    
-    
+    <!-- 방 조건 검색 -->
+    <Search @setSearchData="setSearchData"/>
     <!-- 방 목록 -->
     <v-row>
       <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
@@ -21,6 +19,7 @@ import Item from "@/components/Rooms/Item";
 import Create from "@/components/Rooms/Create";
 import Search from "@/components/Rooms/Search";
 import InfiniteLoading from "vue-infinite-loading";
+import http from "@/util/http-common";
 
 export default {
   name: "Room",
@@ -70,6 +69,21 @@ export default {
       this.$log("[sendMessage] message: " + jsonMessage);
       this.ws.send(jsonMessage);
     },
+    // NOTE: 방 조건 검색 시
+    setSearchData (data) {
+      //검색을 하고 난뒤
+      http.get("/rooms/search", {params:{
+        condition:data.category,
+        text:data.text
+      }}).then((res)=>{
+        //console.log(res)
+        const data = res.data.roomResList;
+        let room =[]
+        room.push(...data)
+        console.log(room)
+        this.rooms=room
+      }).catch((err)=>console.log(err))
+    }
   },
   created() {
     // console.log(this.$store.getters["userStore/getLocale"]);
