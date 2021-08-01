@@ -7,6 +7,7 @@ import com.d203.backend.db.repository.EmailRepository;
 import com.d203.backend.db.repository.UserRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -15,7 +16,8 @@ import java.util.UUID;
 
 @Service
 public class AuthService {
-
+    @Value("${mailurl}")
+    private String url;
     @Autowired
     private EmailRepository emailRepository;
 
@@ -37,10 +39,10 @@ public class AuthService {
     }
     //Email에게 이메일 인증 보내기
     public void sendVerificationMail(User user) throws NotFoundException, MessagingException {
-        String link="http://localhost:8080/api/v1/auth/confirm/";
+        String link=url+"/api/v1/auth/confirm/";
         if(user==null) throw new NotFoundException("사용자 조회 없음");
         String token=createToken(user);
-
+        System.out.println(link);
         emailSenderService.sendEmail(link+token,user.getEmail());
     }
 
