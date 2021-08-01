@@ -10,7 +10,9 @@
         <Item :item="item" />
       </v-col>
     </v-row>
-    <infinite-loading @infinite="requestRooms"></infinite-loading>
+    <!-- 방조건 검색을 하게 되면 무한 로딩 멈추기 -->
+    <span v-if="!flag"> <infinite-loading @infinite="requestRooms"></infinite-loading></span>
+    
   </v-container>
 </template>
 
@@ -29,6 +31,7 @@ export default {
       page: 1,
       rooms: [],
       ws: null,
+      flag : false
     };
   },
   methods: {
@@ -71,6 +74,7 @@ export default {
     },
     // NOTE: 방 조건 검색 시
     setSearchData (data) {
+      
       //검색을 하고 난뒤
       http.get("/rooms/search", {params:{
         condition:data.category,
@@ -82,6 +86,7 @@ export default {
         room.push(...data)
         console.log(room)
         this.rooms=room
+        this.flag=true
       }).catch((err)=>console.log(err))
     }
   },
