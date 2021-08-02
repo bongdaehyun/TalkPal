@@ -102,21 +102,32 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Room> getNameList(String name) {
-        List<Room> rooms=roomRepository.findAllByNameLike("%"+name+"%");
+    public Page<Room> getNameList(String name,int pageno) {
+        Pageable  firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
+        Page<Room> rooms=roomRepository.findAllByNameLike("%"+name+"%",firstPageWithTwoElements);
         return rooms;
     }
 
     @Override
-    public List<Room> getTopicList(String topic) {
-        List<Room> rooms=roomRepository.findAllByTopic(topic);
+    public Page<Room> getTopicList(String topic,int pageno) {
+        Pageable  firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
+        Page<Room> rooms=roomRepository.findAllByTopic(topic,firstPageWithTwoElements);
         return rooms;
     }
 
     @Override
-    public List<Room> getLangList(String lang) {
+    public Page<Room> getLangList(String lang,int pageno) {
+        Pageable  firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
         Lang findlang = langRepository.findByName(lang);
-        List<Room> rooms=roomRepository.findAllByGuest_lang(findlang.getId());
+        Page<Room> rooms=roomRepository.findAllByGuest_lang(findlang.getId(),firstPageWithTwoElements);
+        return rooms;
+    }
+
+    @Override
+    public Page<Room> getSearchList(String topic, String lang, int pageno) {
+        Pageable  firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
+        Lang findlang = langRepository.findByName(lang);
+        Page<Room> rooms=roomRepository.findAllByTopicAndGuest_lang(topic,findlang.getId(),firstPageWithTwoElements);
         return rooms;
     }
 

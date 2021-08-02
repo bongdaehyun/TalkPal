@@ -19,9 +19,11 @@ public interface RoomService {
     Room getRoom(Long room_id);
 
     //방 제목로 검색
-    List<Room> getNameList(String name);
+    Page<Room> getNameList(String name,int pageno);
     //방 주제로 검색
-    List<Room> getTopicList(String topic);
+    Page<Room> getTopicList(String topic,int pageno);
     //방 언어로 검색
-    List<Room> getLangList(String lang);
+    Page<Room> getLangList(String lang,int pageno);
+    //방 제목과 언어로 검색
+    Page<Room> getSearchList(String topic,String lang,int pageno);
 }

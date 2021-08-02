@@ -88,21 +88,20 @@ public class RoomController {
     }
 
     //방 조건 검색
-    @GetMapping("search")
-    public ResponseEntity<?> ConditionSearch(String condition,String text){
+    @GetMapping("search/{pageno}")
+    public ResponseEntity<?> ConditionSearch(String topic,String lang,@PathVariable int pageno){
 
         List<Room> rooms=null;
-        if(condition.equals("Topic") || condition.equals("주제")){
-           rooms=roomService.getTopicList(text);
-        }else if (condition.equals("Room Name") || condition.equals("방 제목")) {
-            rooms = roomService.getNameList(text);
-        }else if(condition.equals("Lang") || condition.equals("언어")){
-            if (text.equals("영어") || text.equals("English")){
-                rooms=roomService.getLangList("en");
-            }
-            else if (text.equals("한글") || text.equals("한국어") || text.equals("korean")){
-                rooms=roomService.getLangList("ko");
-            }
+        Page<Room> pagerooms=null;
+        if(lang.length()>1){
+            lang=lang.substring(7,9);
+            pagerooms=roomService.getSearchList(topic,lang,pageno);
+        }else{
+            pagerooms = roomService.getRoomList(pageno);
+        }
+
+        if(pagerooms!=null){
+            rooms=pagerooms.getContent();
         }
         if(rooms==null){
             return ResponseEntity.status(401).body("No Room");

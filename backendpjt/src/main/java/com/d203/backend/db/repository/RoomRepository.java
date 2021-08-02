@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.d203.backend.db.entity.Room;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,8 +16,10 @@ import com.d203.backend.db.entity.User;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long>{
 
-    List<Room> findAllByNameLike(String name);
-    List<Room> findAllByTopic(String topic);
-    @Query(value = "select r.* from room r where r.guest_lang = ?1", nativeQuery = true)
-    List<Room> findAllByGuest_lang(Long lang);
+    Page<Room> findAllByNameLike(String name, Pageable pageable);
+    Page<Room> findAllByTopic(String topic,Pageable pageable);
+    @Query(value = "select * from room r where r.guest_lang = ?1", nativeQuery = true)
+    Page<Room> findAllByGuest_lang(Long lang,Pageable pageable);
+    @Query(value = "select * from room r where r.guest_lang = ?2 and r.topic LIKE %?1%", nativeQuery = true)
+    Page<Room> findAllByTopicAndGuest_lang(String topic,Long lang,Pageable pageable);
 }
