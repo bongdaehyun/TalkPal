@@ -22,5 +22,8 @@
   "search_topic" : "Topic",
   "search_name" : "Room Name",
   "search_lang" : "Lang",
-  "search_classification" :"classification"
+  "search_classification" :"classification",
+  "search_ko" : "korean",
+  "search_en" : "english",
+  "search_none" : "none"
 } 

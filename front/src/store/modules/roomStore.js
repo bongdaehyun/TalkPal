@@ -38,6 +38,14 @@ const roomStore = {
     connectWebSocket(context) {
       context.commit("CONNECT_WEB_SOCKET");
       return context.state.webSocket
+    },
+    requestSearch(context,payload){
+      //console.log(payload)
+     
+      return http.get(`/rooms/search/${payload.page}`,{params:{
+        topic:payload.topic,
+        lang:payload.lang
+      }})
     }
   },
 }

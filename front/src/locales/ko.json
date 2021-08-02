@@ -22,5 +22,8 @@
   "search_topic" : "주제",
   "search_name" : "방 제목",
   "search_lang" : "언어",
-  "search_classification" :"분류"
+  "search_classification" :"분류",
+  "search_ko" : "한국어",
+  "search_en" : "영어",
+  "search_none" : "없음"
 }
