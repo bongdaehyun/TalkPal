@@ -8,10 +8,10 @@ module.exports = {
     },
     proxy: {
       '/api/v1': {
-        target: 'https://192.168.0.2:8080'
+        target: 'https://54.180.128.85:8080'
       },
       '/groupcall': {
-        target: 'wss://192.168.0.2:8080'
+        target: 'wss://54.180.128.85:8080'
       }
     },
     historyApiFallback: true,
