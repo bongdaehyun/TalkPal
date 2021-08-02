@@ -10,9 +10,23 @@
         <Item :item="item" />
       </v-col>
     </v-row>
-    <!-- 방조건 검색을 하게 되면 무한 로딩 멈추기 -->
+    <!-- 방조건 검색시 이벤트 처리 나누기 -->
     <span v-if="!flag"> <infinite-loading @infinite="requestRooms"></infinite-loading></span>
-    
+    <span v-else> <infinite-loading @infinite="requestSearchRooms"></infinite-loading></span>
+    <v-fab-transition>
+      <v-btn
+        bottom
+        right
+        fixed
+        fab
+        dark
+        small
+        v-show="btnShow"
+        @click.prevent="$vuetify.goTo('.header')"
+      >
+      <v-icon>mdi-chevron-double-up</v-icon>
+      </v-btn>
+    </v-fab-transition>
   </v-container>
 </template>
 
@@ -21,7 +35,6 @@ import Item from "@/components/Rooms/Item";
 import Create from "@/components/Rooms/Create";
 import Search from "@/components/Rooms/Search";
 import InfiniteLoading from "vue-infinite-loading";
-import http from "@/util/http-common";
 
 export default {
   name: "Room",
@@ -31,7 +44,13 @@ export default {
       page: 1,
       rooms: [],
       ws: null,
-      flag : false
+      flag : false,
+      search:{
+        topic:"",
+        lang:"",
+        page:1,
+      },
+      btnShow :false,
     };
   },
   methods: {
@@ -72,29 +91,55 @@ export default {
       this.$log("[sendMessage] message: " + jsonMessage);
       this.ws.send(jsonMessage);
     },
-    // NOTE: 방 조건 검색 시
+    // NOTE: 방 조건 검색 시 받아오는 데이터
     setSearchData (data) {
-      
-      //검색을 하고 난뒤
-      http.get("/rooms/search", {params:{
-        condition:data.category,
-        text:data.text
-      }}).then((res)=>{
-        //console.log(res)
+      console.log("방조건 검색",data)
+      //search 데이터 초기화
+      this.search.topic=data.topic,
+      this.search.lang=data.lang
+      this.search.page=1
+
+      this.$store.dispatch("roomStore/requestSearch",this.search)
+      .then((res)=>{
+          //현재 rooms초기화
+          this.rooms.length=0
+          const data = res.data.roomResList;
+          this.rooms.push(...data)
+          this.search.page+=1
+          //조건 검색
+          this.flag=true
+      })
+    },
+    requestSearchRooms($state){
+       this.$store.dispatch("roomStore/requestSearch",this.search)
+        .then((res)=>{
         const data = res.data.roomResList;
-        let room =[]
-        room.push(...data)
-        console.log(room)
-        this.rooms=room
-        this.flag=true
-      }).catch((err)=>console.log(err))
+          if (data.length) {
+            this.search.page += 1;
+            this.rooms.push(...data)
+            $state.loaded();
+          } else {
+            $state.complete();
+          }
+      })
     }
+    ,
+     handleScroll() {
+      this.btnShow = window.scrollY > 400;
+    }
+
   },
   created() {
     // console.log(this.$store.getters["userStore/getLocale"]);
     // TODO: 언어 설정 다른 방식이 필요해보임
     this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
     this.ws = new WebSocket(this.socketUrl);
+  },
+  beforeMount() {
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  beforeDestroy() {
+    window.removeEventListener("scroll", this.handleScroll);
   },
   components: {
     Item,

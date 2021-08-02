@@ -69,7 +69,7 @@
           </v-menu>
       </div>
     </v-app-bar>
-    <v-main>
+    <v-main class="header">
       <!-- NOTE: 대화방 페이지일 때 -->
       <router-view />
     </v-main>
