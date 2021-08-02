@@ -7,11 +7,11 @@ module.exports = {
       // cert: fs.readFileSync('./cert/example.com+5.pem'),
     },
     proxy: {
-      '/api/v1': {
-        target: 'https://localhost:8080'
+      '/api/v1': { 
+        target: 'https://localhost:8080' 
       },
       '/groupcall': {
-        target: 'wss://192.168.0.2:8080'
+        target: 'wss://54.180.128.85:8080'
       }
     },
     historyApiFallback: true,
