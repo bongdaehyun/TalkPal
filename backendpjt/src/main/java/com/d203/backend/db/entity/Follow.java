@@ -13,12 +13,11 @@ import javax.persistence.*;
 @Table(name = "FOLLOW")
 public class Follow extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fromUserId")
-    private User fromUserId;
+    @JoinColumn(name = "fromuserid")
+    private User fromuserid;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "toUserId")
-    private User toUserId;
+    @JoinColumn(name = "touserid")
+    private User touserid;
 
-    boolean isAccept;
 }
