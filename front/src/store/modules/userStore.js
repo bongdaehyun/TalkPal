@@ -79,6 +79,18 @@ const userStore = {
     // NOTE: 만난 사람들 요청
     requestUserHistories(context, userId) {
       return http.get(`/history/${userId}`)
+    },
+    // NOTE: 팔로우 신청
+    addFollow(context, followInfo) {
+      return http.post(`/follow/${followInfo.fromuserid}/${followInfo.touserid}`)
+    },
+    // NOTE: 팔로우 확인
+    checkFollow(context,followInfo) {
+      return http.get(`/follow/checkFollowing/${followInfo.fromuserid}/${followInfo.touserid}`)
+    },
+    //NOTE: 팔로우 헤제
+    deleteFollow(context, followInfo) {
+      return http.delete(`/follow/${followInfo.fromuserid}/${followInfo.touserid}`)
     }
   },
   getters: {
