@@ -155,15 +155,15 @@ export default {
         hostId: item.hostId,
       };
       console.log(message);
-      // this.sendMessage(message);
+      this.sendMessage(message);
     },
     onJoinAnswer(msg) {
       this.$log("getJoinAnswer");
 
-      if (msg.answer === false) {
+      if (!msg.answer) {
         // NOTE: 입장 거절 시 거절되었다는 안내문 메세지만 출력
         alert("denied request");
-      } else if (msg.answer === true) {
+      } else if (msg.answer) {
         // NOTE: 입장 수락 시 방 입장 요청 및 화면 이동
         // let message = {
         //   id: "joinRoom",
@@ -171,6 +171,7 @@ export default {
         //   uuid: msg.uuid,
         // };
         // this.sendMessage(message);
+        this.$log("answer : true");
         this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
       }
     },
