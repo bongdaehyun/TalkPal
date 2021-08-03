@@ -22,4 +22,6 @@ public interface RoomRepository extends JpaRepository<Room, Long>{
     Page<Room> findAllByGuest_lang(Long lang,Pageable pageable);
     @Query(value = "select * from room r where r.guest_lang = ?2 and r.topic LIKE %?1%", nativeQuery = true)
     Page<Room> findAllByTopicAndGuest_lang(String topic,Long lang,Pageable pageable);
+
+    Room findByUuid(String uuid);
 }
