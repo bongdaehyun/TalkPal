@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name: "Login",
   data() {
@@ -40,8 +38,10 @@ export default {
           password: this.password,
         })
         .then((res) => {
-          // TODO Toast 구현
-          alert("로그인 성공");
+          this.$store.dispatch("onSnackbar", {
+            text: "로그인 성공",
+            color: "success",
+          });
 
           // 인증 Token
           let accessToken = res.data.accessToken;

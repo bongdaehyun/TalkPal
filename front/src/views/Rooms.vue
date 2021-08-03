@@ -186,9 +186,16 @@ export default {
 
       if (answer === "false") {
         // NOTE: 입장 거절 시 거절되었다는 안내문 메세지만 출력
-        alert("denied request");
+        this.$store.dispatch("onSnackbar", {
+          text: "입장 요청이 거부 됐습니다.",
+          color: "red darken-1",
+        });
       } else if (answer === "true") {
         // NOTE: 입장 수락 시 방 입장 요청 및 화면 이동
+        this.$store.dispatch("onSnackbar", {
+          text: "입장 요청이 수락 됐습니다.",
+          color: "success",
+        });
         this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
       }
     },
