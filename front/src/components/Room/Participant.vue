@@ -1,13 +1,10 @@
 <template>
-  <div>
-    <video
-      ref="video"
-      controls="false"
-      autoplay="true"
-      width="100%"
-      height="100%"
-    ></video>
-  </div>
+  <video
+    ref="video"
+    controls="false"
+    autoplay="true"
+    :width="videoWidth"
+  ></video>
 </template>
 
 <script>
@@ -25,7 +22,14 @@ export default {
     ws: {
       type: WebSocket,
     },
+    videoHeight: {
+      type: Number,
+    },
+    videoWidth: {
+      type: Number,
+    },
   },
+
   methods: {
     offerToReceiveVideo(error, offerSdp, wp) {
       if (error) return console.error("sdp offer error");

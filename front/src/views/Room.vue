@@ -1,27 +1,41 @@
 <template>
   <div>
-    <v-container fluid>
-      <div class="row" v-if="participants">
+    <v-container fluid class="pa-0">
+      <v-row style="height: 95vh">
         <!-- NOTE: 화상 구역 -->
         <div
-          style="background-color: green"
-          class="col-9"
-          v-for="participant in participants"
-          :key="participant.userId"
+          class="pa-0"
+          :class="[showGuide ? 'col-9' : 'col-12']"
+          style="width: 100%; height: 100%"
         >
-          <Participant
-            :ref="`participant-${participant.userId}`"
-            :userId="participant.userId"
-            :ws="ws"
-          />
+          <ResizeDetector observe-width observe-height @resize="onResize" />
+          <v-card
+            class="d-flex justify-center align-center"
+            :class="[isRow ? `flex-row` : `flex-column`]"
+            outlined
+            style="background-color: black; height: 100%"
+          >
+            <div v-for="participant in participants" :key="participant.userId">
+              <Participant
+                :ref="`participant-${participant.userId}`"
+                :userId="participant.userId"
+                :ws="ws"
+                :videoWidth="videoWidth"
+                :videoHeight="videoHeight"
+              />
+            </div>
+          </v-card>
         </div>
         <!-- NOTE:가이드 & 기타 버튼 구역 -->
-        <div class="col-3" style="background-color: red"></div>
-      </div>
+        <div
+          :class="{ 'col-3': showGuide }"
+          style="background-color: red"
+        ></div>
+      </v-row>
     </v-container>
     <v-bottom-navigation app>
-      <v-btn @click="leaveRoom">
-        <v-icon>mdi-location-exit</v-icon>
+      <v-btn @click="toggleGuide">
+        <v-icon>가이드</v-icon>
       </v-btn>
     </v-bottom-navigation>
   </div>
@@ -30,6 +44,7 @@
 <script>
 import kurentoUtils from "kurento-utils";
 import Participant from "@/components/Room/Participant.vue";
+import ResizeDetector from "vue-resize-detector";
 import _ from "lodash";
 
 export default {
@@ -37,17 +52,48 @@ export default {
   data() {
     return {
       socketUrl: process.env.VUE_APP_SOCKET_URL,
-      // socketUrl: "wss://192.168.0.2:8080/groupcall",
       UUID: this.$route.params.UUID,
       userId: this.$store.getters["userStore/getUserId"],
       participants: [],
       participantComponents: [],
       ws: null,
+      showGuide: false,
+      innerHeight: window.innerHeight,
+      innerWidth: window.innerWidth,
+      isRow: true,
+      videoWidth: null,
+      videoHeight: null,
     };
+  },
+  computed: {
+    windowHeight() {
+      return `${window.innerHeight}px`;
+    },
+    windowWidth() {
+      return `${window.innerWidth}px`;
+    },
   },
   // TODO: leaveroom 메세지 보낼 때 hostUserId
   // TODO: Host가 방 나갈 때 방 삭제 API도 호출
   methods: {
+    toggleGuide() {
+      this.showGuide = !this.showGuide;
+    },
+    handleResize() {
+      this.innerHeight = window.innerHeight;
+    },
+    onResize(width, height) {
+      if (width * 3 >= height * 4) {
+        this.isRow = true;
+        this.videoWidth = width / 2;
+        this.videoHeight = height;
+      } else {
+        this.isRow = false;
+        this.videoWidth = width;
+        this.videoHeight = height / 2;
+      }
+      console.log(this.videoWidth, this.videoHeight);
+    },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
         this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
@@ -149,6 +195,7 @@ export default {
       const userInfo = { userId: this.userId, ...res.data };
       // NOTE: 참가자 추가
       this.participants.push(userInfo);
+      this.participants.push({ userId: this.userId + 1, ...res.data });
 
       // NOTE: this.$nextTick - UI 작업이 끝나고 다음 작업을 실행함.
       this.$nextTick(() => {
@@ -229,11 +276,16 @@ export default {
       this.$destroy();
     },
   },
+  mounted() {
+    window.addEventListener("resize", this.handleResize);
+  },
   created() {
     this.connect();
+    this.$store.dispatch("roomStore/enterRoom");
   },
   beforeDestroy() {
     this.$log("Room Destory");
+    this.$store.dispatch("roomStore/exitRoom");
     this.sendMessage({
       id: "leaveRoom",
     });
@@ -242,6 +294,7 @@ export default {
   },
   components: {
     Participant,
+    ResizeDetector,
   },
 };
 </script>
