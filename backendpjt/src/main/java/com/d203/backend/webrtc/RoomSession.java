@@ -70,6 +70,15 @@ public class RoomSession implements Closeable {
     public void leave(UserSession user) throws IOException {
         log.debug("PARTICIPANT {}: Leaving room {}", user.getUserId(), this.uuid);
         this.removeParticipant(user.getUserId());
+
+        final JsonObject leaveGuset = new JsonObject();
+        leaveGuset.addProperty("id", "leaveGuest");
+        try{
+            user.sendMessage(leaveGuset);
+        } catch (final Exception e) {
+            log.debug((e.getMessage()));
+        }
+
         user.close();
     }
 
