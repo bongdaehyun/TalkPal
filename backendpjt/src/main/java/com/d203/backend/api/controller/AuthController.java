@@ -75,7 +75,7 @@ public class AuthController {
 		try{
 			User user=userService.getUserByEamil(email);
 			authService.sendVerificationMail(user);
-			System.out.println("sendmail --- Success");
+			System.out.println("sendmail d--- Success");
 			return new ResponseEntity<String>("성공",HttpStatus.OK);
 		}catch (Exception e){
 			return new ResponseEntity<String>("오류", HttpStatus.BAD_REQUEST);
