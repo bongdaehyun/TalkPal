@@ -131,8 +131,6 @@ export default {
     handleScroll() {
       this.btnShow = window.scrollY > 400;
     },
-<<<<<<< Updated upstream
-=======
     connect() {
       this.ws = new WebSocket(this.socketUrl);
       this.ws.onmessage = (message) => {
@@ -146,7 +144,7 @@ export default {
           default:
             this.$error("Unrecognized message", parsedMessage);
         }
-      }
+      };
     },
     onEnterRoom(item) {
       // TODO: 입장 요청 하겠냐는 메세지 추가하기
@@ -156,27 +154,26 @@ export default {
         requestUserId: this.$store.getters["userStore/getUserId"],
         hostId: item.hostId,
       };
-      this.sendMessage(message);
+      console.log(message);
+      // this.sendMessage(message);
     },
     onJoinAnswer(msg) {
       this.$log("getJoinAnswer");
 
-      if (!msg.answer) {
+      if (msg.answer === false) {
         // NOTE: 입장 거절 시 거절되었다는 안내문 메세지만 출력
-        console.log("denied request");
-      }
-      else {
+        alert("denied request");
+      } else if (msg.answer === true) {
         // NOTE: 입장 수락 시 방 입장 요청 및 화면 이동
-        let message = {
-          id: "joinRoom",
-          userId: this.$store.getters["userStore/getUserId"],
-          uuid: msg.uuid,
-        };
-        this.sendMessage(message);
+        // let message = {
+        //   id: "joinRoom",
+        //   userId: this.$store.getters["userStore/getUserId"],
+        //   uuid: msg.uuid,
+        // };
+        // this.sendMessage(message);
         this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
       }
-    }
->>>>>>> Stashed changes
+    },
   },
   created() {
     // console.log(this.$store.getters["userStore/getLocale"]);

@@ -1,10 +1,14 @@
 <template>
-  <video
-    ref="video"
-    controls="false"
-    autoplay="true"
-    :width="videoWidth"
-  ></video>
+  <div>
+    <h1>{{ userId }}</h1>
+    <video
+      muted
+      ref="video"
+      controls="false"
+      autoplay="true"
+      :width="videoWidth"
+    ></video>
+  </div>
 </template>
 
 <script>

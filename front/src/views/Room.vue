@@ -13,7 +13,7 @@
             class="d-flex justify-center align-center"
             :class="[isRow ? `flex-row` : `flex-column`]"
             outlined
-            style="background-color: black; height: 100%"
+            style="background-color: white; height: 100%"
           >
             <div v-for="participant in participants" :key="participant.userId">
               <Participant
@@ -131,12 +131,12 @@ export default {
 
       this.$log("getJoinQuestion");
 
-      let message = { 
+      let message = {
         id: "joinResponse",
         requestUserId: request.requestUserId,
         uuid: request.uuid,
         answer: check,
-      }
+      };
 
       this.sendMessage(message);
     },
@@ -178,7 +178,7 @@ export default {
         senderId
       );
 
-      const userInfo = { userId: senderId, ...res.data };
+      const userInfo = { userId: Number(senderId), ...res.data };
       this.participants.push(userInfo);
 
       this.$nextTick(() => {
@@ -222,7 +222,6 @@ export default {
       const userInfo = { userId: this.userId, ...res.data };
       // NOTE: 참가자 추가
       this.participants.push(userInfo);
-      this.participants.push({ userId: this.userId + 1, ...res.data });
 
       // NOTE: this.$nextTick - UI 작업이 끝나고 다음 작업을 실행함.
       this.$nextTick(() => {
@@ -270,6 +269,7 @@ export default {
         hostId: this.hostId,
       };
       this.sendMessage(message);
+      this.exitRoom();
     },
     leaveHost() {
       this.$log("leaveHost");
@@ -281,8 +281,6 @@ export default {
         })
         .then((res) => {
           console.log(res);
-          // 방 나가기
-          this.exitRoom();
         });
     },
     leaveGuest() {
