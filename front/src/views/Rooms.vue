@@ -3,7 +3,7 @@
     <!-- 방 생성 -->
     <Create @onCreateRoom="onCreateRoom" :ws="ws" />
     <!-- 방 조건 검색 -->
-    <Search @setSearchData="setSearchData"/>
+    <Search @setSearchData="setSearchData" />
     <!-- 방 목록 -->
     <v-row>
       <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
@@ -11,8 +11,12 @@
       </v-col>
     </v-row>
     <!-- 방조건 검색시 이벤트 처리 나누기 -->
-    <span v-if="!flag"> <infinite-loading @infinite="requestRooms"></infinite-loading></span>
-    <span v-else> <infinite-loading @infinite="requestSearchRooms"></infinite-loading></span>
+    <span v-if="!flag">
+      <infinite-loading @infinite="requestRooms"></infinite-loading
+    ></span>
+    <span v-else>
+      <infinite-loading @infinite="requestSearchRooms"></infinite-loading
+    ></span>
     <v-fab-transition>
       <v-btn
         bottom
@@ -24,7 +28,7 @@
         v-show="btnShow"
         @click.prevent="$vuetify.goTo('.header')"
       >
-      <v-icon>mdi-chevron-double-up</v-icon>
+        <v-icon>mdi-chevron-double-up</v-icon>
       </v-btn>
     </v-fab-transition>
   </v-container>
@@ -44,13 +48,13 @@ export default {
       page: 1,
       rooms: [],
       ws: null,
-      flag : false,
-      search:{
-        topic:"",
-        lang:"",
-        page:1,
+      flag: false,
+      search: {
+        topic: "",
+        lang: "",
+        page: 1,
       },
-      btnShow :false,
+      btnShow: false,
     };
   },
   methods: {
@@ -92,42 +96,41 @@ export default {
       this.ws.send(jsonMessage);
     },
     // NOTE: 방 조건 검색 시 받아오는 데이터
-    setSearchData (data) {
-      console.log("방조건 검색",data)
+    setSearchData(data) {
+      console.log("방조건 검색", data);
       //search 데이터 초기화
-      this.search.topic=data.topic,
-      this.search.lang=data.lang
-      this.search.page=1
+      (this.search.topic = data.topic), (this.search.lang = data.lang);
+      this.search.page = 1;
 
-      this.$store.dispatch("roomStore/requestSearch",this.search)
-      .then((res)=>{
+      this.$store
+        .dispatch("roomStore/requestSearch", this.search)
+        .then((res) => {
           //현재 rooms초기화
-          this.rooms.length=0
+          this.rooms.length = 0;
           const data = res.data.roomResList;
-          this.rooms.push(...data)
-          this.search.page+=1
+          this.rooms.push(...data);
+          this.search.page += 1;
           //조건 검색
-          this.flag=true
-      })
+          this.flag = true;
+        });
     },
-    requestSearchRooms($state){
-       this.$store.dispatch("roomStore/requestSearch",this.search)
-        .then((res)=>{
-        const data = res.data.roomResList;
+    requestSearchRooms($state) {
+      this.$store
+        .dispatch("roomStore/requestSearch", this.search)
+        .then((res) => {
+          const data = res.data.roomResList;
           if (data.length) {
             this.search.page += 1;
-            this.rooms.push(...data)
+            this.rooms.push(...data);
             $state.loaded();
           } else {
             $state.complete();
           }
-      })
-    }
-    ,
-     handleScroll() {
+        });
+    },
+    handleScroll() {
       this.btnShow = window.scrollY > 400;
-    }
-
+    },
   },
   created() {
     // console.log(this.$store.getters["userStore/getLocale"]);
