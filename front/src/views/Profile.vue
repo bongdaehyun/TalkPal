@@ -9,16 +9,43 @@
       <v-col>
         <h1>{{ user.nickname }}</h1>
         <h3>평균 평점</h3>
+<<<<<<< Updated upstream
+=======
+        
+      
+
+
+>>>>>>> Stashed changes
 
         <div v-if="isMyProfile">
           <button v-if="isFollow" v-on:click="addFollow">팔로우 추가</button>
           <button v-else v-on:click="delFollow">팔로우 제거</button>
         </div>
       </v-col>
-      <v-col> 팔로워</v-col>
+    
 
+    
+      <v-col>
+
+      <!-- <ModalView v-if="isModalViewed" @close="isModalViewed = false">
+      <Content msg="Hello Vue in CodeSandbox!" />
+      </ModalView> -->
+    <v-dialog
+      v-model="dialog"
+      max-width="300px"
+      scrollable
+    >
+      <card-dialog
+      @submit="show"
+      @hide="hide"
+      />
+    </v-dialog>
+    
+      <button @click="show"> 팔로워</button>
+    </v-col>
       <v-col> 팔로우</v-col>
 
+  
       <v-col>
         <h3>SNS</h3>
         <h3>자기소개</h3>
@@ -66,12 +93,19 @@
 <script>
 import ReviewSlide from "../components/Profile/ReviewSlide.vue";
 import HistorySlide from "../components/Profile/HistorySlide.vue";
-
+import CardDialog from "../components/Profile/FollowingModal.vue";
+//import Content from "../components/Profile/Follow/followitems.vue";
+ 
 export default {
   name: "Profile",
   data() {
     return {
+<<<<<<< Updated upstream
       isFollow: true,
+=======
+      dialog:false,
+      isFollow : true,
+>>>>>>> Stashed changes
       overlay: false,
       userId: this.$route.params.userId,
       user: null,
@@ -114,9 +148,21 @@ export default {
   },
 
   methods: {
+<<<<<<< Updated upstream
     // NOTE : 팔로우 체크
     checkFollow() {
       console.log("팔로우 체크 실행");
+=======
+  show() {
+      this.dialog = true
+  },
+  hide() {
+      this.dialog = false
+  },
+  // NOTE : 팔로우 체크
+  checkFollow(){
+     console.log("팔로우 체크 실행")
+>>>>>>> Stashed changes
 
       let url = "userStore/checkFollow";
       let followInfo = {
@@ -222,8 +268,10 @@ export default {
     this.checkFollow();
   },
   components: {
+    //Content,
+    CardDialog,
     ReviewSlide,
-    HistorySlide,
+    HistorySlide
   },
 };
 </script>

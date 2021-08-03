@@ -93,6 +93,10 @@ const userStore = {
     //NOTE: 팔로우 헤제
     deleteFollow(context, followInfo) {
       return http.delete(`/follow/${followInfo.fromuserid}/${followInfo.touserid}`)
+    },
+    // NOTE: 팔로워 목록 가져오기
+    listFollower(context, followInfo) {
+      return http.get(`/follow/er/${followInfo.userid}/${followInfo.pageno}`)
     }
   },
   getters: {
