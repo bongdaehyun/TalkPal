@@ -1,6 +1,6 @@
 
 <template>
-<v-col
+<!-- <v-col
     ref="notification-list"
     class="list"
     @scroll="handleNotificationListScroll"
@@ -12,8 +12,15 @@
       nick : {{ notification.user_nickname }}
       user_email:  {{ notification.user_id }}
     </li>
-  </v-col> 
-  
+  </v-col>  -->
+  <v-row>
+    <v-col>
+      <p>{{item.user_nickname}}</p>
+    </v-col>
+    <v-btn>
+      팔로우 해제
+    </v-btn>
+  </v-row>
 </template>
 
 <script>
@@ -32,17 +39,17 @@ export default {
       }
     },
     created() {
-    console.log( this.$route.params.userId)
-    let url = "userStore/listFollower"
-    let followInfo ={
-       userid : this.userid,
-       pageno : this.pageno
-      }
-      this.$store.dispatch(url,followInfo)
-      .then((res) => {
-        console.log(res.data.followList)
-         this.notifications = res.data.followList;
-       })
+    // console.log( this.$route.params.userId)
+    // let url = "userStore/listFollower"
+    // let followInfo ={
+    //    userid : this.userid,
+    //    pageno : this.pageno
+    //   }
+    //   this.$store.dispatch(url,followInfo)
+    //   .then((res) => {
+    //     console.log(res.data.followList)
+    //      this.notifications = res.data.followList;
+    //    })
     },
 
   methods: {

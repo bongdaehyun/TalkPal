@@ -18,23 +18,26 @@
 
     
       <v-col>
+        <!-- NOTE: 팔로워 목록 -->
       <!-- <ModalView v-if="isModalViewed" @close="isModalViewed = false">
       <Content msg="Hello Vue in CodeSandbox!" />
       </ModalView> -->
-    <v-dialog
-      v-model="dialog"
-      max-width="300px"
-      scrollable
-    >
-      <card-dialog
-      @submit="show"
-      @hide="hide"
-      />
-    </v-dialog>
+      <v-dialog
+        v-model="dialog"
+        max-width="300px"
+        scrollable
+      >
+        <card-dialog
+        @submit="show"
+        @hide="hide"
+        :follow="follow"
+       
+        />
+      </v-dialog>
     
-      <button @click="show"> 팔로워</button>
-    </v-col>
-      <v-col> 팔로우</v-col>
+      <button @click="show" > 팔로워</button>
+      </v-col>
+      <v-col> <button @click="test" > 팔로우</button></v-col>
 
   
       <v-col>
@@ -91,6 +94,7 @@ export default {
   name: "Profile",
   data() {
     return {
+      follow:"follower",
 
       dialog:false,
       isFollow : true,
@@ -137,14 +141,19 @@ export default {
 
   methods: {
 
-    // NOTE : 팔로우 체크
+    // NOTE : 팔로우 다이어로그
     
-  show() {
-      this.dialog = true
-  },
-  hide() {
-      this.dialog = false
-  },
+      show() {
+          this.dialog = true
+          this.follow="follower"
+      },
+      hide() {
+          this.dialog = false
+      },
+      test(){
+        this.dialog = true
+          this.follow="following"
+      },
   // NOTE : 팔로우 체크
   checkFollow(){
      console.log("팔로우 체크 실행")

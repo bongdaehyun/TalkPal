@@ -46,7 +46,7 @@ public class FollowServiceImpl implements FollowService{
 
     @Override
     public Page<Follow> getFollowerList(User userid, int pageno) {
-        Pageable firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno-1, 10);
         return followRepository.findAllByTouserid(userid,firstPageWithTwoElements);
     }
 
