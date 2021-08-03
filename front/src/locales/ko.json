@@ -25,5 +25,7 @@
   "search_classification" :"분류",
   "search_ko" : "한국어",
   "search_en" : "영어",
-  "search_none" : "없음"
+  "search_none" : "전체",
+  "alert_nolist_01" : "존재하는 방이 없습니다.",
+  "alert_nolist_02" : "새롭게 방을 만드시거나 다른 주제 및 언어로 방을 검색해주세요!!."
 }

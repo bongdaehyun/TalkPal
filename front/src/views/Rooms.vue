@@ -5,21 +5,30 @@
     <!-- 방 조건 검색 -->
     <Search @setSearchData="setSearchData"/>
     <!-- 방 목록 -->
-    <v-row>
+    <v-row v-if="rooms.length>1">
       <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
         <Item :item="item" />
+      </v-col>
+    </v-row>
+    <v-row v-else >
+      <v-col>
+        <v-row justify="center"> <v-icon x-large  color="secondary" >mdi-close-box</v-icon></v-row>
+        <v-row justify="center"> <h1> {{ $t("alert_nolist_01") }}</h1></v-row>
+        <v-row justify="center"> <h3 >{{ $t("alert_nolist_02") }}</h3></v-row>
+        
       </v-col>
     </v-row>
     <!-- 방조건 검색시 이벤트 처리 나누기 -->
     <span v-if="!flag"> <infinite-loading @infinite="requestRooms"></infinite-loading></span>
     <span v-else> <infinite-loading @infinite="requestSearchRooms"></infinite-loading></span>
+    <!-- 맨위로 올리기 버튼 -->
     <v-fab-transition>
       <v-btn
         bottom
         right
         fixed
         fab
-        dark
+        color="secondary"
         small
         v-show="btnShow"
         @click.prevent="$vuetify.goTo('.header')"
@@ -108,6 +117,7 @@ export default {
           this.search.page+=1
           //조건 검색
           this.flag=true
+          console.log(data)
       })
     },
     requestSearchRooms($state){

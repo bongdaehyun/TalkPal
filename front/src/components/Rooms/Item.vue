@@ -3,7 +3,7 @@
     <v-img
       class="white--text align-end"
       height="200px"
-      src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+      src="@/assets/image/food.png"
     >
       <v-card-title>{{ item.name }}</v-card-title>
     </v-img>
@@ -24,6 +24,11 @@
 <script>
 export default {
   name: "item",
+  data(){
+    return {
+      name :"",
+    }
+  },
   props: {
     item: {
       type: Object,
@@ -31,9 +36,16 @@ export default {
   },
   methods: {
     goRoom() {
-      this.$router.push({ name: "Test" });
+      this.$router.push({ name: "Room", params: { UUID: this.item.uuid } });
     },
   },
+  mounted(){
+    const topic =this.item.topic
+    if(topic=="create_food"){
+        this.name="/src/assets/image/food.jpg"
+        console.log(this.name)
+    }
+  }
 };
 </script>
 
