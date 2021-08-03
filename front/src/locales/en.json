@@ -25,5 +25,7 @@
   "search_classification" :"classification",
   "search_ko" : "korean",
   "search_en" : "english",
-  "search_none" : "none"
+  "search_none" : "Total",
+  "alert_nolist_01" : "There are no existing rooms.",
+  "alert_nolist_02" : "Please create a new room or search for a room in a different subject and language."
 } 
