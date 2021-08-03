@@ -104,6 +104,8 @@ public class RoomController {
         if(lang.length()>1){
             lang=lang.substring(7,9);
             pagerooms=roomService.getSearchList(topic,lang,pageno);
+        }else if(topic.length()>1 && lang.equals("") ){
+            pagerooms=roomService.getTopicList(topic,pageno);
         }else{
             pagerooms = roomService.getRoomList(pageno);
         }
