@@ -99,14 +99,16 @@ public class RoomController {
 
     //방 조건 검색
     @GetMapping("search/{pageno}")
-    public ResponseEntity<?> ConditionSearch(String topic, String lang, @PathVariable int pageno) {
+    public ResponseEntity<?> ConditionSearch(String topic,String lang,@PathVariable int pageno){
 
-        List<Room> rooms = null;
-        Page<Room> pagerooms = null;
-        if (lang.length() > 1) {
-            lang = lang.substring(7, 9);
-            pagerooms = roomService.getSearchList(topic, lang, pageno);
-        } else {
+        List<Room> rooms=null;
+        Page<Room> pagerooms=null;
+        if(lang.length()>1){
+            lang=lang.substring(7,9);
+            pagerooms=roomService.getSearchList(topic,lang,pageno);
+        }else if(topic.length()>1 && lang.equals("") ){
+            pagerooms=roomService.getTopicList(topic,pageno);
+        }else{
             pagerooms = roomService.getRoomList(pageno);
         }
 

@@ -6,11 +6,13 @@
           md="2"
         >
           <v-select
+          
           @change="search"
           :items="topicItems | searchi18n"
           item-text="name"
           item-value="value"
-          
+          item-color="#a200e0"
+          style="color: #a200e0;"
           v-model="input.topic"
           :label="$t('create_topic')"
         ></v-select>
@@ -21,6 +23,7 @@
           md="2">
 
           <v-select
+          class="slt"
           @change="search"
           :items="LangItems | searchi18n"
           item-text="name"
@@ -93,3 +96,6 @@ export default {
     }
 }
 </script>
+<style scoped>
+
+</style>

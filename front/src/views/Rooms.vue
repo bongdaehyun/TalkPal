@@ -5,12 +5,21 @@
     <!-- 방 조건 검색 -->
     <Search @setSearchData="setSearchData" />
     <!-- 방 목록 -->
-    <v-row>
+    <v-row v-if="rooms.length>1">
       <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
         <Item :item="item" @onEnterRoom="onEnterRoom" />
       </v-col>
     </v-row>
+    <v-row v-else >
+      <v-col>
+        <v-row justify="center"> <v-icon x-large  color="secondary" >mdi-close-box</v-icon></v-row>
+        <v-row justify="center"> <h1> {{ $t("alert_nolist_01") }}</h1></v-row>
+        <v-row justify="center"> <h3 >{{ $t("alert_nolist_02") }}</h3></v-row>
+        
+      </v-col>
+    </v-row>
     <!-- 방조건 검색시 이벤트 처리 나누기 -->
+
     <span v-if="!flag">
       <infinite-loading @infinite="requestRooms"></infinite-loading
     ></span>
@@ -23,7 +32,7 @@
         right
         fixed
         fab
-        dark
+        color="secondary"
         small
         v-show="btnShow"
         @click.prevent="$vuetify.goTo('.header')"
@@ -111,8 +120,11 @@ export default {
           this.rooms.push(...data);
           this.search.page += 1;
           //조건 검색
-          this.flag = true;
-        });
+
+          this.flag=true
+          console.log(data)
+      })
+
     },
     requestSearchRooms($state) {
       this.$store
@@ -171,6 +183,7 @@ export default {
         //   uuid: msg.uuid,
         // };
         // this.sendMessage(message);
+        this.$log("answer : true");
         this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
       }
     },
