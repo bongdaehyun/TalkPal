@@ -9,12 +9,11 @@
       <v-col>
         <h1>{{ user.nickname }}</h1>
         <h3>평균 평점</h3>
-        
 
-      <div v-if="isMyProfile">
-        <button v-if="isFollow" v-on:click="addFollow"> 팔로우 추가</button>
-        <button v-else v-on:click="delFollow">팔로우 제거</button>
-    </div>
+        <div v-if="isMyProfile">
+          <button v-if="isFollow" v-on:click="addFollow">팔로우 추가</button>
+          <button v-else v-on:click="delFollow">팔로우 제거</button>
+        </div>
       </v-col>
       <v-col> 팔로워</v-col>
 
@@ -72,7 +71,7 @@ export default {
   name: "Profile",
   data() {
     return {
-      isFollow : true,
+      isFollow: true,
       overlay: false,
       userId: this.$route.params.userId,
       user: null,
@@ -92,7 +91,6 @@ export default {
         url: "requestReceivedReviews",
         isEnd: false,
       },
-      
     };
   },
   computed: {
@@ -106,66 +104,59 @@ export default {
           return true;
       }
     },
-    isMyProfile(){
-      if(this.userId == this.$store.state.userStore.userId)
-      {
+    isMyProfile() {
+      if (this.userId == this.$store.state.userStore.userId) {
         return false;
-      }
-      else{
+      } else {
         return true;
       }
-    }
+    },
   },
 
   methods: {
-  // NOTE : 팔로우 체크
-  checkFollow(){
-     console.log("팔로우 체크 실행")
+    // NOTE : 팔로우 체크
+    checkFollow() {
+      console.log("팔로우 체크 실행");
 
-    let url = "userStore/checkFollow"
-    let followInfo ={
-        fromuserid : this.$store.state.userStore.userId,
-        touserid : this.userId
-      }
-   
-    this.$store
-      .dispatch(url,followInfo)
-      .then( (res) => {
+      let url = "userStore/checkFollow";
+      let followInfo = {
+        fromuserid: this.$store.state.userStore.userId,
+        touserid: this.userId,
+      };
+
+      this.$store.dispatch(url, followInfo).then((res) => {
         this.isFollow = res.data;
-        console.log(res.data)
-       })
-  },
-  // NOTE: 팔로우 제거
-  delFollow(){
-    let url = "userStore/deleteFollow" 
-    let followInfo ={
-        fromuserid : this.$store.state.userStore.userId,
-        touserid : this.userId
-      }
-    this.$store
-      .dispatch(url,followInfo)
-      .then(() => {
-         alert("팔로우 제거 성공")
-         this.$router.go();
-      })
-     
-  },
-  // NOTE: 팔로우 추가
-    addFollow(){
-     console.log(this.userId);
-     console.log(this.$store.state.userStore.userId); 
-     let url = "userStore/addFollow"    
-     let followInfo ={
-        fromuserid : this.$store.state.userStore.userId,
-        touserid : this.userId
-      }
-      this.$store
-      .dispatch(url,followInfo)
-      .then(() =>{ 
-        alert("팔로우 성공")
+        console.log(res.data);
+      });
+    },
+    // NOTE: 팔로우 제거
+    delFollow() {
+      let url = "userStore/deleteFollow";
+      let followInfo = {
+        fromuserid: this.$store.state.userStore.userId,
+        touserid: this.userId,
+      };
+      this.$store.dispatch(url, followInfo).then(() => {
+        alert("팔로우 제거 성공");
         this.$router.go();
-      })
-      .catch((err) => {
+      });
+    },
+    // NOTE: 팔로우 추가
+    addFollow() {
+      console.log(this.userId);
+      console.log(this.$store.state.userStore.userId);
+      let url = "userStore/addFollow";
+      let followInfo = {
+        fromuserid: this.$store.state.userStore.userId,
+        touserid: this.userId,
+      };
+      this.$store
+        .dispatch(url, followInfo)
+        .then(() => {
+          alert("팔로우 성공");
+          this.$router.go();
+        })
+        .catch((err) => {
           console.log("이미 요청한 팔로우");
         });
     },

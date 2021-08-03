@@ -8,7 +8,7 @@ module.exports = {
     },
     proxy: {
       '/api/v1': {
-        target: 'https://192.168.0.2:8080'
+        target: 'https://localhost:8080'
       }
     },
     historyApiFallback: true,
