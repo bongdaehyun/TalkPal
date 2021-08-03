@@ -7,7 +7,7 @@
     <!-- 방 목록 -->
     <v-row>
       <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
-        <Item :item="item" />
+        <Item :item="item" @onEnterRoom="onEnterRoom" />
       </v-col>
     </v-row>
     <!-- 방조건 검색시 이벤트 처리 나누기 -->
@@ -131,12 +131,58 @@ export default {
     handleScroll() {
       this.btnShow = window.scrollY > 400;
     },
+<<<<<<< Updated upstream
+=======
+    connect() {
+      this.ws = new WebSocket(this.socketUrl);
+      this.ws.onmessage = (message) => {
+        let parsedMessage = JSON.parse(message.data);
+        this.$info(`[parsedMessage] : ${parsedMessage}`);
+        switch (parsedMessage.id) {
+          case "joinAnswer":
+            // NOTE: 방 입장 요청 수락/거절 여부
+            this.onJoinAnswer(parsedMessage);
+            break;
+          default:
+            this.$error("Unrecognized message", parsedMessage);
+        }
+      }
+    },
+    onEnterRoom(item) {
+      // TODO: 입장 요청 하겠냐는 메세지 추가하기
+      let message = {
+        id: "joinRequest",
+        uuid: item.uuid,
+        requestUserId: this.$store.getters["userStore/getUserId"],
+        hostId: item.hostId,
+      };
+      this.sendMessage(message);
+    },
+    onJoinAnswer(msg) {
+      this.$log("getJoinAnswer");
+
+      if (!msg.answer) {
+        // NOTE: 입장 거절 시 거절되었다는 안내문 메세지만 출력
+        console.log("denied request");
+      }
+      else {
+        // NOTE: 입장 수락 시 방 입장 요청 및 화면 이동
+        let message = {
+          id: "joinRoom",
+          userId: this.$store.getters["userStore/getUserId"],
+          uuid: msg.uuid,
+        };
+        this.sendMessage(message);
+        this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
+      }
+    }
+>>>>>>> Stashed changes
   },
   created() {
     // console.log(this.$store.getters["userStore/getLocale"]);
     // TODO: 언어 설정 다른 방식이 필요해보임
     this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
-    this.ws = new WebSocket(this.socketUrl);
+    this.connect();
   },
   beforeMount() {
     window.addEventListener("scroll", this.handleScroll);

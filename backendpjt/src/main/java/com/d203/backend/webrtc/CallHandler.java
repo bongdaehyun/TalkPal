@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import org.kurento.client.IceCandidate;
+import org.kurento.client.KurentoClient;
+import org.kurento.client.MediaPipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,10 @@ public class CallHandler extends TextWebSocketHandler {
     @Autowired
     private UserManager userManager;
 
+    // TTTTTTTTTTTTEEEEEEEEEEEEEEEEEEEEESSSSSSSSSSTTTTTTTTTTTTTT
+    @Autowired
+    private KurentoClient kurento;
+
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         final JsonObject jsonMessage = gson.fromJson(message.getPayload(), JsonObject.class);
@@ -47,7 +53,7 @@ public class CallHandler extends TextWebSocketHandler {
                 joinRequest(jsonMessage, session);
                 break;
             case "joinResponse":
-                joinResponse(jsonMessage, session);
+                joinResponse(jsonMessage);
                 break;
             case "joinRoom":
                 joinRoom(jsonMessage, session);
@@ -93,6 +99,7 @@ public class CallHandler extends TextWebSocketHandler {
     }
 
     private void joinRequest(JsonObject params, WebSocketSession session) throws IOException {
+        log.info("********joinRequest*********");
         // 호스트에게 현재 입장 요청한 클라이언트 userId 전송
         final String uuid = params.get("uuid").getAsString();
         final String requestUserId = params.get("requestUserId").getAsString(); // 제이슨객체 수정 (id)
@@ -106,20 +113,28 @@ public class CallHandler extends TextWebSocketHandler {
 
         UserSession hostSession = userManager.getByUserId(hostId);
 
+        log.info("joinRequest = uuid : {}, requestUserId : {}, hostId : {}", uuid, requestUserId, hostId);
+        log.info("hostSession.getSession() : {}", hostSession.getSession());
+
+        // 여기서 입장 요청자의 세션정보 등록 (uuid, pipeline은 없어서 임시 보류 => 유저세션 생성이 안됨)
+        UserSession requestUser = new UserSession(requestUserId, "tmp", session, kurento.createMediaPipeline());
+        userManager.register(requestUser);
+
+        log.info("requestSession.getSession : {}", requestUser.getSession());
+
         synchronized (hostSession) {
             hostSession.sendMessage(requestMsg);
         }
-
-        // 여기서 입장 요청자의 세션정보 등록 (uuid, pipeline은 없어서 임시 보류)
-        UserSession requestUser = new UserSession("tmp", null, session, null);
-        userManager.register(requestUser);
     }
 
-    private void joinResponse(JsonObject params, WebSocketSession session) throws IOException {
+    private void joinResponse(JsonObject params) throws IOException {
+        log.info("********joinResponse*********");
         // 입장 요청한 클라이언트에게 수락/거절여부 + uuid 전송
         final String requestUserId = params.get("requestUserId").getAsString();
         final String uuid = params.get("uuid").getAsString();
         final String answer = params.get("answer").getAsString();
+
+        log.info("requestUserId : {}, uuid : {}, answer : {}", requestUserId, uuid, answer);
 
         final JsonObject responseMsg = new JsonObject();
         responseMsg.addProperty("id", "joinAnswer");
@@ -127,14 +142,16 @@ public class CallHandler extends TextWebSocketHandler {
         responseMsg.addProperty("answer", answer);
 
         UserSession requestSession = userManager.getByUserId(requestUserId);
+        userManager.removeBySession(requestSession.getSession());
+        log.info("requestSession remove Success");
 
         synchronized (requestSession) {
             requestSession.sendMessage(responseMsg);
         }
-        userManager.removeBySession(requestSession.getSession());
     }
 
     private void joinRoom(JsonObject params, WebSocketSession session) throws IOException {
+        log.info("********joinRoom*********");
         final String uuid = params.get("uuid").getAsString();
         final String userId = params.get("userId").getAsString();
         log.info("PARTICIPANT {}: trying to join room {}", userId, uuid);
@@ -147,7 +164,7 @@ public class CallHandler extends TextWebSocketHandler {
     private void leaveRoom(UserSession user, String hostId) throws IOException {
         final RoomSession roomSession = roomManager.getRoom(user.getUuid());
 
-        if (user.getUserId().equals(hostId)) { // 타입 체크
+        if (user.getUserId().equals(hostId)) {
             for (UserSession participant : roomSession.getParticipants()) {
                 roomSession.deleteRoom(participant, hostId);
             }

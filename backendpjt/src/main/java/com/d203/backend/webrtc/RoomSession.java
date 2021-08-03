@@ -62,7 +62,7 @@ public class RoomSession implements Closeable {
         } catch (final IOException e) {
             log.debug(e.getMessage());
         }
-
+        // removeParticipant의 cancelVideoFrom..
         participants.remove(user.getUserId());
         user.close();
     }

@@ -31,7 +31,8 @@ export default {
   },
   methods: {
     goRoom() {
-      this.$router.push({ name: "Room", params: { UUID: this.item.uuid } });
+      this.$emit("onEnterRoom", this.item);
+      // this.$router.push({ name: "Room", params: { UUID: this.item.uuid } });
     },
   },
 };

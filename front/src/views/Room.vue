@@ -124,6 +124,22 @@ export default {
     startVideo(video) {
       video.play();
     },
+    onJoinQuestion(request) {
+      // NOTE: 다른 유저의 입장 요청 (uuid, requestUserId, hostId)
+      // TODO: 요청 수락/거절 띄워서 입력 받기 (임시로 check 사용)
+      let check = true;
+
+      this.$log("getJoinQuestion");
+
+      let message = { 
+        id: "joinResponse",
+        requestUserId: request.requestUserId,
+        uuid: request.uuid,
+        answer: check,
+      }
+
+      this.sendMessage(message);
+    },
     onNewParticipant(request) {
       this.$log(request);
       this.receiveVideo(request.userId);
@@ -235,6 +251,8 @@ export default {
             );
           }
         );
+        // NOTE: 신규 참가자에게 기존 참가자들 비디오 표시
+        msg.data.forEach(this.receiveVideo);
       });
     },
     join() {
@@ -285,6 +303,9 @@ export default {
         console.log(parsedMessage);
         // this.$info(`[parsedMessage] : ${parsedMessage}`);
         switch (parsedMessage.id) {
+          case "joinQuestion":
+            this.onJoinQuestion(parsedMessage);
+            break;
           case "existingParticipants":
             this.onExistingParticipants(parsedMessage);
             break;
