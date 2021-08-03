@@ -127,7 +127,7 @@ export default {
     onJoinQuestion(request) {
       // NOTE: 다른 유저의 입장 요청 (uuid, requestUserId, hostId)
       // TODO: 요청 수락/거절 띄워서 입력 받기 (임시로 check 사용)
-      let check = true;
+      let answer = confirm("입장 요청이 들어왔습니다. 수락하시겠습니가?");
 
       this.$log("getJoinQuestion");
 
@@ -135,7 +135,7 @@ export default {
         id: "joinResponse",
         requestUserId: request.requestUserId,
         uuid: request.uuid,
-        answer: check,
+        answer: answer,
       };
 
       this.sendMessage(message);
@@ -312,9 +312,6 @@ export default {
         console.log(parsedMessage);
         // this.$info(`[parsedMessage] : ${parsedMessage}`);
         switch (parsedMessage.id) {
-          case "joinQuestion":
-            this.onJoinQuestion(parsedMessage);
-            break;
           case "existingParticipants":
             this.onExistingParticipants(parsedMessage);
             break;
@@ -327,13 +324,18 @@ export default {
           case "receiveVideoAnswer":
             this.receiveVideoResponse(parsedMessage);
             break;
-          //  Host 가 나갈 때, 방 삭제 API 호출 필요
+          // NOTE: Host 가 나갈 때, 방 삭제 API 호출 필요
           case "leaveHost":
             this.leaveHost();
             break;
-          // Host 가 나갈 때, Guest 강제 퇴실 혹은 Guest 가 혼자 나갈 때,
+          // NOTE: Host 가 나갈 때, Guest 강제 퇴실
+          // NOTE: Guest 가 혼자 나갈 때
           case "leaveGuest":
             this.leaveGuest();
+            break;
+          // NOTE: 방 입장 요청들어왔을 때
+          case "joinQuestion":
+            this.onJoinQuestion(parsedMessage);
             break;
           case "iceCandidate":
             this.participantComponents[

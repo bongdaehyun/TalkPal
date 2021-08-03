@@ -24,10 +24,10 @@
 <script>
 export default {
   name: "item",
-  data(){
+  data() {
     return {
-      name :"",
-    }
+      name: "",
+    };
   },
   props: {
     item: {
@@ -36,16 +36,17 @@ export default {
   },
   methods: {
     goRoom() {
-      this.$router.push({ name: "Room", params: { UUID: this.item.uuid } });
+      this.$emit("onEnterRoom", this.item);
+      // this.$router.push({ name: "Room", params: { UUID: this.item.uuid } });
     },
   },
-  mounted(){
-    const topic =this.item.topic
-    if(topic=="create_food"){
-        this.name="/src/assets/image/food.jpg"
-        console.log(this.name)
+  mounted() {
+    const topic = this.item.topic;
+    if (topic == "create_food") {
+      this.name = "/src/assets/image/food.jpg";
+      console.log(this.name);
     }
-  }
+  },
 };
 </script>
 
