@@ -31,12 +31,7 @@ export default {
   },
   methods: {
     goRoom() {
-<<<<<<< Updated upstream
-      this.$emit("onEnterRoom", this.item);
-      // this.$router.push({ name: "Room", params: { UUID: this.item.uuid } });
-=======
       this.$router.push({ name: "Room", params: { UUID: this.item.uuid } });
->>>>>>> Stashed changes
     },
   },
 };

@@ -9,24 +9,15 @@
       <v-col>
         <h1>{{ user.nickname }}</h1>
         <h3>평균 평점</h3>
-<<<<<<< Updated upstream
-=======
-        
-      
-
-
->>>>>>> Stashed changes
 
         <div v-if="isMyProfile">
           <button v-if="isFollow" v-on:click="addFollow">팔로우 추가</button>
           <button v-else v-on:click="delFollow">팔로우 제거</button>
         </div>
       </v-col>
-    
 
     
       <v-col>
-
       <!-- <ModalView v-if="isModalViewed" @close="isModalViewed = false">
       <Content msg="Hello Vue in CodeSandbox!" />
       </ModalView> -->
@@ -100,12 +91,9 @@ export default {
   name: "Profile",
   data() {
     return {
-<<<<<<< Updated upstream
-      isFollow: true,
-=======
+
       dialog:false,
       isFollow : true,
->>>>>>> Stashed changes
       overlay: false,
       userId: this.$route.params.userId,
       user: null,
@@ -148,11 +136,9 @@ export default {
   },
 
   methods: {
-<<<<<<< Updated upstream
+
     // NOTE : 팔로우 체크
-    checkFollow() {
-      console.log("팔로우 체크 실행");
-=======
+    
   show() {
       this.dialog = true
   },
@@ -162,7 +148,7 @@ export default {
   // NOTE : 팔로우 체크
   checkFollow(){
      console.log("팔로우 체크 실행")
->>>>>>> Stashed changes
+
 
       let url = "userStore/checkFollow";
       let followInfo = {
