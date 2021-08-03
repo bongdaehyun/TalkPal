@@ -15,29 +15,30 @@ import lombok.ToString;
 @ToString
 @ApiModel("RoomResponse")
 public class RoomRes {
+    @ApiModelProperty(name = "roomId")
+    Long roomId;
 
-
-    @ApiModelProperty(name="hostId")
+    @ApiModelProperty(name = "hostId")
     Long hostId;
 
-    @ApiModelProperty(name="host_lang")
+    @ApiModelProperty(name = "host_lang")
     String host_lang;
 
-    @ApiModelProperty(name="guest_lang")
+    @ApiModelProperty(name = "guest_lang")
     String guest_lang;
 
-    @ApiModelProperty(name="uuid")
+    @ApiModelProperty(name = "uuid")
     String uuid;
 
-    @ApiModelProperty(name="topic")
+    @ApiModelProperty(name = "topic")
     String topic;
 
-    @ApiModelProperty(name="name")
+    @ApiModelProperty(name = "name")
     String name;
 
     public static RoomRes of(Room room) {
-        RoomRes roomRes= new RoomRes();
-
+        RoomRes roomRes = new RoomRes();
+        roomRes.setRoomId(room.getId());
         roomRes.setTopic(room.getTopic());
         roomRes.setName(room.getName());
         roomRes.setHostId(room.getHostId().getId());

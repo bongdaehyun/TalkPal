@@ -50,19 +50,19 @@ public class RoomSession implements Closeable {
         return participant;
     }
 
-    public void hostLeave(UserSession user, String hostId) throws  IOException {
-        final JsonObject hostLeave = new JsonObject();
+    public void deleteRoom(UserSession user, String hostId) throws IOException {
+        final JsonObject deleteRoomMsg = new JsonObject();
         if (user.getUserId().equals(hostId))
-            hostLeave.addProperty("id", "hostLeave"); // 호스트
+            deleteRoomMsg.addProperty("id", "leaveHost"); // 호스트
         else
-            hostLeave.addProperty("id", "roomDestroyed"); // 참여자
+            deleteRoomMsg.addProperty("id", "leaveGuest"); // 참여자
 
         try {
-            user.sendMessage(hostLeave);
+            user.sendMessage(deleteRoomMsg);
         } catch (final IOException e) {
             log.debug(e.getMessage());
         }
-
+        // removeParticipant의 cancelVideoFrom..
         participants.remove(user.getUserId());
         user.close();
     }
@@ -70,6 +70,15 @@ public class RoomSession implements Closeable {
     public void leave(UserSession user) throws IOException {
         log.debug("PARTICIPANT {}: Leaving room {}", user.getUserId(), this.uuid);
         this.removeParticipant(user.getUserId());
+
+        final JsonObject leaveGuset = new JsonObject();
+        leaveGuset.addProperty("id", "leaveGuest");
+        try{
+            user.sendMessage(leaveGuset);
+        } catch (final Exception e) {
+            log.debug((e.getMessage()));
+        }
+
         user.close();
     }
 

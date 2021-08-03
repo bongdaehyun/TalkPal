@@ -13,7 +13,7 @@
             class="d-flex justify-center align-center"
             :class="[isRow ? `flex-row` : `flex-column`]"
             outlined
-            style="background-color: black; height: 100%"
+            style="background-color: white; height: 100%"
           >
             <div v-for="participant in participants" :key="participant.userId">
               <Participant
@@ -34,6 +34,9 @@
       </v-row>
     </v-container>
     <v-bottom-navigation app>
+      <v-btn @click="leaveRoom">
+        <v-icon>나가기</v-icon>
+      </v-btn>
       <v-btn @click="toggleGuide">
         <v-icon>가이드</v-icon>
       </v-btn>
@@ -51,6 +54,8 @@ export default {
   name: "Room",
   data() {
     return {
+      hostId: null,
+      roomId: null,
       socketUrl: process.env.VUE_APP_SOCKET_URL,
       UUID: this.$route.params.UUID,
       userId: this.$store.getters["userStore/getUserId"],
@@ -73,9 +78,16 @@ export default {
       return `${window.innerWidth}px`;
     },
   },
-  // TODO: leaveroom 메세지 보낼 때 hostUserId
-  // TODO: Host가 방 나갈 때 방 삭제 API도 호출
   methods: {
+    requestRoomInfo() {
+      this.$store
+        .dispatch("roomStore/reqeustRoomInfo", { uuid: this.UUID })
+        .then((res) => {
+          console.log(res);
+          this.hostId = res.data.hostId;
+          this.roomId = res.data.roomId;
+        });
+    },
     toggleGuide() {
       this.showGuide = !this.showGuide;
     },
@@ -92,7 +104,6 @@ export default {
         this.videoWidth = width;
         this.videoHeight = height / 2;
       }
-      console.log(this.videoWidth, this.videoHeight);
     },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
@@ -112,6 +123,22 @@ export default {
     },
     startVideo(video) {
       video.play();
+    },
+    onJoinQuestion(request) {
+      // NOTE: 다른 유저의 입장 요청 (uuid, requestUserId, hostId)
+      // TODO: 요청 수락/거절 띄워서 입력 받기 (임시로 check 사용)
+      let check = true;
+
+      this.$log("getJoinQuestion");
+
+      let message = {
+        id: "joinResponse",
+        requestUserId: request.requestUserId,
+        uuid: request.uuid,
+        answer: check,
+      };
+
+      this.sendMessage(message);
     },
     onNewParticipant(request) {
       this.$log(request);
@@ -151,7 +178,7 @@ export default {
         senderId
       );
 
-      const userInfo = { userId: senderId, ...res.data };
+      const userInfo = { userId: Number(senderId), ...res.data };
       this.participants.push(userInfo);
 
       this.$nextTick(() => {
@@ -195,7 +222,6 @@ export default {
       const userInfo = { userId: this.userId, ...res.data };
       // NOTE: 참가자 추가
       this.participants.push(userInfo);
-      this.participants.push({ userId: this.userId + 1, ...res.data });
 
       // NOTE: this.$nextTick - UI 작업이 끝나고 다음 작업을 실행함.
       this.$nextTick(() => {
@@ -224,14 +250,60 @@ export default {
             );
           }
         );
+        // NOTE: 신규 참가자에게 기존 참가자들 비디오 표시
+        msg.data.forEach(this.receiveVideo);
       });
+    },
+    join() {
+      let message = {
+        id: "joinRoom",
+        userId: this.userId,
+        uuid: this.UUID,
+      };
+      this.sendMessage(message);
+    },
+    leaveRoom() {
+      this.$log("leaveRoom");
+      let message = {
+        id: "leaveRoom",
+        hostId: this.hostId,
+      };
+      this.sendMessage(message);
+      this.exitRoom();
+    },
+    leaveHost() {
+      this.$log("leaveHost");
+      // 방 삭제 API 호출
+      this.$store
+        .dispatch("roomStore/requestDelete", {
+          roomId: this.roomId,
+          header: this.$store.getters["userStore/getHeader"],
+        })
+        .then((res) => {
+          console.log(res);
+        });
+    },
+    leaveGuest() {
+      this.$log("leaveGuest");
+      // 방 나가기
+      this.exitRoom();
+    },
+    exitRoom() {
+      this.$store.dispatch("roomStore/exitRoom");
+      this.ws.close();
+      this.$router.push({ name: "Rooms" });
     },
     connect() {
       this.ws = new WebSocket(this.socketUrl);
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
-        this.$info(`[parsedMessage] : ${parsedMessage}`);
+        console.log("[parsedMessage]");
+        console.log(parsedMessage);
+        // this.$info(`[parsedMessage] : ${parsedMessage}`);
         switch (parsedMessage.id) {
+          case "joinQuestion":
+            this.onJoinQuestion(parsedMessage);
+            break;
           case "existingParticipants":
             this.onExistingParticipants(parsedMessage);
             break;
@@ -243,6 +315,14 @@ export default {
             break;
           case "receiveVideoAnswer":
             this.receiveVideoResponse(parsedMessage);
+            break;
+          //  Host 가 나갈 때, 방 삭제 API 호출 필요
+          case "leaveHost":
+            this.leaveHost();
+            break;
+          // Host 가 나갈 때, Guest 강제 퇴실
+          case "leaveGuest":
+            this.leaveGuest();
             break;
           case "iceCandidate":
             this.participantComponents[
@@ -263,34 +343,18 @@ export default {
         this.join();
       };
     },
-    join() {
-      let message = {
-        id: "joinRoom",
-        userId: this.userId,
-        uuid: this.UUID,
-      };
-      this.sendMessage(message);
-    },
-    leaveRoom() {
-      this.$log("leaveRoom");
-      this.$destroy();
-    },
   },
   mounted() {
     window.addEventListener("resize", this.handleResize);
   },
   created() {
+    this.requestRoomInfo();
     this.connect();
     this.$store.dispatch("roomStore/enterRoom");
   },
   beforeDestroy() {
     this.$log("Room Destory");
-    this.$store.dispatch("roomStore/exitRoom");
-    this.sendMessage({
-      id: "leaveRoom",
-    });
-    this.ws.close();
-    this.$router.push({ name: "Rooms" });
+    this.leaveRoom();
   },
   components: {
     Participant,

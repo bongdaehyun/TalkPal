@@ -102,32 +102,32 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Page<Room> getNameList(String name,int pageno) {
-        Pageable  firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
-        Page<Room> rooms=roomRepository.findAllByNameLike("%"+name+"%",firstPageWithTwoElements);
+    public Page<Room> getNameList(String name, int pageno) {
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
+        Page<Room> rooms = roomRepository.findAllByNameLike("%" + name + "%", firstPageWithTwoElements);
         return rooms;
     }
 
     @Override
-    public Page<Room> getTopicList(String topic,int pageno) {
-        Pageable  firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
-        Page<Room> rooms=roomRepository.findAllByTopic(topic,firstPageWithTwoElements);
+    public Page<Room> getTopicList(String topic, int pageno) {
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
+        Page<Room> rooms = roomRepository.findAllByTopic(topic, firstPageWithTwoElements);
         return rooms;
     }
 
     @Override
-    public Page<Room> getLangList(String lang,int pageno) {
-        Pageable  firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
+    public Page<Room> getLangList(String lang, int pageno) {
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
         Lang findlang = langRepository.findByName(lang);
-        Page<Room> rooms=roomRepository.findAllByGuest_lang(findlang.getId(),firstPageWithTwoElements);
+        Page<Room> rooms = roomRepository.findAllByGuest_lang(findlang.getId(), firstPageWithTwoElements);
         return rooms;
     }
 
     @Override
     public Page<Room> getSearchList(String topic, String lang, int pageno) {
-        Pageable  firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
         Lang findlang = langRepository.findByName(lang);
-        Page<Room> rooms=roomRepository.findAllByTopicAndGuest_lang(topic,findlang.getId(),firstPageWithTwoElements);
+        Page<Room> rooms = roomRepository.findAllByTopicAndGuest_lang(topic, findlang.getId(), firstPageWithTwoElements);
         return rooms;
     }
 

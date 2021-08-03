@@ -15,7 +15,10 @@ import 'swiper/css/swiper.css'
 import Console from "@/util/console.js"
 // NOTE: 요소 사이즈 변화 감지 모듈
 
+
 Vue.config.productionTip = false;
+
+
 Vue.prototype.$log = Console.log
 Vue.prototype.$info = Console.info
 Vue.prototype.$warn = Console.warn
