@@ -146,9 +146,17 @@ export default {
     },
     onParticipantLeft(request) {
       this.$log("Participant " + request.userId + " left");
-      let participant = this.participants[request.userId];
-      participant.dispose();
-      delete this.participants[request.userId];
+
+      const index = _.findIndex(this.participants, (participant) => {
+        return participant.userId == request.userId;
+      });
+
+      this.participants.splice(index, 1);
+
+      let participantComponent = this.participantComponents[request.userId];
+      participantComponent.dispose();
+
+      delete this.participantComponents[request.userId];
     },
     receiveVideoResponse(result) {
       this.$log("receiveVideoResponse");
@@ -264,12 +272,14 @@ export default {
     },
     leaveRoom() {
       this.$log("leaveRoom");
+      // 1. Host가 나갈 떄 Host => leaveHost 메세지 수신, Guest => leaveGeust 메세지 수신
+      // 2. Guest가 혼자 나갈 때 => 메세지 수신 X
       let message = {
         id: "leaveRoom",
         hostId: this.hostId,
       };
       this.sendMessage(message);
-      this.exitRoom();
+      // this.exitRoom();
     },
     leaveHost() {
       this.$log("leaveHost");
@@ -281,6 +291,7 @@ export default {
         })
         .then((res) => {
           console.log(res);
+          this.exitRoom();
         });
     },
     leaveGuest() {
@@ -320,7 +331,7 @@ export default {
           case "leaveHost":
             this.leaveHost();
             break;
-          // Host 가 나갈 때, Guest 강제 퇴실
+          // Host 가 나갈 때, Guest 강제 퇴실 혹은 Guest 가 혼자 나갈 때,
           case "leaveGuest":
             this.leaveGuest();
             break;
