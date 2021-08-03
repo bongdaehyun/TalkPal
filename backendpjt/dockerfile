@@ -1,4 +1,14 @@
-FROM openjdk:8-jdk-alpine
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} app.jar
+FROM adoptopenjdk:8-jdk-hotspot AS builder
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY src src
+RUN chmod +x ./gradlew
+RUN ./gradlew bootjar
+
+FROM adoptopenjdk:8-jdk-hotspot
+COPY --from=builder build/libs/*.jar app.jar
+
+EXPOSE 8080
 ENTRYPOINT ["java","-Dkms.url=ws://54.180.128.85:8888/kurento","-jar","/app.jar"]

@@ -5,7 +5,6 @@ import Rooms from "@/views/Rooms.vue";
 import Room from "@/views/Room.vue";
 import Profile from "@/views/Profile.vue";
 import ERROR404 from '@/views/ERROR404.vue';
-
 import store from '@/store/index';
 
 
@@ -17,7 +16,6 @@ const routes = [
     name: "Main",
     component: Main,
     meta: { auth: false },
-
   },
   {
     path: "/rooms",

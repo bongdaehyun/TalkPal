@@ -1,7 +1,6 @@
 <template>
   <v-app>
-    
-    <v-app-bar app color="white" v-if="loginStatus">
+    <v-app-bar app color="white" v-if="loginStatus && !isRoom">
       <div class="d-flex align-center">
         <!-- NOTE: 네비게이션바 왼쪽 -->
         <v-img src="@/assets/image/logo.png" max-width="224px" contain></v-img>
@@ -25,52 +24,41 @@
           </span>
         </v-btn>
       </div>
-      <!-- 모바일 버전일때  -->
+      <!-- NOTE: 모바일 버전일때  -->
       <div v-else>
-        <v-menu
-            bottom
-            left
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                dark
-                icon
-                v-bind="attrs"
-                v-on="on"
-                color="secondary"
-              >
+        <v-menu bottom left>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn dark icon v-bind="attrs" v-on="on" color="secondary">
               <v-icon>mdi-widgets</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item>
+              <v-btn text>
+                <span class="mr-2" color="secondary" @click="goRooms">
+                  {{ $t("nav_rooms") }}
+                </span>
               </v-btn>
-            </template>
-
-            <v-list>
-              <v-list-item>
-                <v-btn text>
-                  <span class="mr-2" color="secondary" @click="goRooms">
-                    {{ $t("nav_rooms") }}
-                  </span>
-                </v-btn>
-              </v-list-item>
-              <v-list-item>
-                  <v-btn text>
-                  <span class="mr-2" color="secondary" @click="goProfile">
-                    {{ $t("nav_profile") }}
-                  </span>
-                </v-btn>
-              </v-list-item>
-              <v-list-item>
-                <v-btn text>
-                  <span class="mr-2" color="secondary" @click="onLogout">
-                    {{ $t("nav_logout") }}
-                  </span>
-                </v-btn>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+            </v-list-item>
+            <v-list-item>
+              <v-btn text>
+                <span class="mr-2" color="secondary" @click="goProfile">
+                  {{ $t("nav_profile") }}
+                </span>
+              </v-btn>
+            </v-list-item>
+            <v-list-item>
+              <v-btn text>
+                <span class="mr-2" color="secondary" @click="onLogout">
+                  {{ $t("nav_logout") }}
+                </span>
+              </v-btn>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
     </v-app-bar>
     <v-main class="header">
-      <!-- NOTE: 대화방 페이지일 때 -->
       <router-view />
     </v-main>
   </v-app>
@@ -80,29 +68,28 @@
 export default {
   name: "App",
   data() {
-    return {
-      isMobile: false,
-    };
-  },
-  beforeDestroy(){
-    if (typeof window === 'undefined') return
-
-    window.removeEventListener('resize', this.onResize, { passive: true })
-  },
-  mounted(){
-    this.onResize()
-
-     window.addEventListener('resize', this.onResize, { passive: true })
+    return {};
   },
   computed: {
     loginStatus() {
       return this.$store.getters["userStore/getLoginStatus"];
     },
+    isRoom() {
+      return this.$store.getters["roomStore/getIsRoom"];
+    },
+    isMobile() {
+      switch (this.$vuetify.breakpoint.name) {
+        // NOTE: 모바일에서 여백 조절
+        case "xs":
+          return true;
+        case "sm":
+          return true;
+        default:
+          return false;
+      }
+    },
   },
   methods: {
-    onResize () {
-        this.isMobile = window.innerWidth < 600
-    },
     goRooms() {
       this.$router.push({ name: "Rooms" });
     },

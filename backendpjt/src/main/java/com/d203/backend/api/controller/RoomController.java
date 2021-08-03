@@ -56,6 +56,14 @@ public class RoomController {
         return ResponseEntity.status(200).body(RoomRes.of(room));
     }
 
+    @GetMapping("/one/{room_uuid}")
+    @ApiOperation(value = "방정보 조회", notes = "방정보의 값을 조최한다.")
+    public ResponseEntity<RoomRes> getOneRoom(  @PathVariable String room_uuid) {
+
+        Room room = roomService.getRoom(room_uuid);
+        return ResponseEntity.status(200).body(RoomRes.of(room));
+    }
+
     @PutMapping("{room_id}")
     @ApiOperation(value = "방 정보 수정", notes = "방정보의 값을 받아와 수정한다.")
     @ApiResponses({

@@ -5,6 +5,7 @@ import http from '@/util/http-common'
 const getDefaultState = () => {
   return {
     webSocket: null,
+    isRoom: null,
     socketUrl: process.env.VUE_APP_SOCKET_URL,
   }
 }
@@ -20,12 +21,21 @@ const roomStore = {
     getSocketUrl(state) {
       return state.socketUrl
     },
+    getIsRoom(state) {
+      return state.isRoom
+    }
   },
 
   mutations: {
     CONNECT_WEB_SOCKET(state) {
       state.webSocket = new WebSocket(state.socketUrl)
-    }
+    },
+    ENTER_ROOM(state) {
+      state.isRoom = true
+    },
+    EXIT_ROOM(state) {
+      state.isRoom = false
+    },
   },
 
   actions: {
@@ -34,6 +44,12 @@ const roomStore = {
     },
     requestCreate(context, payload) {
       return http.post('/rooms/create', payload)
+    },
+    enterRoom(context) {
+      context.commit("ENTER_ROOM");
+    },
+    exitRoom(context) {
+      context.commit("EXIT_ROOM");
     },
     connectWebSocket(context) {
       context.commit("CONNECT_WEB_SOCKET");
@@ -47,6 +63,7 @@ const roomStore = {
         lang:payload.lang
       }})
     }
+
   },
 }
 export default roomStore

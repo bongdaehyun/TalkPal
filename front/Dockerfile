@@ -1,14 +1,15 @@
-# build stage
 FROM node:lts-alpine as build-stage
-WORKDIR /app
+WORKDIR /homepage
 COPY package*.json ./
-RUN npm install --production
-RUN npm install @vue/cli-service
+
+RUN npm install
 COPY . .
 RUN npm run build
 
-# production stage
 FROM nginx:stable-alpine as production-stage
-COPY --from=build-stage /app/dist /usr/share/nginx/html
+RUN rm /etc/nginx/conf.d/default.conf
+COPY ./nginx/homepage.conf /etc/nginx/conf.d/homepage.conf
+
+COPY --from=build-stage ./homepage/dist /usr/share/nginx/html/homepage
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
