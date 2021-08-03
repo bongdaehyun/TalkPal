@@ -16,7 +16,7 @@ public interface RoomService {
 
     Page<Room> getRoomList(int pageno);
 
-    Room getRoom(Long room_id);
+    Room getRoom(String room_uuid);
 
     //방 제목로 검색
     Page<Room> getNameList(String name,int pageno);

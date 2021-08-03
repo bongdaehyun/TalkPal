@@ -96,8 +96,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Room getRoom(Long room_id) {
-        Room room = roomRepository.findById(room_id).get();
+    public Room getRoom(String room_uuid) {
+        Room room = roomRepository.findByUuid(room_uuid);
         return room;
     }
 
