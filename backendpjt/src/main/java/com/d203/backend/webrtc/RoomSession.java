@@ -50,15 +50,15 @@ public class RoomSession implements Closeable {
         return participant;
     }
 
-    public void hostLeave(UserSession user, String hostId) throws  IOException {
-        final JsonObject hostLeave = new JsonObject();
+    public void deleteRoom(UserSession user, String hostId) throws IOException {
+        final JsonObject deleteRoomMsg = new JsonObject();
         if (user.getUserId().equals(hostId))
-            hostLeave.addProperty("id", "hostLeave"); // 호스트
+            deleteRoomMsg.addProperty("id", "leaveHost"); // 호스트
         else
-            hostLeave.addProperty("id", "roomDestroyed"); // 참여자
+            deleteRoomMsg.addProperty("id", "leaveGuest"); // 참여자
 
         try {
-            user.sendMessage(hostLeave);
+            user.sendMessage(deleteRoomMsg);
         } catch (final IOException e) {
             log.debug(e.getMessage());
         }

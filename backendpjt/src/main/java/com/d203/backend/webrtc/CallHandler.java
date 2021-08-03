@@ -149,7 +149,7 @@ public class CallHandler extends TextWebSocketHandler {
 
         if (user.getUserId().equals(hostId)) { // 타입 체크
             for (UserSession participant : roomSession.getParticipants()) {
-                roomSession.hostLeave(participant, hostId);
+                roomSession.deleteRoom(participant, hostId);
             }
             roomManager.removeRoom(roomSession);
             return;

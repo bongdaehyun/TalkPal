@@ -42,16 +42,18 @@ const userStore = {
       let body = payload
       return http.post('/auth/login', body)
     },
-    // NOTE: 로그인
+    // NOTE: 로그인 상태 설정
     login(context, accessToken) {
       const decoded = jwt_decode(accessToken);
       const userInfo = decoded.userinfo;
+
       const payload = {
         userId: Number(userInfo.id),
         nickname: userInfo.nickname,
         lang: userInfo.lang,
         accessToken
       }
+
       console.log(decoded);
       context.commit('LOGIN', payload)
     },
@@ -85,7 +87,7 @@ const userStore = {
       return http.post(`/follow/${followInfo.fromuserid}/${followInfo.touserid}`)
     },
     // NOTE: 팔로우 확인
-    checkFollow(context,followInfo) {
+    checkFollow(context, followInfo) {
       return http.get(`/follow/checkFollowing/${followInfo.fromuserid}/${followInfo.touserid}`)
     },
     //NOTE: 팔로우 헤제
@@ -108,7 +110,10 @@ const userStore = {
     },
     getNickName(state) {
       return state.nickname;
-    }
+    },
+    getHeader(state) {
+      return { Authorization: `Bearer ${state.accessToken}` }
+    },
   },
 }
 export default userStore

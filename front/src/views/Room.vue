@@ -34,6 +34,9 @@
       </v-row>
     </v-container>
     <v-bottom-navigation app>
+      <v-btn @click="leaveRoom">
+        <v-icon>나가기</v-icon>
+      </v-btn>
       <v-btn @click="toggleGuide">
         <v-icon>가이드</v-icon>
       </v-btn>
@@ -51,6 +54,8 @@ export default {
   name: "Room",
   data() {
     return {
+      hostId: null,
+      roomId: null,
       socketUrl: process.env.VUE_APP_SOCKET_URL,
       UUID: this.$route.params.UUID,
       userId: this.$store.getters["userStore/getUserId"],
@@ -73,9 +78,16 @@ export default {
       return `${window.innerWidth}px`;
     },
   },
-  // TODO: leaveroom 메세지 보낼 때 hostUserId
-  // TODO: Host가 방 나갈 때 방 삭제 API도 호출
   methods: {
+    requestRoomInfo() {
+      this.$store
+        .dispatch("roomStore/reqeustRoomInfo", { uuid: this.UUID })
+        .then((res) => {
+          console.log(res);
+          this.hostId = res.data.hostId;
+          this.roomId = res.data.roomId;
+        });
+    },
     toggleGuide() {
       this.showGuide = !this.showGuide;
     },
@@ -92,7 +104,6 @@ export default {
         this.videoWidth = width;
         this.videoHeight = height / 2;
       }
-      console.log(this.videoWidth, this.videoHeight);
     },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
@@ -226,11 +237,53 @@ export default {
         );
       });
     },
+    join() {
+      let message = {
+        id: "joinRoom",
+        userId: this.userId,
+        uuid: this.UUID,
+      };
+      this.sendMessage(message);
+    },
+    leaveRoom() {
+      this.$log("leaveRoom");
+      let message = {
+        id: "leaveRoom",
+        hostId: this.hostId,
+      };
+      this.sendMessage(message);
+    },
+    leaveHost() {
+      this.$log("leaveHost");
+      // 방 삭제 API 호출
+      this.$store
+        .dispatch("roomStore/requestDelete", {
+          roomId: this.roomId,
+          header: this.$store.getters["userStore/getHeader"],
+        })
+        .then((res) => {
+          console.log(res);
+          // 방 나가기
+          this.exitRoom();
+        });
+    },
+    leaveGuest() {
+      this.$log("leaveGuest");
+      // 방 나가기
+      this.exitRoom();
+    },
+    exitRoom() {
+      this.$store.dispatch("roomStore/exitRoom");
+      this.ws.close();
+      this.$router.push({ name: "Rooms" });
+    },
     connect() {
       this.ws = new WebSocket(this.socketUrl);
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
-        this.$info(`[parsedMessage] : ${parsedMessage}`);
+        console.log("[parsedMessage]");
+        console.log(parsedMessage);
+        // this.$info(`[parsedMessage] : ${parsedMessage}`);
         switch (parsedMessage.id) {
           case "existingParticipants":
             this.onExistingParticipants(parsedMessage);
@@ -243,6 +296,14 @@ export default {
             break;
           case "receiveVideoAnswer":
             this.receiveVideoResponse(parsedMessage);
+            break;
+          //  Host 가 나갈 때, 방 삭제 API 호출 필요
+          case "leaveHost":
+            this.leaveHost();
+            break;
+          // Host 가 나갈 때, Guest 강제 퇴실
+          case "leaveGuest":
+            this.leaveGuest();
             break;
           case "iceCandidate":
             this.participantComponents[
@@ -263,34 +324,18 @@ export default {
         this.join();
       };
     },
-    join() {
-      let message = {
-        id: "joinRoom",
-        userId: this.userId,
-        uuid: this.UUID,
-      };
-      this.sendMessage(message);
-    },
-    leaveRoom() {
-      this.$log("leaveRoom");
-      this.$destroy();
-    },
   },
   mounted() {
     window.addEventListener("resize", this.handleResize);
   },
   created() {
+    this.requestRoomInfo();
     this.connect();
     this.$store.dispatch("roomStore/enterRoom");
   },
   beforeDestroy() {
     this.$log("Room Destory");
-    this.$store.dispatch("roomStore/exitRoom");
-    this.sendMessage({
-      id: "leaveRoom",
-    });
-    this.ws.close();
-    this.$router.push({ name: "Rooms" });
+    this.leaveRoom();
   },
   components: {
     Participant,

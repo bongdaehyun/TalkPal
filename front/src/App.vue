@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app color="white" v-if="loginStatus && !isRoom">
+    <v-app-bar app color="white" v-if="loginStatus">
       <div class="d-flex align-center">
         <!-- NOTE: 네비게이션바 왼쪽 -->
         <v-img src="@/assets/image/logo.png" max-width="224px" contain></v-img>

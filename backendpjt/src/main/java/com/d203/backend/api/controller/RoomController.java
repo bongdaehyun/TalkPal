@@ -56,9 +56,9 @@ public class RoomController {
         return ResponseEntity.status(200).body(RoomRes.of(room));
     }
 
-    @GetMapping("/one/{room_uuid}")
+    @GetMapping("/get/{room_uuid}")
     @ApiOperation(value = "방정보 조회", notes = "방정보의 값을 조최한다.")
-    public ResponseEntity<RoomRes> getOneRoom(  @PathVariable String room_uuid) {
+    public ResponseEntity<RoomRes> getOneRoom(@PathVariable String room_uuid) {
 
         Room room = roomService.getRoom(room_uuid);
         return ResponseEntity.status(200).body(RoomRes.of(room));
@@ -85,6 +85,8 @@ public class RoomController {
             @PathVariable Long room_id,
             @ApiIgnore Authentication authentication
     ) {
+        System.out.println("[room_id] : " + room_id);
+        System.out.println("[authentication] : " + authentication);
         SsafyUserDetails userDetails = (SsafyUserDetails) authentication.getDetails();
         Long tokenUserId = userDetails.getUser().getId();
 
@@ -97,25 +99,24 @@ public class RoomController {
 
     //방 조건 검색
     @GetMapping("search/{pageno}")
-    public ResponseEntity<?> ConditionSearch(String topic,String lang,@PathVariable int pageno){
+    public ResponseEntity<?> ConditionSearch(String topic, String lang, @PathVariable int pageno) {
 
-        List<Room> rooms=null;
-        Page<Room> pagerooms=null;
-        if(lang.length()>1){
-            lang=lang.substring(7,9);
-            pagerooms=roomService.getSearchList(topic,lang,pageno);
-        }else{
+        List<Room> rooms = null;
+        Page<Room> pagerooms = null;
+        if (lang.length() > 1) {
+            lang = lang.substring(7, 9);
+            pagerooms = roomService.getSearchList(topic, lang, pageno);
+        } else {
             pagerooms = roomService.getRoomList(pageno);
         }
 
-        if(pagerooms!=null){
-            rooms=pagerooms.getContent();
+        if (pagerooms != null) {
+            rooms = pagerooms.getContent();
         }
-        if(rooms==null){
+        if (rooms == null) {
             return ResponseEntity.status(401).body("No Room");
-        }
-        else{
-            return  ResponseEntity.status(200).body(RoomListRes.getList(rooms));
+        } else {
+            return ResponseEntity.status(200).body(RoomListRes.getList(rooms));
         }
     }
 }

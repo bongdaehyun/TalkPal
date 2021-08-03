@@ -46,11 +46,6 @@ export default {
           // 인증 Token
           let accessToken = res.data.accessToken;
 
-          // Axios 인증 Token 설정
-          axios.defaults.headers.common[
-            "Authorization"
-          ] = `Bearer ${accessToken}`;
-
           // 로그인 상태 설정
           this.$store.dispatch("userStore/login", accessToken);
 
