@@ -18,26 +18,33 @@
 
     
       <v-col>
-        <!-- NOTE: 팔로워 목록 -->
-      <!-- <ModalView v-if="isModalViewed" @close="isModalViewed = false">
-      <Content msg="Hello Vue in CodeSandbox!" />
-      </ModalView> -->
       <v-dialog
-        v-model="dialog"
+        v-model="followerD"
         max-width="300px"
         scrollable
       >
-        <card-dialog
-        @submit="show"
-        @hide="hide"
-        :follow="follow"
-       
-        />
+         <FollowDialog
+              :isDesktop="isDesktop"
+              :follows = "followers"
+               @onCloseDialog="hide"
+            />
       </v-dialog>
     
-      <button @click="show" > 팔로워</button>
+      <button @click="showFollower" > 팔로워</button>
       </v-col>
-      <v-col> <button @click="test" > 팔로우</button></v-col>
+
+       <v-dialog
+        v-model="followingD"
+        max-width="300px"
+        scrollable
+      >
+        <FollowDialog 
+        :isDesktop="isDesktop"
+        :follows = "followings"
+         @onCloseDialog="hide"/>
+      </v-dialog>
+
+      <v-col> <button @click="showFollowing" > 팔로잉</button></v-col>
 
   
       <v-col>
@@ -87,16 +94,32 @@
 <script>
 import ReviewSlide from "../components/Profile/ReviewSlide.vue";
 import HistorySlide from "../components/Profile/HistorySlide.vue";
-import CardDialog from "../components/Profile/FollowingModal.vue";
-//import Content from "../components/Profile/Follow/followitems.vue";
+import FollowDialog from "../components/Profile/FollowDialog.vue";
+
+
  
 export default {
   name: "Profile",
   data() {
     return {
-      follow:"follower",
+      
+      followers: {
+        items: [],
+        page: 0,
+        url: "listFollower",
+        isEnd: false,
+      },
 
-      dialog:false,
+      
+      followings: {
+        items: [],
+        page: 0,
+        url: "listFollowing",
+        isEnd: false,
+      },
+
+      followingD:false,
+      followerD:false,
       isFollow : true,
       overlay: false,
       userId: this.$route.params.userId,
@@ -141,18 +164,19 @@ export default {
 
   methods: {
 
+  
     // NOTE : 팔로우 다이어로그
     
-      show() {
-          this.dialog = true
-          this.follow="follower"
+      showFollowing(){
+        this.followingD = true;
+      },
+
+      showFollower() {
+         this.followerD = true;
       },
       hide() {
-          this.dialog = false
-      },
-      test(){
-        this.dialog = true
-          this.follow="following"
+       this.followerD = false;
+       this.followingD = false;
       },
   // NOTE : 팔로우 체크
   checkFollow(){
@@ -263,8 +287,7 @@ export default {
     this.checkFollow();
   },
   components: {
-    //Content,
-    CardDialog,
+    FollowDialog,
     ReviewSlide,
     HistorySlide
   },
