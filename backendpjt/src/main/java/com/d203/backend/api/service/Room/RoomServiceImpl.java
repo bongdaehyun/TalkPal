@@ -90,9 +90,8 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Page<Room> getRoomList(int pageno) {
-
         Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
-        return roomRepository.findAll(firstPageWithTwoElements);
+        return roomRepository.findAllByUnderMax(firstPageWithTwoElements);
     }
 
     @Override
