@@ -127,7 +127,7 @@ export default {
     onJoinQuestion(request) {
       // NOTE: 다른 유저의 입장 요청 (uuid, requestUserId, hostId)
       // TODO: 요청 수락/거절 띄워서 입력 받기 (임시로 check 사용)
-      let check = true;
+      let answer = confirm("입장 요청이 들어왔습니다. 수락하시겠습니가?");
 
       this.$log("getJoinQuestion");
 
@@ -135,7 +135,7 @@ export default {
         id: "joinResponse",
         requestUserId: request.requestUserId,
         uuid: request.uuid,
-        answer: check,
+        answer: answer,
       };
 
       this.sendMessage(message);
@@ -146,9 +146,17 @@ export default {
     },
     onParticipantLeft(request) {
       this.$log("Participant " + request.userId + " left");
-      let participant = this.participants[request.userId];
-      participant.dispose();
-      delete this.participants[request.userId];
+
+      const index = _.findIndex(this.participants, (participant) => {
+        return participant.userId == request.userId;
+      });
+
+      this.participants.splice(index, 1);
+
+      let participantComponent = this.participantComponents[request.userId];
+      participantComponent.dispose();
+
+      delete this.participantComponents[request.userId];
     },
     receiveVideoResponse(result) {
       this.$log("receiveVideoResponse");
@@ -255,6 +263,12 @@ export default {
       });
     },
     join() {
+      let payload = {
+        uuid: this.UUID,
+        num: 1
+      }
+      this.$store.dispatch("roomStore/requestAddPerson", payload);
+
       let message = {
         id: "joinRoom",
         userId: this.userId,
@@ -264,12 +278,14 @@ export default {
     },
     leaveRoom() {
       this.$log("leaveRoom");
+      // 1. Host가 나갈 떄 Host => leaveHost 메세지 수신, Guest => leaveGeust 메세지 수신
+      // 2. Guest가 혼자 나갈 때 => 메세지 수신 X
       let message = {
         id: "leaveRoom",
         hostId: this.hostId,
       };
       this.sendMessage(message);
-      this.exitRoom();
+      // this.exitRoom();
     },
     leaveHost() {
       this.$log("leaveHost");
@@ -281,14 +297,26 @@ export default {
         })
         .then((res) => {
           console.log(res);
+          this.exitRoom();
         });
     },
     leaveGuest() {
+      let payload = {
+        uuid: this.UUID,
+        num: -1
+      }
+      this.$store.dispatch("roomStore/requestAddPerson", payload);
       this.$log("leaveGuest");
       // 방 나가기
       this.exitRoom();
     },
     exitRoom() {
+      const video = document.querySelector("video");
+      const mediaStream = video.srcObject;
+      const tracks = mediaStream.getTracks();
+      tracks[0].stop();
+      tracks.forEach((track) => track.stop());
+
       this.$store.dispatch("roomStore/exitRoom");
       this.ws.close();
       this.$router.push({ name: "Rooms" });
@@ -301,9 +329,6 @@ export default {
         console.log(parsedMessage);
         // this.$info(`[parsedMessage] : ${parsedMessage}`);
         switch (parsedMessage.id) {
-          case "joinQuestion":
-            this.onJoinQuestion(parsedMessage);
-            break;
           case "existingParticipants":
             this.onExistingParticipants(parsedMessage);
             break;
@@ -316,31 +341,41 @@ export default {
           case "receiveVideoAnswer":
             this.receiveVideoResponse(parsedMessage);
             break;
-          //  Host 가 나갈 때, 방 삭제 API 호출 필요
+          // NOTE: Host 가 나갈 때, 방 삭제 API 호출 필요
           case "leaveHost":
             this.leaveHost();
             break;
-          // Host 가 나갈 때, Guest 강제 퇴실
+          // NOTE: Host 가 나갈 때, Guest 강제 퇴실
+          // NOTE: Guest 가 혼자 나갈 때
           case "leaveGuest":
             this.leaveGuest();
+            break;
+          // NOTE: 방 입장 요청들어왔을 때
+          case "joinQuestion":
+            this.onJoinQuestion(parsedMessage);
             break;
           case "iceCandidate":
             this.participantComponents[
               parsedMessage.userId
             ].rtcPeer.addIceCandidate(parsedMessage.candidate, (error) => {
               if (error) {
-                this.$error("Error adding candidate: " + error);
+                this.$error("Error adding candidate: ");
+                this.$error(error);
                 return;
               }
             });
             break;
           default:
-            this.$error("Unrecognized message", parsedMessage);
+            this.$error("Unrecognized message");
+            this.$error(parsedMessage);
         }
       };
       this.ws.onopen = () => {
         this.$log(this.ws);
-        this.join();
+
+        setTimeout(() => {
+          this.join();
+        }, 500);
       };
     },
   },

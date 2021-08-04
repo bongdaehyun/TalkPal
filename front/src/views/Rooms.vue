@@ -5,17 +5,22 @@
     <!-- 방 조건 검색 -->
     <Search @setSearchData="setSearchData" />
     <!-- 방 목록 -->
-    <v-row v-if="rooms.length>1">
+    <v-row v-if="rooms.length > 0">
       <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
         <Item :item="item" @onEnterRoom="onEnterRoom" />
       </v-col>
     </v-row>
-    <v-row v-else >
+    <v-row v-else>
       <v-col>
-        <v-row justify="center"> <v-icon x-large  color="secondary" >mdi-close-box</v-icon></v-row>
-        <v-row justify="center"> <h1> {{ $t("alert_nolist_01") }}</h1></v-row>
-        <v-row justify="center"> <h3 >{{ $t("alert_nolist_02") }}</h3></v-row>
-        
+        <v-row justify="center">
+          <v-icon x-large color="secondary">mdi-close-box</v-icon></v-row
+        >
+        <v-row justify="center">
+          <h1>{{ $t("alert_nolist_01") }}</h1></v-row
+        >
+        <v-row justify="center">
+          <h3>{{ $t("alert_nolist_02") }}</h3></v-row
+        >
       </v-col>
     </v-row>
     <!-- 방조건 검색시 이벤트 처리 나누기 -->
@@ -40,6 +45,9 @@
         <v-icon>mdi-chevron-double-up</v-icon>
       </v-btn>
     </v-fab-transition>
+    <v-overlay :value="loadingAnswer">
+      <v-progress-circular indeterminate size="128"></v-progress-circular>
+    </v-overlay>
   </v-container>
 </template>
 
@@ -64,6 +72,7 @@ export default {
         page: 1,
       },
       btnShow: false,
+      loadingAnswer: false,
     };
   },
   methods: {
@@ -104,6 +113,7 @@ export default {
       this.$log("[sendMessage] message: " + jsonMessage);
       this.ws.send(jsonMessage);
     },
+
     // NOTE: 방 조건 검색 시 받아오는 데이터
     setSearchData(data) {
       console.log("방조건 검색", data);
@@ -121,10 +131,9 @@ export default {
           this.search.page += 1;
           //조건 검색
 
-          this.flag=true
-          console.log(data)
-      })
-
+          this.flag = true;
+          console.log(data);
+        });
     },
     requestSearchRooms($state) {
       this.$store
@@ -159,37 +168,68 @@ export default {
       };
     },
     onEnterRoom(item) {
-      // TODO: 입장 요청 하겠냐는 메세지 추가하기
       let message = {
         id: "joinRequest",
         uuid: item.uuid,
         requestUserId: this.$store.getters["userStore/getUserId"],
         hostId: item.hostId,
       };
-      console.log(message);
+      this.$log(message);
+      this.loadingAnswer = true;
       this.sendMessage(message);
     },
     onJoinAnswer(msg) {
       this.$log("getJoinAnswer");
-
-      if (!msg.answer) {
+      this.$log(msg);
+      this.loadingAnswer = false;
+      const answer = msg.answer;
+      if (answer === "false") {
         // NOTE: 입장 거절 시 거절되었다는 안내문 메세지만 출력
-        alert("denied request");
-      } else if (msg.answer) {
-        // NOTE: 입장 수락 시 방 입장 요청 및 화면 이동
-        // let message = {
-        //   id: "joinRoom",
-        //   userId: this.$store.getters["userStore/getUserId"],
-        //   uuid: msg.uuid,
-        // };
-        // this.sendMessage(message);
-        this.$log("answer : true");
-        this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
+        this.$store.dispatch("onSnackbar", {
+          text: "입장 요청이 거부 됐습니다.",
+          color: "red darken-1",
+        });
+      } else if (answer === "true") {
+        // NOTE: 입장 수락 시 방 인원 초과 여부 확인 후 입장
+        this.$store
+          .dispatch("roomStore/requestCheckJoin", msg.uuid)
+          .then((res) => {
+            this.$log(res);
+            const flag = res.data;
+            // NOTE: join ok인거 굳이 체크 안해도 됨
+            if (flag === "join ok") {
+              // NOTE: 입장 가능
+              this.$store.dispatch("onSnackbar", {
+                text: "입장 요청이 수락 됐습니다.",
+                color: "success",
+              });
+              this.ws.close();
+              console.log("%%%%% WS CLOSE %%%%%%%%%%");
+              this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
+            }
+          })
+          .catch((res) => {
+            // NOTE: 인원 초과 메세지 출력
+            this.$store.dispatch("onSnackbar", {
+              text: "입장하려는 방의 인원이 가득 찼습니다.",
+              color: "red darken-1",
+            });
+          });
       }
     },
   },
   created() {
     // console.log(this.$store.getters["userStore/getLocale"]);
+    // TODO: Camera/MIC OFF
+    // let constraints = (window.constraints = {
+    //   audio: true,
+    //   video: true,
+    // });
+    // // console.log(navigator.mediaDevices);
+    // navigator.mediaDevices.getUserMedia(constraints).then((res) => {
+    //   console.log(res);
+    // });
+
     // TODO: 언어 설정 다른 방식이 필요해보임
     this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
     this.connect();
