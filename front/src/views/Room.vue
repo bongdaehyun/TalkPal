@@ -263,6 +263,12 @@ export default {
       });
     },
     join() {
+      let payload = {
+        uuid: this.UUID,
+        num: 1
+      }
+      this.$store.dispatch("roomStore/requestAddPerson", payload);
+
       let message = {
         id: "joinRoom",
         userId: this.userId,
@@ -295,6 +301,11 @@ export default {
         });
     },
     leaveGuest() {
+      let payload = {
+        uuid: this.UUID,
+        num: -1
+      }
+      this.$store.dispatch("roomStore/requestAddPerson", payload);
       this.$log("leaveGuest");
       // 방 나가기
       this.exitRoom();

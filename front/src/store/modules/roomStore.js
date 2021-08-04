@@ -74,7 +74,18 @@ const roomStore = {
       context.commit("CONNECT_WEB_SOCKET");
       return context.state.webSocket
     },
-
+    requestCheckJoin(context, uuid) {
+      return http.get(`/rooms/check/${uuid}`);
+    },
+    requestAddPerson(context, payload) {
+      // return http.put(`/roos/cal/${payload.uuid}`, {
+      //   num: payload.num
+      // })
+      return http({
+        method: "PUT",
+        url: `/rooms/cal/${payload.uuid}?num=${payload.num}`
+      })
+    }
   },
 }
 export default roomStore

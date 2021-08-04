@@ -168,7 +168,6 @@ export default {
       };
     },
     onEnterRoom(item) {
-      // TODO: 입장 요청 하겠냐는 메세지 추가하기
       let message = {
         id: "joinRequest",
         uuid: item.uuid,
@@ -184,7 +183,6 @@ export default {
       this.$log(msg);
       this.loadingAnswer = false;
       const answer = msg.answer;
-
       if (answer === "false") {
         // NOTE: 입장 거절 시 거절되었다는 안내문 메세지만 출력
         this.$store.dispatch("onSnackbar", {
@@ -192,14 +190,31 @@ export default {
           color: "red darken-1",
         });
       } else if (answer === "true") {
-        // NOTE: 입장 수락 시 방 입장 요청 및 화면 이동
-        this.$store.dispatch("onSnackbar", {
-          text: "입장 요청이 수락 됐습니다.",
-          color: "success",
-        });
-        this.ws.close();
-        console.log("%%%%% WS CLOSE %%%%%%%%%%");
-        this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
+        // NOTE: 입장 수락 시 방 인원 초과 여부 확인 후 입장
+        this.$store
+          .dispatch("roomStore/requestCheckJoin", msg.uuid)
+          .then((res) => {
+            this.$log(res);
+            const flag = res.data;
+            // NOTE: join ok인거 굳이 체크 안해도 됨
+            if (flag === "join ok") {
+              // NOTE: 입장 가능
+              this.$store.dispatch("onSnackbar", {
+                text: "입장 요청이 수락 됐습니다.",
+                color: "success",
+              });
+              this.ws.close();
+              console.log("%%%%% WS CLOSE %%%%%%%%%%");
+              this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
+            }
+          })
+          .catch((res) => {
+            // NOTE: 인원 초과 메세지 출력
+            this.$store.dispatch("onSnackbar", {
+              text: "입장하려는 방의 인원이 가득 찼습니다.",
+              color: "red darken-1",
+            });
+          });
       }
     },
   },
