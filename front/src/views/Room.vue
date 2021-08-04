@@ -300,6 +300,12 @@ export default {
       this.exitRoom();
     },
     exitRoom() {
+      const video = document.querySelector("video");
+      const mediaStream = video.srcObject;
+      const tracks = mediaStream.getTracks();
+      tracks[0].stop();
+      tracks.forEach((track) => track.stop());
+
       this.$store.dispatch("roomStore/exitRoom");
       this.ws.close();
       this.$router.push({ name: "Rooms" });
@@ -342,18 +348,23 @@ export default {
               parsedMessage.userId
             ].rtcPeer.addIceCandidate(parsedMessage.candidate, (error) => {
               if (error) {
-                this.$error("Error adding candidate: " + error);
+                this.$error("Error adding candidate: ");
+                this.$error(error);
                 return;
               }
             });
             break;
           default:
-            this.$error("Unrecognized message", parsedMessage);
+            this.$error("Unrecognized message");
+            this.$error(parsedMessage);
         }
       };
       this.ws.onopen = () => {
         this.$log(this.ws);
-        this.join();
+
+        setTimeout(() => {
+          this.join();
+        }, 500);
       };
     },
   },

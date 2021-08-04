@@ -113,6 +113,7 @@ export default {
       this.$log("[sendMessage] message: " + jsonMessage);
       this.ws.send(jsonMessage);
     },
+
     // NOTE: 방 조건 검색 시 받아오는 데이터
     setSearchData(data) {
       console.log("방조건 검색", data);
@@ -196,12 +197,24 @@ export default {
           text: "입장 요청이 수락 됐습니다.",
           color: "success",
         });
+        this.ws.close();
+        console.log("%%%%% WS CLOSE %%%%%%%%%%");
         this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
       }
     },
   },
   created() {
     // console.log(this.$store.getters["userStore/getLocale"]);
+    // TODO: Camera/MIC OFF
+    // let constraints = (window.constraints = {
+    //   audio: true,
+    //   video: true,
+    // });
+    // // console.log(navigator.mediaDevices);
+    // navigator.mediaDevices.getUserMedia(constraints).then((res) => {
+    //   console.log(res);
+    // });
+
     // TODO: 언어 설정 다른 방식이 필요해보임
     this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
     this.connect();
