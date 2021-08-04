@@ -62,7 +62,7 @@ public class FollowController {
     }
 
     //팔로우 목록 가져오기
-    @GetMapping("ow/{userId}/{pageno}")
+    @GetMapping("/ing/{userId}/{pageno}")
     @ApiOperation(value = "팔로우 목록 ", notes = "팔로우 목록 ")
     public ResponseEntity<FollowListRes> getFollowList(@PathVariable Long userId , @PathVariable int pageno)
     {

@@ -15,10 +15,38 @@
           <button v-else v-on:click="delFollow">팔로우 제거</button>
         </div>
       </v-col>
-      <v-col> 팔로워</v-col>
 
-      <v-col> 팔로우</v-col>
+    
+      <v-col>
+      <v-dialog
+        v-model="followerD"
+        max-width="300px"
+        scrollable
+      >
+         <FollowDialog
+              :isDesktop="isDesktop"
+              :follows = "followers"
+               @onCloseDialog="hide"
+            />
+      </v-dialog>
+    
+      <button @click="showFollower" > 팔로워</button>
+      </v-col>
 
+       <v-dialog
+        v-model="followingD"
+        max-width="300px"
+        scrollable
+      >
+        <FollowDialog 
+        :isDesktop="isDesktop"
+        :follows = "followings"
+         @onCloseDialog="hide"/>
+      </v-dialog>
+
+      <v-col> <button @click="showFollowing" > 팔로잉</button></v-col>
+
+  
       <v-col>
         <h3>SNS</h3>
         <h3>자기소개</h3>
@@ -66,12 +94,33 @@
 <script>
 import ReviewSlide from "../components/Profile/ReviewSlide.vue";
 import HistorySlide from "../components/Profile/HistorySlide.vue";
+import FollowDialog from "../components/Profile/FollowDialog.vue";
 
+
+ 
 export default {
   name: "Profile",
   data() {
     return {
-      isFollow: true,
+      
+      followers: {
+        items: [],
+        page: 0,
+        url: "listFollower",
+        isEnd: false,
+      },
+
+      
+      followings: {
+        items: [],
+        page: 0,
+        url: "listFollowing",
+        isEnd: false,
+      },
+
+      followingD:false,
+      followerD:false,
+      isFollow : true,
       overlay: false,
       userId: this.$route.params.userId,
       user: null,
@@ -114,9 +163,25 @@ export default {
   },
 
   methods: {
-    // NOTE : 팔로우 체크
-    checkFollow() {
-      console.log("팔로우 체크 실행");
+
+  
+    // NOTE : 팔로우 다이어로그
+    
+      showFollowing(){
+        this.followingD = true;
+      },
+
+      showFollower() {
+         this.followerD = true;
+      },
+      hide() {
+       this.followerD = false;
+       this.followingD = false;
+      },
+  // NOTE : 팔로우 체크
+  checkFollow(){
+     console.log("팔로우 체크 실행")
+
 
       let url = "userStore/checkFollow";
       let followInfo = {
@@ -222,8 +287,9 @@ export default {
     this.checkFollow();
   },
   components: {
+    FollowDialog,
     ReviewSlide,
-    HistorySlide,
+    HistorySlide
   },
 };
 </script>

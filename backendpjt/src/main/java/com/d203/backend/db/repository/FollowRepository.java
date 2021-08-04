@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FollowRepository extends JpaRepository<Follow,Long> {
 
-    @Query(value= "select follow.*  from follow f where follow.fromuserid = ?1 and follow.touserid=?2" ,nativeQuery = true)
+    @Query(value= "select follow.*  from follow  where follow.fromuserid = ?1 and follow.touserid=?2" ,nativeQuery = true)
     Follow isExist(User fromUserId , User toUserid);
 
     Page<Follow> findAllByTouserid(User touserid, Pageable pageable);

@@ -40,13 +40,13 @@ public class FollowServiceImpl implements FollowService{
 
     @Override
     public Page<Follow> getFollowList(User userid, int pageno) {
-        Pageable firstPageWithTwoElements = PageRequest.of(pageno-1, 5);
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
         return followRepository.findAllByFromuserid(userid,firstPageWithTwoElements);
     }
 
     @Override
     public Page<Follow> getFollowerList(User userid, int pageno) {
-        Pageable firstPageWithTwoElements = PageRequest.of(pageno-1, 5);
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno-1, 10);
         return followRepository.findAllByTouserid(userid,firstPageWithTwoElements);
     }
 
