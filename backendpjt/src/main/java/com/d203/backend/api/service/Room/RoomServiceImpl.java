@@ -102,6 +102,39 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public boolean getCheckJoin(String uuid) {
+        Room room = roomRepository.findByUuid(uuid);
+        //찾을 수 없는 방
+        if (room==null){
+            return false;
+        }
+        //최대 인원보다 현재 인원 수가 적을 경우
+        if(room.getCurnum()<room.getMaxnum()){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean doControlPeople(String uuid, Long people) {
+        Room room=roomRepository.findByUuid(uuid);
+        //찾고자 하는 방이 없을 경우
+        if(room==null){
+            return false;
+        }
+        Long curnum=room.getCurnum();
+        //현재인원에 더하거나 마이너스 한부분을 체크
+        Long newNum=curnum+people;
+        if(newNum>room.getMaxnum() ||  newNum<=0){
+            return false;
+        }
+        room.setCurnum(newNum);
+        roomRepository.save(room);
+        return true;
+    }
+
+    @Override
     public Page<Room> getNameList(String name, int pageno) {
         Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
         Page<Room> rooms = roomRepository.findAllByNameLike("%" + name + "%", firstPageWithTwoElements);
