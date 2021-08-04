@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service("followService")
-public class FollowServiceImpl implements FollowService{
+public class FollowServiceImpl implements FollowService {
 
     @Autowired
     FollowRepository followRepository;
@@ -20,8 +20,8 @@ public class FollowServiceImpl implements FollowService{
     @Override
     public boolean followRegist(User fromUserId, User toUserId) {
 
-        Follow dupcheck = followRepository.isExist(fromUserId,toUserId);
-        if(dupcheck != null) return false;
+        Follow dupcheck = followRepository.isExist(fromUserId, toUserId);
+        if (dupcheck != null) return false;
 
         Follow follow = new Follow();
         follow.setFromuserid(fromUserId);
@@ -33,27 +33,27 @@ public class FollowServiceImpl implements FollowService{
 
     @Override
     public void followDelete(User fromUserId, User toUserId) {
-        Follow follow = followRepository.isExist(fromUserId,toUserId);
+        Follow follow = followRepository.isExist(fromUserId, toUserId);
         System.out.println("Follow Del" + follow.toString());
         followRepository.delete(follow);
     }
 
     @Override
     public Page<Follow> getFollowList(User userid, int pageno) {
-        Pageable firstPageWithTwoElements = PageRequest.of(pageno-1, 20);
-        return followRepository.findAllByFromuserid(userid,firstPageWithTwoElements);
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
+        return followRepository.findAllByFromuserid(userid, firstPageWithTwoElements);
     }
 
     @Override
     public Page<Follow> getFollowerList(User userid, int pageno) {
-        Pageable firstPageWithTwoElements = PageRequest.of(pageno-1, 10);
-        return followRepository.findAllByTouserid(userid,firstPageWithTwoElements);
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 10);
+        return followRepository.findAllByTouserid(userid, firstPageWithTwoElements);
     }
 
     @Override
     public boolean checkFollowing(User myid, User toId) {
-        Follow follow = followRepository.isExist(myid,toId);
-        if(follow == null) return true;
+        Follow follow = followRepository.isExist(myid, toId);
+        if (follow == null) return true;
         else return false;
     }
 

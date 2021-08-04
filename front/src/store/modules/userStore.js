@@ -1,7 +1,5 @@
-import axios from 'axios';
 import Cookies from 'js-cookie';
 import jwt_decode from 'jwt-decode';
-
 import http from '@/util/http-common';
 
 
@@ -54,13 +52,11 @@ const userStore = {
         accessToken
       }
 
-      console.log(decoded);
       context.commit('LOGIN', payload)
     },
     // NOTE: 로그아웃
     logout(context) {
       context.commit('LOGOUT')
-      axios.defaults.headers.common['Authorization'] = undefined
     },
     // NOTE: 유저 정보 요청
     requestUserInfo(context, userId) {
@@ -78,21 +74,25 @@ const userStore = {
     requestReceivedReviews(context, payload) {
       return http.get(`/review/to/${payload.userId}/${payload.page}`)
     },
-    // NOTE: 만난 사람들 요청
+    // NOTE: 만난 사람 추가
+    addUserHistorie(context, payload) {
+      return http.post('/history/add/', payload)
+    },
+    // NOTE: 만난 사람들 목록 요청
     requestUserHistories(context, userId) {
       return http.get(`/history/${userId}`)
     },
     // NOTE: 팔로우 신청
-    addFollow(context, followInfo) {
-      return http.post(`/follow/${followInfo.fromuserid}/${followInfo.touserid}`)
+    addFollow(context, payload) {
+      return http.post(`/follow/${payload.fromuserid}/${payload.touserid}`)
+    },
+    //NOTE: 팔로우 해제
+    deleteFollow(context, payload) {
+      return http.delete(`/follow/${payload.fromuserid}/${payload.touserid}`)
     },
     // NOTE: 팔로우 확인
-    checkFollow(context, followInfo) {
-      return http.get(`/follow/checkFollowing/${followInfo.fromuserid}/${followInfo.touserid}`)
-    },
-    //NOTE: 팔로우 헤제
-    deleteFollow(context, followInfo) {
-      return http.delete(`/follow/${followInfo.fromuserid}/${followInfo.touserid}`)
+    checkFollow(context, payload) {
+      return http.get(`/follow/checkFollowing/${payload.fromuserid}/${payload.touserid}`)
     },
     // NOTE: 팔로워 목록 가져오기
     listFollower(context, payload) {

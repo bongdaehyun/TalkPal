@@ -41,6 +41,29 @@
         <v-icon>가이드</v-icon>
       </v-btn>
     </v-bottom-navigation>
+    <div class="text-center">
+      <v-dialog v-model="joinQuestionDialog" width="500">
+        <v-card>
+          <v-card-title class="text-h5 grey lighten-2">
+            입장 요청을 수락하시겠습니까?({{ timer }}초 남았습니다.)
+          </v-card-title>
+
+          <v-card-text>회원 정보</v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="questionResponse(true)">
+              예
+            </v-btn>
+            <v-btn color="primary" text @click="questionResponse(false)">
+              아니오
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
   </div>
 </template>
 
@@ -54,20 +77,26 @@ export default {
   name: "Room",
   data() {
     return {
+      // NOTE: Web RTC 관련 변수
       hostId: null,
       roomId: null,
+      userId: this.$store.getters["userStore/getUserId"],
       socketUrl: process.env.VUE_APP_SOCKET_URL,
       UUID: this.$route.params.UUID,
-      userId: this.$store.getters["userStore/getUserId"],
       participants: [],
       participantComponents: [],
       ws: null,
+      joinQuestionDialog: false, // 입장 요청 수락/거부 dialog
+      joinAnswer: null,
+
+      // NOTE: 레이아웃 관련 변수
       showGuide: false,
+      isRow: true,
       innerHeight: window.innerHeight,
       innerWidth: window.innerWidth,
-      isRow: true,
       videoWidth: null,
       videoHeight: null,
+      timer: null,
     };
   },
   computed: {
@@ -124,24 +153,71 @@ export default {
     startVideo(video) {
       video.play();
     },
+    questionResponse(response) {
+      if (response === true) {
+        this.joinAnswer = true;
+      } else if (response === false) {
+        this.joinAnswer = false;
+      }
+      this.joinQuestionDialog = false;
+    },
+
+    openQuestionDialog() {
+      this.joinQuestionDialog = true;
+      this.joinAnswer = null;
+    },
+
     onJoinQuestion(request) {
       // NOTE: 다른 유저의 입장 요청 (uuid, requestUserId, hostId)
-      // TODO: 요청 수락/거절 띄워서 입력 받기 (임시로 check 사용)
-      let answer = confirm("입장 요청이 들어왔습니다. 수락하시겠습니가?");
 
-      this.$log("getJoinQuestion");
+      // NOTE: 요청 수락/거부 Dialog OPEN
+      this.openQuestionDialog();
 
-      let message = {
-        id: "joinResponse",
-        requestUserId: request.requestUserId,
-        uuid: request.uuid,
-        answer: answer,
-      };
+      // NOTE: 요청 결과 0.1초 마다 확인
+      const responseInterval = setInterval(() => {
+        if (this.joinAnswer !== null) {
+          let message = {
+            id: "joinResponse",
+            requestUserId: request.requestUserId,
+            uuid: request.uuid,
+            answer: this.joinAnswer,
+          };
+          this.sendMessage(message);
+          this.joinAnswer = null;
+          clearInterval(responseInterval);
+          clearInterval(timerInterval);
+        }
+      }, 100);
 
-      this.sendMessage(message);
+      // NOTE: 제한시간(10초) 후 거절 강제 전송
+      this.timer = 10;
+      const timerInterval = setInterval(() => {
+        this.timer = this.timer - 1;
+        if (this.timer === 0) {
+          let message = {
+            id: "joinResponse",
+            requestUserId: request.requestUserId,
+            uuid: request.uuid,
+            answer: false,
+          };
+          this.sendMessage(message);
+          this.joinQuestionDialog = false;
+          this.joinAnswer = null;
+          clearInterval(timerInterval);
+          clearInterval(responseInterval);
+        }
+      }, 1000);
     },
     onNewParticipant(request) {
-      this.$log(request);
+      // NOTE: 새로 들어온 유저 만난 사람들에 추가
+      this.$store
+        .dispatch("userStore/addUserHistorie", {
+          fromid: this.userId,
+          toid: request.userId,
+        })
+        .then((res) => {
+          this.$log(res);
+        });
       this.receiveVideo(request.userId);
     },
     onParticipantLeft(request) {
@@ -212,6 +288,19 @@ export default {
       });
     },
     async onExistingParticipants(msg) {
+      const userIds = msg.data;
+      for (let toId of userIds) {
+        // NOTE: 기존 방에 있던 유저 만난 사람들에 추가
+        this.$store
+          .dispatch("userStore/addUserHistorie", {
+            fromid: this.userId,
+            toid: toId,
+          })
+          .then((res) => {
+            this.$log(res);
+          });
+      }
+
       const constraints = {
         audio: true,
         video: {
@@ -265,8 +354,8 @@ export default {
     join() {
       let payload = {
         uuid: this.UUID,
-        num: 1
-      }
+        num: 1,
+      };
       this.$store.dispatch("roomStore/requestAddPerson", payload);
 
       let message = {
@@ -303,8 +392,8 @@ export default {
     leaveGuest() {
       let payload = {
         uuid: this.UUID,
-        num: -1
-      }
+        num: -1,
+      };
       this.$store.dispatch("roomStore/requestAddPerson", payload);
       this.$log("leaveGuest");
       // 방 나가기

@@ -2,7 +2,7 @@
 <template>
   <v-row>
     <v-col>
-      <p>{{this.item.user_nickname}}</p>
+      <p>{{ this.item.user_nickname }}</p>
     </v-col>
   </v-row>
 </template>
@@ -14,20 +14,13 @@ export default {
       type: Object,
     },
   },
-   data() {
-      return {
-  
-      }
-    },
-    created() {
- 
-    },
+  data() {
+    return {};
+  },
+  created() {},
 
-  methods: {
-    
-  }
+  methods: {},
 };
 </script>
 <style>
-
 </style>

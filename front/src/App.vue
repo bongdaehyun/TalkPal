@@ -69,6 +69,7 @@
         :timeout="timeout"
         :color="snackbarColor"
         outlined
+        top
       >
         {{ snackbarText }}
       </v-snackbar>

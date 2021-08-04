@@ -32,31 +32,28 @@ public class FollowController {
     //팔로우
     @PostMapping("/{fromUserId}/{toUserId}")
     @ApiOperation(value = "팔로우 신청 ", notes = "팔로우 신청 from -> to")
-    public ResponseEntity<? extends BaseResponseBody> followRegist(@PathVariable Long fromUserId,@PathVariable Long toUserId)
-    {
+    public ResponseEntity<? extends BaseResponseBody> followRegist(@PathVariable Long fromUserId, @PathVariable Long toUserId) {
         User fromUser = userService.getUserByuserId(fromUserId);
         User toUser = userService.getUserByuserId(toUserId);
 
-        boolean isOk = followService.followRegist(fromUser,toUser);
+        boolean isOk = followService.followRegist(fromUser, toUser);
 
-        if(isOk)
-        {
+        if (isOk) {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
         }
 
-       return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Dup Request"));
+        return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Dup Request"));
     }
 
 
     //언팔로우
     @DeleteMapping("/{fromUserId}/{toUserId}")
     @ApiOperation(value = "팔로우 해제 ", notes = "팔로우 해제 from -> to")
-    public ResponseEntity<? extends BaseResponseBody> followDelete(@PathVariable Long fromUserId,@PathVariable Long toUserId)
-    {
+    public ResponseEntity<? extends BaseResponseBody> followDelete(@PathVariable Long fromUserId, @PathVariable Long toUserId) {
 
         User fromUser = userService.getUserByuserId(fromUserId);
         User toUser = userService.getUserByuserId(toUserId);
-        followService.followDelete(fromUser,toUser);
+        followService.followDelete(fromUser, toUser);
 
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
     }
@@ -64,24 +61,23 @@ public class FollowController {
     //팔로우 목록 가져오기
     @GetMapping("/ing/{userId}/{pageno}")
     @ApiOperation(value = "팔로우 목록 ", notes = "팔로우 목록 ")
-    public ResponseEntity<FollowListRes> getFollowList(@PathVariable Long userId , @PathVariable int pageno)
-    {
+    public ResponseEntity<FollowListRes> getFollowList(@PathVariable Long userId, @PathVariable int pageno) {
         User user = userService.getUserByuserId(userId);
-        Page<Follow> firstPage = followService.getFollowList(user,pageno);
+        Page<Follow> firstPage = followService.getFollowList(user, pageno);
         List<Follow> following = firstPage.getContent();
 
         return ResponseEntity.status(200).body(FollowListRes.getIngList(following));
     }
+
     //팔로워 목록 가져오기
     @GetMapping("er/{userId}/{pageno}")
     @ApiOperation(value = "팔로워 목록 ", notes = "팔로워 목록 ")
-    public ResponseEntity<FollowListRes> getFollowerList(@PathVariable Long userId, @PathVariable int pageno)
-    {
+    public ResponseEntity<FollowListRes> getFollowerList(@PathVariable Long userId, @PathVariable int pageno) {
 
         User user = userService.getUserByuserId(userId);
         System.out.println("ReqUser : try" + user.toString());
 
-        Page<Follow> firstPage = followService.getFollowerList(user,pageno);
+        Page<Follow> firstPage = followService.getFollowerList(user, pageno);
 
 
         List<Follow> follower = firstPage.getContent();
@@ -91,15 +87,14 @@ public class FollowController {
 
     @GetMapping("/checkFollowing/{fromuserid}/{touserid}")
     @ApiOperation(value = "팔로잉 채크하기", notes = "팔로워 목록 ")
-    public boolean checkFollowing(@PathVariable Long fromuserid, @PathVariable Long touserid)
-    {
+    public boolean checkFollowing(@PathVariable Long fromuserid, @PathVariable Long touserid) {
 
 
-        System.out.println("Chek Following : try" + fromuserid +"   " + touserid);
+        System.out.println("Chek Following : try" + fromuserid + "   " + touserid);
 
-        User  myId= userService.getUserByuserId(fromuserid);
-        User  toId= userService.getUserByuserId(touserid);
+        User myId = userService.getUserByuserId(fromuserid);
+        User toId = userService.getUserByuserId(touserid);
 
-        return followService.checkFollowing(myId,toId);
+        return followService.checkFollowing(myId, toId);
     }
 }
