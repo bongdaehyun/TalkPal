@@ -6,6 +6,7 @@ import com.d203.backend.db.entity.Room;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface RoomService {
     Room createRoom(RoomReq roomInfo);
@@ -18,6 +19,11 @@ public interface RoomService {
 
     Room getRoom(String room_uuid);
 
+    //현재인원을 체크
+    boolean getCheckJoin(String uuid);
+
+    //현재인원을 + -
+    boolean doControlPeople(String uuid,Long people);
     //방 제목로 검색
     Page<Room> getNameList(String name,int pageno);
     //방 주제로 검색
