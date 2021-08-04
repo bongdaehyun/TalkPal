@@ -11,4 +11,7 @@ import java.util.List;
 public interface UserHistoryRepository extends JpaRepository<UserHistory,Long> {
     @Query(value = "select p.* from userhistory p where p.from_user_id = ?1", nativeQuery = true)
     List<UserHistory> findAllByFrom_user_id(Long userid);
+
+    @Query(value = "select p.* from userhistory p where p.from_user_id = ?1", nativeQuery = true)
+    UserHistory findByFrom_user_id(Long userid);
 }
