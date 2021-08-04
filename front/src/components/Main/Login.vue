@@ -38,6 +38,7 @@ export default {
           password: this.password,
         })
         .then((res) => {
+          // NOTE: Toast Message 출력
           this.$store.dispatch("onSnackbar", {
             text: "로그인 성공",
             color: "success",
