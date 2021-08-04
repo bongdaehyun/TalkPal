@@ -5,7 +5,7 @@
     <!-- 방 조건 검색 -->
     <Search @setSearchData="setSearchData" />
     <!-- 방 목록 -->
-    <v-row v-if="rooms.length > 0">
+    <v-row v-if="rooms.length > 1">
       <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
         <Item :item="item" @onEnterRoom="onEnterRoom" />
       </v-col>
@@ -13,24 +13,24 @@
     <v-row v-else>
       <v-col>
         <v-row justify="center">
-          <v-icon x-large color="secondary">mdi-close-box</v-icon></v-row
-        >
+          <v-icon x-large color="secondary">mdi-close-box</v-icon>
+        </v-row>
         <v-row justify="center">
-          <h1>{{ $t("alert_nolist_01") }}</h1></v-row
-        >
+          <h1>{{ $t("alert_nolist_01") }}</h1>
+        </v-row>
         <v-row justify="center">
-          <h3>{{ $t("alert_nolist_02") }}</h3></v-row
-        >
+          <h3>{{ $t("alert_nolist_02") }}</h3>
+        </v-row>
       </v-col>
     </v-row>
     <!-- 방조건 검색시 이벤트 처리 나누기 -->
 
     <span v-if="!flag">
-      <infinite-loading @infinite="requestRooms"></infinite-loading
-    ></span>
+      <infinite-loading @infinite="requestRooms"> </infinite-loading>
+    </span>
     <span v-else>
-      <infinite-loading @infinite="requestSearchRooms"></infinite-loading
-    ></span>
+      <infinite-loading @infinite="requestSearchRooms"> </infinite-loading>
+    </span>
     <v-fab-transition>
       <v-btn
         bottom
@@ -46,7 +46,9 @@
       </v-btn>
     </v-fab-transition>
     <v-overlay :value="loadingAnswer">
-      <v-progress-circular indeterminate size="128"></v-progress-circular>
+      <v-progress-circular indeterminate size="128">
+        대기중...
+      </v-progress-circular>
     </v-overlay>
   </v-container>
 </template>
@@ -93,8 +95,7 @@ export default {
     requestRooms($state) {
       this.$store.dispatch("roomStore/requestRooms", this.page).then((res) => {
         const data = res.data.roomResList;
-        console.log(data);
-
+        this.$log(data);
         if (data.length) {
           this.rooms.push(...data);
           this.page += 1;
@@ -113,10 +114,9 @@ export default {
       this.$log("[sendMessage] message: " + jsonMessage);
       this.ws.send(jsonMessage);
     },
-
     // NOTE: 방 조건 검색 시 받아오는 데이터
     setSearchData(data) {
-      console.log("방조건 검색", data);
+      this.$log("방조건 검색", data);
       //search 데이터 초기화
       (this.search.topic = data.topic), (this.search.lang = data.lang);
       this.search.page = 1;
@@ -132,7 +132,7 @@ export default {
           //조건 검색
 
           this.flag = true;
-          console.log(data);
+          this.$log(data);
         });
     },
     requestSearchRooms($state) {
@@ -175,16 +175,23 @@ export default {
         hostId: item.hostId,
       };
       this.$log(message);
+
+      // NOTE: 입장 요청 대기 시작
       this.loadingAnswer = true;
+
+      // NOTE: 웹소켓 메세지 전송
       this.sendMessage(message);
     },
     onJoinAnswer(msg) {
       this.$log("getJoinAnswer");
       this.$log(msg);
+
+      // NOTE: 입장 응답 대기 종료
       this.loadingAnswer = false;
       const answer = msg.answer;
       if (answer === "false") {
         // NOTE: 입장 거절 시 거절되었다는 안내문 메세지만 출력
+        console.log("입장 요청 거부");
         this.$store.dispatch("onSnackbar", {
           text: "입장 요청이 거부 됐습니다.",
           color: "red darken-1",
@@ -219,26 +226,17 @@ export default {
     },
   },
   created() {
-    // console.log(this.$store.getters["userStore/getLocale"]);
-    // TODO: Camera/MIC OFF
-    // let constraints = (window.constraints = {
-    //   audio: true,
-    //   video: true,
-    // });
-    // // console.log(navigator.mediaDevices);
-    // navigator.mediaDevices.getUserMedia(constraints).then((res) => {
-    //   console.log(res);
-    // });
-
+    // this.$log(this.$store.getters["userStore/getLocale"]);
     // TODO: 언어 설정 다른 방식이 필요해보임
     this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
     this.connect();
   },
-  beforeMount() {
+  mounted() {
     window.addEventListener("scroll", this.handleScroll);
   },
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
+    clearInterval(this.progressInterval);
   },
   components: {
     Item,

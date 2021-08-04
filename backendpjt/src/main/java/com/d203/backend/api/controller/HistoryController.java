@@ -45,12 +45,12 @@ public class HistoryController {
             @ApiResponse(code = 401, message = "상대방 아이디가 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<?> addPeople(@RequestBody HistoryReq req){
+    public ResponseEntity<?> addPeople(@RequestBody HistoryReq req) {
 
-        boolean flag=historyService.addHistory(req.getFromid(), req.getToid());
-        if(flag){
+        boolean flag = historyService.addHistory(req.getFromid(), req.getToid());
+        if (flag) {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
-        }else{
+        } else {
             return ResponseEntity.status(401).body(BaseResponseBody.of(401, "No find friend ID"));
         }
     }

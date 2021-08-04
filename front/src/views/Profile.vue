@@ -1,5 +1,7 @@
 <template>
-  <v-container v-if="user && receivedReviews && giveReviews">
+  <v-container
+    v-if="user && receivedReviews && giveReviews && isFollow != null"
+  >
     <!-- NOTE: 사용자 정보 -->
     <!-- TODO: 레이아웃 생각 중... -->
     <v-row justify="center">
@@ -9,44 +11,31 @@
       <v-col>
         <h1>{{ user.nickname }}</h1>
         <h3>평균 평점</h3>
-
-        <div v-if="isMyProfile">
-          <button v-if="isFollow" v-on:click="addFollow">팔로우 추가</button>
-          <button v-else v-on:click="delFollow">팔로우 제거</button>
+        <div v-if="userId != $store.getters[`userStore/getUserId`]">
+          <button v-if="isFollow" @click="addFollow">팔로우 추가</button>
+          <button v-else @click="delFollow">팔로우 제거</button>
         </div>
       </v-col>
-
-    
       <v-col>
-      <v-dialog
-        v-model="followerD"
-        max-width="300px"
-        scrollable
-      >
-         <FollowDialog
-              :isDesktop="isDesktop"
-              :follows = "followers"
-               @onCloseDialog="hide"
-            />
-      </v-dialog>
-    
-      <button @click="showFollower" > 팔로워</button>
+        <v-dialog v-model="followerDialog" max-width="300px" scrollable>
+          <FollowDialog
+            :isDesktop="isDesktop"
+            :follows="followers"
+            @onCloseDialog="followerDialog = false"
+          />
+        </v-dialog>
+        <button @click="followerDialog = true">팔로워</button>
       </v-col>
-
-       <v-dialog
-        v-model="followingD"
-        max-width="300px"
-        scrollable
-      >
-        <FollowDialog 
-        :isDesktop="isDesktop"
-        :follows = "followings"
-         @onCloseDialog="hide"/>
-      </v-dialog>
-
-      <v-col> <button @click="showFollowing" > 팔로잉</button></v-col>
-
-  
+      <v-col>
+        <v-dialog v-model="followingDialog" max-width="300px" scrollable>
+          <FollowDialog
+            :isDesktop="isDesktop"
+            :follows="followings"
+            @onCloseDialog="followingDialog = false"
+          />
+        </v-dialog>
+        <button @click="followingDialog = true">팔로잉</button>
+      </v-col>
       <v-col>
         <h3>SNS</h3>
         <h3>자기소개</h3>
@@ -96,31 +85,25 @@ import ReviewSlide from "../components/Profile/ReviewSlide.vue";
 import HistorySlide from "../components/Profile/HistorySlide.vue";
 import FollowDialog from "../components/Profile/FollowDialog.vue";
 
-
- 
 export default {
   name: "Profile",
   data() {
     return {
-      
       followers: {
         items: [],
         page: 0,
         url: "listFollower",
         isEnd: false,
       },
-
-      
       followings: {
         items: [],
         page: 0,
         url: "listFollowing",
         isEnd: false,
       },
-
-      followingD:false,
-      followerD:false,
-      isFollow : true,
+      followingDialog: false,
+      followerDialog: false,
+      isFollow: null,
       overlay: false,
       userId: this.$route.params.userId,
       user: null,
@@ -153,81 +136,61 @@ export default {
           return true;
       }
     },
-    isMyProfile() {
-      if (this.userId == this.$store.state.userStore.userId) {
-        return false;
-      } else {
-        return true;
-      }
-    },
   },
 
   methods: {
-
-  
-    // NOTE : 팔로우 다이어로그
-    
-      showFollowing(){
-        this.followingD = true;
-      },
-
-      showFollower() {
-         this.followerD = true;
-      },
-      hide() {
-       this.followerD = false;
-       this.followingD = false;
-      },
-  // NOTE : 팔로우 체크
-  checkFollow(){
-     console.log("팔로우 체크 실행")
-
-
+    // NOTE : 팔로우 체크
+    checkFollow() {
+      // this.$log("팔로우 체크 실행");
       let url = "userStore/checkFollow";
       let followInfo = {
-        fromuserid: this.$store.state.userStore.userId,
+        fromuserid: this.$store.getters["userStore/getUserId"],
         touserid: this.userId,
       };
-
       this.$store.dispatch(url, followInfo).then((res) => {
         this.isFollow = res.data;
-        console.log(res.data);
+        // this.$log(res.data);
       });
     },
     // NOTE: 팔로우 제거
     delFollow() {
       let url = "userStore/deleteFollow";
       let followInfo = {
-        fromuserid: this.$store.state.userStore.userId,
+        fromuserid: this.$store.getters["userStore/getUserId"],
         touserid: this.userId,
       };
       this.$store.dispatch(url, followInfo).then(() => {
         alert("팔로우 제거 성공");
-        this.$router.go();
+        this.isFollow = true;
+        // TODO: 팔로워 목록 다시 불러와야함.
       });
     },
     // NOTE: 팔로우 추가
     addFollow() {
-      console.log(this.userId);
-      console.log(this.$store.state.userStore.userId);
+      // 로그인한 유저
+      // this.$log(this.$store.getters["userStore/getUserId"]);
+      // 프로필 페이지 유저
+      // this.$log(this.userId);
       let url = "userStore/addFollow";
       let followInfo = {
-        fromuserid: this.$store.state.userStore.userId,
+        fromuserid: this.$store.getters["userStore/getUserId"],
         touserid: this.userId,
       };
       this.$store
         .dispatch(url, followInfo)
         .then(() => {
           alert("팔로우 성공");
-          this.$router.go();
+          this.isFollow = false;
+          // TODO: 팔로워 목록 다시 불러와야함.
         })
         .catch((err) => {
-          console.log("이미 요청한 팔로우");
+          console.error(err);
+          this.$log("이미 요청한 팔로우");
         });
     },
     // NOTE: 응답 리뷰 목록 추가
     pushReviews(reviews, res) {
-      // console.log(res);
+      // this.$log(res);
       if (res.length) {
         reviews.items.push(...res);
         reviews.page = reviews.page + 1;
@@ -252,7 +215,7 @@ export default {
           this.pushReviews(reviews, res.data.reviewList);
         })
         .catch((err) => {
-          console.log(err);
+          this.$log(err);
         });
     },
     // NOTE: 유저 정보 요청
@@ -263,7 +226,7 @@ export default {
           this.user = res.data;
         })
         .catch((err) => {
-          console.log(err);
+          this.$log(err);
         });
     },
     // NOTE: 만난 사람들 요청
@@ -275,7 +238,7 @@ export default {
         );
         this.histories = res.data.historyList;
       } catch (error) {
-        console.log(error);
+        this.$log(error);
       }
     },
   },
@@ -289,7 +252,7 @@ export default {
   components: {
     FollowDialog,
     ReviewSlide,
-    HistorySlide
+    HistorySlide,
   },
 };
 </script>

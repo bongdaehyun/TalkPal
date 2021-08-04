@@ -6,10 +6,13 @@ import org.springframework.data.domain.Page;
 
 public interface FollowService {
     //팔로우 신청 서비스
-    boolean followRegist(User fromUserId , User toUserId);
-    void followDelete(User fromUserId , User toUserId);
-    Page<Follow> getFollowList(User userid,int pageno);
-    Page<Follow> getFollowerList(User userid,int pageno);
+    boolean followRegist(User fromUserId, User toUserId);
 
-    boolean checkFollowing(User myid,User toId);
+    void followDelete(User fromUserId, User toUserId);
+
+    Page<Follow> getFollowList(User userid, int pageno);
+
+    Page<Follow> getFollowerList(User userid, int pageno);
+
+    boolean checkFollowing(User myid, User toId);
 }
