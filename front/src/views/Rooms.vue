@@ -5,7 +5,7 @@
     <!-- 방 조건 검색 -->
     <Search @setSearchData="setSearchData" />
     <!-- 방 목록 -->
-    <v-row v-if="rooms.length > 1">
+    <v-row v-if="rooms.length > 0">
       <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
         <Item :item="item" @onEnterRoom="onEnterRoom" />
       </v-col>
