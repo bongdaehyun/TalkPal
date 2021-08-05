@@ -36,5 +36,6 @@
   "profile_follow_no": "Delete Follwer",
   "profile_history": "User History",
   "profile_receive_review": "Receive Review",
-  "profile_written_review": "Written Review"
+  "profile_written_review": "Written Review",
+  "profile_follow" : "Follow"
 }

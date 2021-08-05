@@ -28,6 +28,15 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
+	public boolean saveImgFile(Long userId, String imgFilePath) {
+		User user = userRepository.findById(userId).get();
+
+		user.setImgpath(imgFilePath);
+		userRepository.save(user);
+		return true;
+	}
+
+	@Override
 	public User createUser(UserReq userRegisterInfo) {
 		
 		User user = new User();

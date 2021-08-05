@@ -1,6 +1,9 @@
 package com.d203.backend.api.controller;
 
 import com.d203.backend.api.service.Email.EmailSenderService;
+import com.d203.backend.db.repository.UserRepository;
+import io.swagger.v3.oas.annotations.media.Content;
+import javafx.scene.canvas.GraphicsContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +23,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * 유저 관련 API 요청 처리를 위한 컨트롤러 정의.
@@ -35,6 +43,30 @@ public class UserController {
 
 	@Autowired
 	EmailSenderService emailSenderService;
+
+
+	@PutMapping(value = "/saveimg/{userId}")
+	public ResponseEntity<String> profileImg(@PathVariable Long userId,
+			     					@RequestPart("imgFile") MultipartFile imgFile ) throws IOException {
+
+
+		String basePath = System.getProperty("user.dir");;
+		String filePath = basePath+"/src/main/resources/static/"+imgFile.getOriginalFilename();
+
+		File dest= new File(filePath);
+
+
+		imgFile.transferTo(dest);//파일 생성
+		//DB에 저장
+
+		if(userService.saveImgFile(userId, filePath))
+		{
+			return ResponseEntity.status(200).body(filePath);
+		}
+
+		return ResponseEntity.status(500).body("이미지저장 실패");
+	}
+
 
 	@PostMapping()
 	@ApiOperation(value = "회원 가입", notes = "<strong>아이디와 패스워드</strong>를 통해 회원가입 한다.")

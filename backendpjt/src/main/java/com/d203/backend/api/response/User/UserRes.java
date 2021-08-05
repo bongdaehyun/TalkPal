@@ -25,6 +25,9 @@ public class UserRes{
 
 	String sns;
 	String introduction;
+	String imgPath;
+
+
 
 	public static UserRes of(User user) {
 		
@@ -34,7 +37,8 @@ public class UserRes{
 		res.setNickname(user.getNickname());
 		res.setSns(user.getSns());
 		res.setIntroduction(user.getIntroduction());
-
+		res.setImgPath(user.getImgpath());
 		return res;
+
 	}
 }
