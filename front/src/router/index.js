@@ -30,7 +30,7 @@ const routes = [
     meta: { auth: true },
   },
   {
-    path: "/profie/:userId",
+    path: "/profile/:userId",
     name: "Profile",
     component: Profile,
     meta: { auth: true },
