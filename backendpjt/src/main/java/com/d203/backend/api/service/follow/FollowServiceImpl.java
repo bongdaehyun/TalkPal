@@ -57,5 +57,17 @@ public class FollowServiceImpl implements FollowService {
         else return false;
     }
 
+    @Override
+    public Long getCountFollower(User myid) {
+        Long num= followRepository.countAllByTouserid(myid);
+        return num;
+    }
+
+    @Override
+    public Long getCountFollowing(User myid) {
+        Long num=followRepository.countAllByFromuserid(myid);
+        return num;
+    }
+
 
 }
