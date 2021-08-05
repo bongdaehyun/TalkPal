@@ -1,22 +1,24 @@
 <template>
   <div>
-    <v-container fluid class="pa-0">
-      <v-row style="height: 95vh">
+    <v-container fluid class="pa-0" style="height: 100vh">
+      <v-row style="background-color: black; height: 100%">
         <!-- NOTE: 화상 구역 -->
         <div
           class="pa-0"
-          :class="[showGuide ? 'col-6' : 'col-9']"
-          style="width: 100%; height: 100%"
+          :class="[showGuideChat ? 'col-9' : 'col-12']"
+          style="height: 100%"
         >
           <ResizeDetector observe-width observe-height @resize="onResize" />
           <v-card
             class="d-flex justify-center align-center"
             :class="[isRow ? `flex-row` : `flex-column`]"
+            style="height: 100%; background-color: black"
             outlined
-            style="background-color: white; height: 100%"
           >
             <div v-for="participant in participants" :key="participant.userId">
               <Participant
+                class="pa-6"
+                v-show="checkMobile(participant.userId)"
                 :ref="`participant-${participant.userId}`"
                 :userId="participant.userId"
                 :ws="ws"
@@ -26,99 +28,92 @@
             </div>
           </v-card>
         </div>
-        <!-- NOTE:가이드 & 기타 버튼 구역 -->
+        <!-- NOTE:가이드 & 채팅 -->
         <div
-          :class="{ 'col-3': showGuide }"
-          style="background-color: red"
-        ></div>
-        <div
-          class="col-3"
-          style="background-color: lightgray"
-          id="chat"
+          v-if="showGuideChat"
+          :class="{ ' col-3': showGuideChat }"
+          class="d-flex flex-column"
+          style="height: 100%"
         >
-          <v-text-field
-            v-model="msg"
-            placeholder="메세지를 입력하세요."
-            solo
-            @keyup.13="submitMessage"
-          ></v-text-field>
-            <div v-for="(message, index) in msgList" v-bind:key="index">
-              {{ message.sender }}  {{ message.time }}<br>
-              {{ message.content }}
-              <hr>
-            </div>
+          <Guide v-if="showGuide" :height="guideHeight" />
+          <Chat
+            v-if="showChat"
+            :items="msgList"
+            :height="chatHeight"
+            @onSubmitMessage="submitMessage"
+          />
         </div>
       </v-row>
     </v-container>
-    <v-bottom-navigation app>
-      <v-btn @click="leaveRoom">
-        <v-icon>나가기</v-icon>
-      </v-btn>
-      <v-btn @click="toggleGuide">
-        <v-icon>가이드</v-icon>
-      </v-btn>
-    </v-bottom-navigation>
-    <div class="text-center">
-      <v-dialog v-model="joinQuestionDialog" width="500">
-        <v-card>
-          <v-card-title class="text-h5 grey lighten-2">
-            입장 요청을 수락하시겠습니까?({{ timer }}초 남았습니다.)
-          </v-card-title>
-
-          <v-card-text>회원 정보</v-card-text>
-
-          <v-divider></v-divider>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="questionResponse(true)">
-              예
-            </v-btn>
-            <v-btn color="primary" text @click="questionResponse(false)">
-              아니오
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </div>
+    <Navigation
+      @onLeaveRoom="leaveRoom"
+      @onToggleChat="showChat = !showChat"
+      @onToggleGuide="showGuide = !showGuide"
+    />
+    <QuestionDialog
+      :timer="timer"
+      :joinQuestionDialog="joinQuestionDialog"
+      @onQuestionResponse="questionResponse"
+    />
   </div>
 </template>
 
 <script>
-import kurentoUtils from "kurento-utils";
+// NOTE: 컴포넌트
 import Participant from "@/components/Room/Participant.vue";
+import Chat from "@/components/Room/Chat.vue";
+import Guide from "@/components/Room/Guide.vue";
+import QuestionDialog from "@/components/Room/QuestionDialog.vue";
+import Navigation from "@/components/Room/Navigation.vue";
+
+// NOTE: MIXIN
+import WebRTCMixin from "@/mixin/WebRTCMixin.js";
+import isMobile from "@/mixin/isMobile.js";
+
+// NOTE: 외부 모듈
+import adapter from "webrtc-adapter";
 import ResizeDetector from "vue-resize-detector";
 import _ from "lodash";
 
 export default {
   name: "Room",
+  mixins: [WebRTCMixin, isMobile],
   data() {
     return {
-      // NOTE: Web RTC 관련 변수
-      hostId: null,
-      roomId: null,
-      userId: this.$store.getters["userStore/getUserId"],
-      socketUrl: process.env.VUE_APP_SOCKET_URL,
-      UUID: this.$route.params.UUID,
-      participants: [],
-      participantComponents: [],
-      ws: null,
-      joinQuestionDialog: false, // 입장 요청 수락/거부 dialog
-      joinAnswer: null,
-      msg: '',
+      // NOTE: 채팅 관련 변수
       msgList: [],
 
       // NOTE: 레이아웃 관련 변수
       showGuide: false,
+      showChat: false,
       isRow: true,
       innerHeight: window.innerHeight,
       innerWidth: window.innerWidth,
       videoWidth: null,
       videoHeight: null,
-      timer: null,
     };
   },
   computed: {
+    guideHeight() {
+      if (this.showChat) {
+        return "50%";
+      } else {
+        return "100%";
+      }
+    },
+    chatHeight() {
+      if (this.showGuide) {
+        return "50%";
+      } else {
+        return "100%";
+      }
+    },
+    showGuideChat() {
+      return this.showGuide || this.showChat;
+    },
+    videoContaierHeight() {
+      return `${window.innerHeight - 56} px`;
+    },
     windowHeight() {
       return `${window.innerHeight}px`;
     },
@@ -127,6 +122,22 @@ export default {
     },
   },
   methods: {
+    checkMobile(userId) {
+      console.log("checkMobile");
+      console.log(this.isMobile);
+      if (this.isMobile === false) {
+        return true;
+      }
+      const myUserId = this.$store.getters["userStore/getUserId"];
+      console.log(userId, myUserId);
+      console.log(userId == myUserId);
+
+      if (userId == myUserId) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     requestRoomInfo() {
       this.$store
         .dispatch("roomStore/reqeustRoomInfo", { uuid: this.UUID })
@@ -136,377 +147,19 @@ export default {
           this.roomId = res.data.roomId;
         });
     },
-    toggleGuide() {
-      this.showGuide = !this.showGuide;
-    },
     handleResize() {
       this.innerHeight = window.innerHeight;
     },
     onResize(width, height) {
       if (width * 3 >= height * 4) {
         this.isRow = true;
-        this.videoWidth = width / 2;
-        this.videoHeight = height;
+        this.videoWidth = width / 2.5;
+        this.videoHeight = height * 0.9;
       } else {
         this.isRow = false;
-        this.videoWidth = width;
-        this.videoHeight = height / 2;
+        this.videoWidth = width * 0.9;
+        this.videoHeight = height / 2.5;
       }
-    },
-    sendMessage(message) {
-      if (this.ws.readyState !== this.ws.OPEN) {
-        this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
-        return;
-      }
-      const jsonMessage = JSON.stringify(message);
-      this.$log("[sendMessage] message: " + jsonMessage);
-      this.ws.send(jsonMessage);
-    },
-    sendError(message) {
-      this.$log("[errMessage] " + message);
-      this.sendMessage({
-        id: "ERROR",
-        message: message,
-      });
-    },
-    startVideo(video) {
-      video.play();
-    },
-    questionResponse(response) {
-      if (response === true) {
-        this.joinAnswer = true;
-      } else if (response === false) {
-        this.joinAnswer = false;
-      }
-      this.joinQuestionDialog = false;
-    },
-
-    openQuestionDialog() {
-      this.joinQuestionDialog = true;
-      this.joinAnswer = null;
-    },
-
-    onJoinQuestion(request) {
-      // NOTE: 다른 유저의 입장 요청 (uuid, requestUserId, hostId)
-
-      // NOTE: 요청 수락/거부 Dialog OPEN
-      this.openQuestionDialog();
-
-      // NOTE: 요청 결과 0.1초 마다 확인
-      const responseInterval = setInterval(() => {
-        if (this.joinAnswer !== null) {
-          let message = {
-            id: "joinResponse",
-            requestUserId: request.requestUserId,
-            uuid: request.uuid,
-            answer: this.joinAnswer,
-          };
-          this.sendMessage(message);
-          this.joinAnswer = null;
-          clearInterval(responseInterval);
-          clearInterval(timerInterval);
-        }
-      }, 100);
-
-      // NOTE: 제한시간(10초) 후 거절 강제 전송
-      this.timer = 10;
-      const timerInterval = setInterval(() => {
-        this.timer = this.timer - 1;
-        if (this.timer === 0) {
-          let message = {
-            id: "joinResponse",
-            requestUserId: request.requestUserId,
-            uuid: request.uuid,
-            answer: false,
-          };
-          this.sendMessage(message);
-          this.joinQuestionDialog = false;
-          this.joinAnswer = null;
-          clearInterval(timerInterval);
-          clearInterval(responseInterval);
-        }
-      }, 1000);
-    },
-    onNewParticipant(request) {
-      // NOTE: 새로 들어온 유저 만난 사람들에 추가
-      this.$store
-        .dispatch("userStore/addUserHistorie", {
-          fromid: this.userId,
-          toid: request.userId,
-        })
-        .then((res) => {
-          this.$log(res);
-        });
-      this.receiveVideo(request.userId);
-    },
-    onParticipantLeft(request) {
-      this.$log("Participant " + request.userId + " left");
-
-      const index = _.findIndex(this.participants, (participant) => {
-        return participant.userId == request.userId;
-      });
-
-      this.participants.splice(index, 1);
-
-      let participantComponent = this.participantComponents[request.userId];
-      participantComponent.dispose();
-
-      delete this.participantComponents[request.userId];
-    },
-    receiveVideoResponse(result) {
-      this.$log("receiveVideoResponse");
-      this.$log(this.participantComponents[result.userId]);
-
-      this.participantComponents[result.userId].rtcPeer.processAnswer(
-        result.sdpAnswer,
-        (error) => {
-          if (error) return this.$error(error);
-        }
-      );
-    },
-    callResponse(message) {
-      if (message.response != "accepted") {
-        this.$log("Call not accepted by peer. Closing call");
-        stop();
-      } else {
-        this.webRtcPeer.processAnswer(message.sdpAnswer, (error) => {
-          if (error) return this.$error(error);
-        });
-      }
-    },
-    async receiveVideo(senderId) {
-      this.$log(senderId);
-      let res = await this.$store.dispatch(
-        "userStore/requestUserInfo",
-        senderId
-      );
-
-      const userInfo = { userId: Number(senderId), ...res.data };
-      this.participants.push(userInfo);
-
-      this.$nextTick(() => {
-        let participant = this.$refs[`participant-${senderId}`][0];
-        this.participantComponents[senderId] = participant;
-        let video = participant.getVideoElement();
-        let options = {
-          remoteVideo: video,
-          onicecandidate: participant.onIceCandidate.bind(participant),
-        };
-
-        participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(
-          options,
-          function (error) {
-            if (error) {
-              return this.$error(error);
-            }
-            this.generateOffer(
-              participant.offerToReceiveVideo.bind(participant)
-            );
-          }
-        );
-      });
-    },
-    async onExistingParticipants(msg) {
-      const userIds = msg.data;
-      for (let toId of userIds) {
-        // NOTE: 기존 방에 있던 유저 만난 사람들에 추가
-        this.$store
-          .dispatch("userStore/addUserHistorie", {
-            fromid: this.userId,
-            toid: toId,
-          })
-          .then((res) => {
-            this.$log(res);
-          });
-      }
-
-      const constraints = {
-        audio: true,
-        video: {
-          mandatory: {
-            maxWidth: 320,
-            maxFrameRate: 15,
-            minFrameRate: 15,
-          },
-        },
-      };
-      this.$log(this.userId + " registered in room " + this.UUID);
-      let res = await this.$store.dispatch(
-        "userStore/requestUserInfo",
-        this.userId
-      );
-      const userInfo = { userId: this.userId, ...res.data };
-      // NOTE: 참가자 추가
-      this.participants.push(userInfo);
-
-      // NOTE: this.$nextTick - UI 작업이 끝나고 다음 작업을 실행함.
-      this.$nextTick(() => {
-        // NOTE: participant 컴포넌트
-        let participant = this.$refs[`participant-${this.userId}`][0];
-
-        //  NOTE: 컴포넌트 추가
-        this.participantComponents[this.userId] = participant;
-
-        // NOTE: 비디오 엘리먼트 가져오기
-        let video = participant.getVideoElement();
-
-        let options = {
-          localVideo: video,
-          mediaConstraints: constraints,
-          onicecandidate: participant.onIceCandidate.bind(participant),
-        };
-        participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(
-          options,
-          function (error) {
-            if (error) {
-              return this.$error(error);
-            }
-            this.generateOffer(
-              participant.offerToReceiveVideo.bind(participant)
-            );
-          }
-        );
-        // NOTE: 신규 참가자에게 기존 참가자들 비디오 표시
-        msg.data.forEach(this.receiveVideo);
-      });
-    },
-    join() {
-      let payload = {
-        uuid: this.UUID,
-        num: 1,
-      };
-      this.$store.dispatch("roomStore/requestAddPerson", payload);
-
-      let message = {
-        id: "joinRoom",
-        userId: this.userId,
-        uuid: this.UUID,
-      };
-      this.sendMessage(message);
-    },
-    leaveRoom() {
-      this.$log("leaveRoom");
-      // 1. Host가 나갈 떄 Host => leaveHost 메세지 수신, Guest => leaveGeust 메세지 수신
-      // 2. Guest가 혼자 나갈 때 => 메세지 수신 X
-      let message = {
-        id: "leaveRoom",
-        hostId: this.hostId,
-      };
-      this.sendMessage(message);
-      // this.exitRoom();
-    },
-    leaveHost() {
-      this.$log("leaveHost");
-      // 방 삭제 API 호출
-      this.$store
-        .dispatch("roomStore/requestDelete", {
-          roomId: this.roomId,
-          header: this.$store.getters["userStore/getHeader"],
-        })
-        .then((res) => {
-          console.log(res);
-          this.exitRoom();
-        });
-    },
-    leaveGuest() {
-      let payload = {
-        uuid: this.UUID,
-        num: -1,
-      };
-      this.$store.dispatch("roomStore/requestAddPerson", payload);
-      this.$log("leaveGuest");
-      // 방 나가기
-      this.exitRoom();
-    },
-    exitRoom() {
-      const video = document.querySelector("video");
-      const mediaStream = video.srcObject;
-      const tracks = mediaStream.getTracks();
-      tracks[0].stop();
-      tracks.forEach((track) => track.stop());
-
-      this.$store.dispatch("roomStore/exitRoom");
-      this.ws.close();
-      this.$router.push({ name: "Rooms" });
-    },
-    submitMessage() {
-      if (this.msg.length === 0) return;
-      this.sendMessage({
-        id: 'sendChat',
-        senderId: this.userId,
-        sendMsg: this.msg,
-      })
-      this.msg = '';
-    },
-    onRecieveChat(msgInfo) {
-      this.$log(msgInfo);
-      let msg = {
-        sender: msgInfo.senderId,
-        time: msgInfo.sendTime,
-        content: msgInfo.sendMsg,
-      }
-      this.msgList.push(msg);
-    },
-    connect() {
-      this.ws = new WebSocket(this.socketUrl);
-      this.ws.onmessage = (message) => {
-        let parsedMessage = JSON.parse(message.data);
-        console.log("[parsedMessage]");
-        console.log(parsedMessage);
-        // this.$info(`[parsedMessage] : ${parsedMessage}`);
-        switch (parsedMessage.id) {
-          case "existingParticipants":
-            this.onExistingParticipants(parsedMessage);
-            break;
-          case "newParticipantArrived":
-            this.onNewParticipant(parsedMessage);
-            break;
-          case "participantLeft":
-            this.onParticipantLeft(parsedMessage);
-            break;
-          case "receiveVideoAnswer":
-            this.receiveVideoResponse(parsedMessage);
-            break;
-          // NOTE: Host 가 나갈 때, 방 삭제 API 호출 필요
-          case "leaveHost":
-            this.leaveHost();
-            break;
-          // NOTE: Host 가 나갈 때, Guest 강제 퇴실
-          // NOTE: Guest 가 혼자 나갈 때
-          case "leaveGuest":
-            this.leaveGuest();
-            break;
-          // NOTE: 방 입장 요청들어왔을 때
-          case "joinQuestion":
-            this.onJoinQuestion(parsedMessage);
-            break;
-          // NOTE: 채팅 수신
-          case "receiveChat":
-            this.onRecieveChat(parsedMessage);
-            break;
-          case "iceCandidate":
-            this.participantComponents[
-              parsedMessage.userId
-            ].rtcPeer.addIceCandidate(parsedMessage.candidate, (error) => {
-              if (error) {
-                this.$error("Error adding candidate: ");
-                this.$error(error);
-                return;
-              }
-            });
-            break;
-          default:
-            this.$error("Unrecognized message");
-            this.$error(parsedMessage);
-        }
-      };
-      this.ws.onopen = () => {
-        this.$log(this.ws);
-
-        setTimeout(() => {
-          this.join();
-        }, 500);
-      };
     },
   },
   mounted() {
@@ -524,10 +177,10 @@ export default {
   components: {
     Participant,
     ResizeDetector,
+    Chat,
+    Guide,
+    QuestionDialog,
+    Navigation,
   },
 };
-</script>
-
-
-<style scoped>
-</style>
+</script> 
