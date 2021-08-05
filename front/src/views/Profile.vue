@@ -255,7 +255,10 @@ export default {
         touserid: this.userId,
       };
       this.$store.dispatch(url, followInfo).then(() => {
-        alert("팔로우 제거 성공");
+         this.$store.dispatch("onSnackbar", {
+            text: "팔로우 해제",
+            color: "success",
+          });
         this.isFollow = true;
         // TODO: 팔로워 목록 다시 불러와야함.
       });
@@ -274,7 +277,10 @@ export default {
       this.$store
         .dispatch(url, followInfo)
         .then(() => {
-          alert("팔로우 성공");
+           this.$store.dispatch("onSnackbar", {
+            text: "팔로우 추가",
+            color: "success",
+          });
           this.isFollow = false;
           // TODO: 팔로워 목록 다시 불러와야함.
         })
@@ -286,14 +292,14 @@ export default {
     // NOTE: 팔로워 개수
     countFollower() {
       http.get(`/follow/countfollower/${this.userId}`).then((res) => {
-        console.log("팔로워", res);
+       //console.log("팔로워", res);
         this.count.follower=res.data
       });
     },
     // NOTE: 팔로잉 개수
     countFollowing() {
       http.get(`/follow/countfollowing/${this.userId}`).then((res) => {
-        console.log("팔로잉", res);
+        //console.log("팔로잉", res);
         this.count.following=res.data
       });
     },
