@@ -27,5 +27,14 @@
   "search_classification": "분류",
   "search_none": "전체",
   "alert_nolist_01": "존재하는 방이 없습니다.",
-  "alert_nolist_02": "새롭게 방을 만드시거나 다른 주제 및 언어로 방을 검색해주세요!!."
+  "alert_nolist_02": "새롭게 방을 만드시거나 다른 주제 및 언어로 방을 검색해주세요!!.",
+  "profile_introduce": "자기소개",
+  "profile_score": "평균 평점",
+  "profile_follower": "팔로워",
+  "profile_follow_add": "팔로워 추가",
+  "profile_follow_no": "팔로워 삭제",
+  "profile_following": "팔로잉",
+  "profile_history": "만났던 사람들",
+  "profile_receive_review": "받은 평가",
+  "profile_written_review": "작성한 평가"
 }

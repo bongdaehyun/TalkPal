@@ -27,5 +27,14 @@
   "search_classification": "classification",
   "search_none": "Total",
   "alert_nolist_01": "There are no existing rooms.",
-  "alert_nolist_02": "Please create a new room or search for a room in a different subject and language."
+  "alert_nolist_02": "Please create a new room or search for a room in a different subject and language.",
+  "profile_introduce": "Introduce",
+  "profile_score": "Average score",
+  "profile_follower": "Follwer",
+  "profile_following": "Following",
+  "profile_follow_add": "Add Follwer",
+  "profile_follow_no": "Delete Follwer",
+  "profile_history": "User History",
+  "profile_receive_review": "Receive Review",
+  "profile_written_review": "Written Review"
 }

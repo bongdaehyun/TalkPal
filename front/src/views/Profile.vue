@@ -4,16 +4,38 @@
   >
     <!-- NOTE: 사용자 정보 -->
     <!-- TODO: 레이아웃 생각 중... -->
-    <v-row justify="center">
+    <v-row class="mt-12 mb-5" justify="center">
       <v-col>
         <v-img src="@/assets/image/flag/en.png"> </v-img>
       </v-col>
       <v-col>
-        <h1>{{ user.nickname }}</h1>
-        <h3>평균 평점</h3>
+        <v-row>
+          <v-col>
+            <h1 v-if="!profile">{{ user.nickname }}</h1>
+            <span v-else>
+              <v-text-field
+                v-model="user.nickname"
+                :counter="10"
+                label="Nickname"
+                required
+              ></v-text-field>
+            </span>
+          </v-col>
+          <v-col
+            class="mt-3"
+            v-if="userId == $store.getters[`userStore/getUserId`] && !profile"
+          >
+            <v-icon @click="updateProfile">fas fa-cog</v-icon>
+          </v-col>
+        </v-row>
+        <h3>{{ $t("profile_score") }}</h3>
         <div v-if="userId != $store.getters[`userStore/getUserId`]">
-          <button v-if="isFollow" @click="addFollow">팔로우 추가</button>
-          <button v-else @click="delFollow">팔로우 제거</button>
+          <button v-if="isFollow" @click="addFollow">
+            {{ $t("profile_follow_add") }}
+          </button>
+          <button v-else @click="delFollow">
+            {{ $t("profile_follow_no") }}
+          </button>
         </div>
       </v-col>
       <v-col>
@@ -24,7 +46,13 @@
             @onCloseDialog="followerDialog = false"
           />
         </v-dialog>
-        <button @click="followerDialog = true">팔로워</button>
+
+        <button @click="followerDialog = true">
+          <v-icon>mdi-heart</v-icon>{{ $t("profile_follower") }}
+        </button>
+        <span>
+          {{count.follower}}
+        </span>
       </v-col>
       <v-col>
         <v-dialog v-model="followingDialog" max-width="300px" scrollable>
@@ -34,21 +62,58 @@
             @onCloseDialog="followingDialog = false"
           />
         </v-dialog>
-        <button @click="followingDialog = true">팔로잉</button>
+        <button @click="followingDialog = true">
+          {{ $t("profile_following") }}
+        </button>
+         <span>
+          {{count.following}}
+        </span>
       </v-col>
       <v-col>
-        <h3>SNS</h3>
-        <h3>자기소개</h3>
+        <v-row>
+          <span>
+            <h3>SNS</h3>
+            <div v-if="!profile">
+              {{ user.sns }}
+            </div>
+            <div v-else>
+              <v-text-field
+                v-model="user.sns"
+                :counter="25"
+                label="SNS"
+              ></v-text-field>
+            </div>
+          </span>
+        </v-row>
+        <v-row>
+          <span>
+            <h3>{{ $t("profile_introduce") }}</h3>
+            <div v-if="!profile">
+              {{ user.introduction }}
+            </div>
+            <div v-else>
+              <v-textarea
+                name="input-7-1"
+                filled
+                auto-grow
+                v-model="user.introduction"
+              ></v-textarea>
+            </div>
+          </span>
+        </v-row>
       </v-col>
     </v-row>
-    <!-- NOTE: 만난 사람들, 평가 내용 -->
     <v-row justify="center">
+      <v-btn color="secondary" @click="submit" v-if="profile"> 제출 </v-btn>
+    </v-row>
+    <!-- NOTE: 만난 사람들, 평가 내용 -->
+    <v-row justify="center" class="mt-12">
       <v-col class="col-12 col-md-8">
         <!-- NOTE: 탭 메뉴 -->
         <v-tabs centered v-model="tab">
-          <v-tab>만난 사람들</v-tab>
-          <v-tab>받은 평가</v-tab>
-          <v-tab>작성한 평가</v-tab>
+          <v-tab>{{ $t("profile_history") }}</v-tab>
+          <v-tab>{{ $t("profile_receive_review") }}</v-tab>
+          <v-tab>{{ $t("profile_written_review") }}</v-tab>
         </v-tabs>
         <v-tabs-items v-model="tab" :touchless="true">
           <!-- NOTE: 만난 사람들 -->
@@ -84,6 +149,7 @@
 import ReviewSlide from "../components/Profile/ReviewSlide.vue";
 import HistorySlide from "../components/Profile/HistorySlide.vue";
 import FollowDialog from "../components/Profile/FollowDialog.vue";
+import http from "@/util/http-common";
 
 export default {
   name: "Profile",
@@ -123,6 +189,11 @@ export default {
         url: "requestReceivedReviews",
         isEnd: false,
       },
+      profile: false,
+      count:{
+        follower: 0,
+        following : 0
+      }
     };
   },
   computed: {
@@ -139,6 +210,30 @@ export default {
   },
 
   methods: {
+    // NOTE : 프로필 수정
+    updateProfile() {
+      this.profile = true;
+    },
+    submit() {
+      console.log(this.user);
+      let updateUser = {
+        email: this.user.email,
+        introduction: this.user.introduction,
+        nickname: this.user.nickname,
+        sns: this.user.sns,
+      };
+      http.put("/users", updateUser).then((res) => {
+        console.log(res);
+        if (res.data == "SUCCESS") {
+          this.$store.dispatch("onSnackbar", {
+            text: "수정 완료.",
+            color: "success",
+          });
+          this.profile = false;
+        }
+      });
+    },
+
     // NOTE : 팔로우 체크
     checkFollow() {
       // this.$log("팔로우 체크 실행");
@@ -187,6 +282,20 @@ export default {
           console.error(err);
           this.$log("이미 요청한 팔로우");
         });
+    },
+    // NOTE: 팔로워 개수
+    countFollower() {
+      http.get(`/follow/countfollower/${this.userId}`).then((res) => {
+        console.log("팔로워", res);
+        this.count.follower=res.data
+      });
+    },
+    // NOTE: 팔로잉 개수
+    countFollowing() {
+      http.get(`/follow/countfollowing/${this.userId}`).then((res) => {
+        console.log("팔로잉", res);
+        this.count.following=res.data
+      });
     },
     // NOTE: 응답 리뷰 목록 추가
     pushReviews(reviews, res) {
@@ -248,6 +357,8 @@ export default {
     this.requestReviews(this.giveReviews);
     this.reuqestHistoryUser();
     this.checkFollow();
+    this.countFollower();
+    this.countFollowing();
   },
   components: {
     FollowDialog,

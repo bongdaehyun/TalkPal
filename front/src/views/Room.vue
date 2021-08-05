@@ -5,7 +5,7 @@
         <!-- NOTE: 화상 구역 -->
         <div
           class="pa-0"
-          :class="[showGuide ? 'col-9' : 'col-12']"
+          :class="[showGuide ? 'col-6' : 'col-9']"
           style="width: 100%; height: 100%"
         >
           <ResizeDetector observe-width observe-height @resize="onResize" />
@@ -31,6 +31,23 @@
           :class="{ 'col-3': showGuide }"
           style="background-color: red"
         ></div>
+        <div
+          class="col-3"
+          style="background-color: lightgray"
+          id="chat"
+        >
+          <v-text-field
+            v-model="msg"
+            placeholder="메세지를 입력하세요."
+            solo
+            @keyup.13="submitMessage"
+          ></v-text-field>
+            <div v-for="(message, index) in msgList" v-bind:key="index">
+              {{ message.sender }}  {{ message.time }}<br>
+              {{ message.content }}
+              <hr>
+            </div>
+        </div>
       </v-row>
     </v-container>
     <v-bottom-navigation app>
@@ -88,6 +105,8 @@ export default {
       ws: null,
       joinQuestionDialog: false, // 입장 요청 수락/거부 dialog
       joinAnswer: null,
+      msg: '',
+      msgList: [],
 
       // NOTE: 레이아웃 관련 변수
       showGuide: false,
@@ -410,6 +429,24 @@ export default {
       this.ws.close();
       this.$router.push({ name: "Rooms" });
     },
+    submitMessage() {
+      if (this.msg.length === 0) return;
+      this.sendMessage({
+        id: 'sendChat',
+        senderId: this.userId,
+        sendMsg: this.msg,
+      })
+      this.msg = '';
+    },
+    onRecieveChat(msgInfo) {
+      this.$log(msgInfo);
+      let msg = {
+        sender: msgInfo.senderId,
+        time: msgInfo.sendTime,
+        content: msgInfo.sendMsg,
+      }
+      this.msgList.push(msg);
+    },
     connect() {
       this.ws = new WebSocket(this.socketUrl);
       this.ws.onmessage = (message) => {
@@ -442,6 +479,10 @@ export default {
           // NOTE: 방 입장 요청들어왔을 때
           case "joinQuestion":
             this.onJoinQuestion(parsedMessage);
+            break;
+          // NOTE: 채팅 수신
+          case "receiveChat":
+            this.onRecieveChat(parsedMessage);
             break;
           case "iceCandidate":
             this.participantComponents[

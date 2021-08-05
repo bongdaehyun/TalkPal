@@ -23,15 +23,18 @@ public class UserRes{
 	@ApiModelProperty(name="User nickname")
 	String nickname;
 
+	String sns;
+	String introduction;
 
-	
-	
 	public static UserRes of(User user) {
 		
 		UserRes res = new UserRes();
 		res.setEmail(user.getEmail());
 		res.setLang(user.getLang().getName());
 		res.setNickname(user.getNickname());
+		res.setSns(user.getSns());
+		res.setIntroduction(user.getIntroduction());
+
 		return res;
 	}
 }
