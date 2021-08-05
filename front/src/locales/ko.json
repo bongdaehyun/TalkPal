@@ -36,5 +36,6 @@
   "profile_following": "팔로잉",
   "profile_history": "만났던 사람들",
   "profile_receive_review": "받은 평가",
-  "profile_written_review": "작성한 평가"
+  "profile_written_review": "작성한 평가",
+  "profile_follow" : "팔로우"
 }

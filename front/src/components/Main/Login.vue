@@ -13,7 +13,7 @@
     ></v-text-field>
     <v-btn class="ma-2" color="primary" dark @click="requestLogin">
       {{ $t("main_login") }}
-      <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
+      <v-icon dark right> mdi-login </v-icon>
     </v-btn>
   </v-container>
 </template>
@@ -54,8 +54,10 @@ export default {
           this.$router.push({ name: "Rooms" });
         })
         .catch((err) => {
-          alert("로그인 실패");
-          // console.log(err);
+          this.$store.dispatch("onSnackbar", {
+            text: "로그인 실패 ! , 아이디 및 비밀번호를 다시 확인해주세요",
+            color: "success",
+          });
         });
     },
   },

@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title>Select Country</v-card-title>
+    <v-card-title>{{ $t("profile_follow") }} </v-card-title>
     <v-divider></v-divider>
     <v-card-text style="height: 300px">
       <div
@@ -13,10 +13,9 @@
       >
         <Item :item="item" />
       </div>
-      <infinite-loading
-        @infinite="scrollEnd"
-        spinner="waveDots"
-      ></infinite-loading>
+      <infinite-loading @infinite="scrollEnd" spinner="waveDots">
+        <span slot="no-more"></span>
+      </infinite-loading>
     </v-card-text>
     <v-card-actions>
       <v-btn color="blue darken-1" text @click="closeDialog"> Close </v-btn>
