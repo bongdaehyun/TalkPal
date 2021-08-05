@@ -46,4 +46,6 @@ public class User extends BaseEntity{
     public boolean getValid(){
         return valid;
     }
+
+    String imgpath;
 }
