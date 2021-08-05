@@ -140,7 +140,7 @@ public class UserController {
 
 	@PutMapping
 	public ResponseEntity<?> updateUser(@RequestBody UserReq userReq){
-		System.out.println(userReq.toString());
+		System.out.println("update"+userReq.toString());
 		if(userService.updateUser(userReq)){
 			return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
 		}

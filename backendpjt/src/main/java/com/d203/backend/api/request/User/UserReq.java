@@ -27,8 +27,9 @@ public class UserReq {
 	@ApiModelProperty(name="유저 nickname", example="your_nickname")
 	String nickname;
 
-	
-	
-	
-	
+	@ApiModelProperty(name="유저 sns", example="your_sns")
+	String sns;
+	@ApiModelProperty(name="유저 자기소개", example="your_introduction")
+	String introduction;
+
 }

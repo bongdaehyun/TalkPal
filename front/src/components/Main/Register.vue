@@ -109,9 +109,12 @@ export default {
         this.$store
           .dispatch("userStore/requestRegister", credentials)
           .then(() => {
-            alert("인증메일을 발송했습니다.");
-            console.log(credentials);
-            //인증 메일 보내기 --> post는 params를 못보낸다..
+            // NOTE: Toast Message 출력
+            this.$store.dispatch("onSnackbar", {
+              text: "인증메일을 발송했습니다.",
+              color: "success",
+            });
+
             let email = credentials.email;
             http
               .post(`/auth/send/${email}`)
