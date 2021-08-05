@@ -16,6 +16,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CallHandler extends TextWebSocketHandler {
 
@@ -46,6 +48,9 @@ public class CallHandler extends TextWebSocketHandler {
         }
 
         switch (jsonMessage.get("id").getAsString()) {
+            case "sendChat":
+                sendChat(jsonMessage);
+                break;
             case "createRoom":
                 createRoom(jsonMessage, session);
                 break;
@@ -86,6 +91,31 @@ public class CallHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         UserSession user = userManager.removeBySession(session);
         roomManager.getRoom(user.getUuid()).leave(user);
+    }
+
+    private void sendChat(JsonObject params) throws IOException {
+        final String senderId = params.get("senderId").getAsString();
+        final String sendMsg = params.get("sendMsg").getAsString();
+
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        Date time = new Date();
+        String sendTime = format.format(time);
+
+        log.info("User {} send message in ({}) : {}", senderId, sendTime, sendMsg);
+
+        final JsonObject chatInfo = new JsonObject();
+        chatInfo.addProperty("id", "receiveChat");
+        chatInfo.addProperty("senderId", senderId);
+        chatInfo.addProperty("sendMsg", sendMsg);
+        chatInfo.addProperty("sendTime", sendTime);
+
+        final UserSession sender = userManager.getByUserId(senderId);
+        RoomSession roomSession = roomManager.getRoom(sender.getUuid());
+        for (UserSession user : roomSession.getParticipants()){
+            synchronized (user) {
+                user.sendMessage(chatInfo);
+            }
+        }
     }
 
     private void createRoom(JsonObject params, WebSocketSession session) throws IOException {
