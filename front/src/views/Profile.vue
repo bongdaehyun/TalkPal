@@ -258,6 +258,7 @@ export default {
         alert("팔로우 제거 성공");
         this.isFollow = true;
         // TODO: 팔로워 목록 다시 불러와야함.
+        // this.$router.go();
       });
     },
     // NOTE: 팔로우 추가
@@ -277,6 +278,7 @@ export default {
           alert("팔로우 성공");
           this.isFollow = false;
           // TODO: 팔로워 목록 다시 불러와야함.
+          // this.$router.go();
         })
         .catch((err) => {
           console.error(err);

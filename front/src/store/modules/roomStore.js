@@ -38,7 +38,6 @@ const roomStore = {
 
   actions: {
     requestRooms(context, payload) {
-      console.log(payload)
       return http.get(`/rooms/${payload.page}`, {
         params: {
           topic: payload.topic,

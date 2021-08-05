@@ -1,26 +1,25 @@
 <template>
-  <v-row justify="end">
-    <v-col cols="6" sm="3" md="2">
+  <v-row :justify="isMobile ? 'center' : 'end'">
+    <v-col cols="6" lg="2" md="3" sm="4">
       <v-select
         @change="search"
         :items="topicItems | searchi18n"
+        :label="$t('create_topic')"
         item-text="name"
         item-value="value"
+        v-model="input.topic"
         item-color="#a200e0"
         style="color: #a200e0"
-        v-model="input.topic"
-        :label="$t('create_topic')"
       ></v-select>
     </v-col>
-    <v-col cols="6" sm="3" md="2">
+    <v-col cols="6" lg="2" md="3" sm="4">
       <v-select
-        class="slt"
         @change="search"
         :items="LangItems | searchi18n"
+        :label="$t('search_lang')"
         item-text="name"
         item-value="value"
         v-model="input.lang"
-        :label="$t('search_lang')"
       ></v-select>
     </v-col>
   </v-row>
@@ -28,17 +27,20 @@
 
 <script>
 import i18n from "@/i18n.js";
+import isMobile from "@/mixin/isMobile.js";
 
 export default {
+  name: "Search",
+  mixins: [isMobile],
   data() {
     return {
       input: {
-        topic: "",
-        lang: "",
+        topic: "search_total",
+        lang: "search_total",
       },
-      LangItems: ["search_none", "ko", "en"],
+      LangItems: ["search_total", "ko", "en"],
       topicItems: [
-        "search_none",
+        "search_total",
         "create_music",
         "create_movie",
         "create_game",
@@ -49,14 +51,16 @@ export default {
   },
   methods: {
     search() {
-      if (this.input.topic == "search_none") {
-        this.input.topic = "";
-      } else if (this.input.lang == "search_none") {
-        this.input.lang = "";
+      let topic = this.input.topic;
+      let lang = this.input.lang;
+      if (topic == "search_total") {
+        topic = "";
+      } else if (lang == "search_total") {
+        lang = "";
       }
       let changeData = {
-        topic: this.input.topic,
-        lang: this.input.lang,
+        topic: topic,
+        lang: lang,
       };
       this.$log("데이터 전달");
       this.$log(changeData);

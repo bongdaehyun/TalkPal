@@ -1,11 +1,13 @@
 <template>
-  <v-card class="mx-auto" max-width="400">
+  <v-card>
     <v-img
       class="white--text align-end"
       height="200px"
       src="@/assets/image/food.png"
     >
-      <v-card-title>{{ item.name }}</v-card-title>
+      <v-card-title>
+        <span class="white black--text bold">{{ item.name }}</span>
+      </v-card-title>
     </v-img>
     <v-card-subtitle class="pb-0"> {{ $t(item.topic) }} </v-card-subtitle>
     <v-card-text class="text--primary">

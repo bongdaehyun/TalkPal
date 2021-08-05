@@ -7,7 +7,8 @@ const getDefaultState = () => {
   return {
     accessToken: null,
     loginStatus: false,
-    lang: 'en',
+    lang: null,
+    langId: null,
     userId: null,
     nickname: null,
   }
@@ -21,6 +22,7 @@ const userStore = {
       state.accessToken = payload.accessToken;
       state.loginStatus = true;
       state.lang = payload.lang;
+      state.langId = payload.langId;
       state.userId = payload.userId;
       state.nickname = payload.nickname;
     },
@@ -44,14 +46,13 @@ const userStore = {
     login(context, accessToken) {
       const decoded = jwt_decode(accessToken);
       const userInfo = decoded.userinfo;
-
       const payload = {
         userId: Number(userInfo.id),
         nickname: userInfo.nickname,
         lang: userInfo.lang,
+        langId: userInfo.langId,
         accessToken
       }
-
       context.commit('LOGIN', payload)
     },
     // NOTE: 로그아웃
@@ -112,6 +113,9 @@ const userStore = {
     },
     getLocale(state) {
       return state.lang;
+    },
+    getLangId(state) {
+      return state.langId;
     },
     getUserId(state) {
       return state.userId;

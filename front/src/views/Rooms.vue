@@ -1,12 +1,18 @@
 <template>
   <v-container>
-    <!-- 방 생성 -->
-    <Create @onCreateRoom="onCreateRoom" :ws="ws" />
-    <!-- 방 조건 검색 -->
-    <Search @setSearchData="changeSearchData" />
+    <v-row class="mt-6">
+      <!-- 방 생성 -->
+      <v-col cols="6" align-self="center">
+        <Create @onCreateRoom="onCreateRoom" :ws="ws" />
+      </v-col>
+      <!-- 방 조건 검색 -->
+      <v-col cols="6">
+        <Search @setSearchData="changeSearchData" />
+      </v-col>
+    </v-row>
     <!-- 방 목록 -->
     <v-row>
-      <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
+      <v-col v-for="item in rooms" :key="item.id" xl="2" lg="3" md="4" sm="6">
         <Item :item="item" @onEnterRoom="onEnterRoom" />
       </v-col>
     </v-row>
@@ -33,8 +39,8 @@
         right
         fixed
         fab
-        color="secondary"
         small
+        color="secondary"
         v-show="btnShow"
         @click.prevent="$vuetify.goTo('.header')"
       >
@@ -101,7 +107,6 @@ export default {
       this.rooms = [];
     },
     requestRooms($state) {
-      console.log(this.searchData);
       this.$store
         .dispatch("roomStore/requestRooms", {
           topic: this.searchData.topic,
@@ -144,7 +149,6 @@ export default {
         requestUserId: this.$store.getters["userStore/getUserId"],
         hostId: item.hostId,
       };
-      this.$log(message);
 
       // NOTE: 입장 요청 대기 시작
       this.loadingAnswer = true;
@@ -161,7 +165,6 @@ export default {
       const answer = msg.answer;
       if (answer === "false") {
         // NOTE: 입장 거절 시 거절되었다는 안내문 메세지만 출력
-        console.log("입장 요청 거부");
         this.$store.dispatch("onSnackbar", {
           text: "입장 요청이 거부 됐습니다.",
           color: "red darken-1",
