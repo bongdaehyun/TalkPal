@@ -21,14 +21,21 @@
               ></v-text-field>
             </span>
           </v-col>
-          <v-col class="mt-3" v-if="!profile">
+          <v-col
+            class="mt-3"
+            v-if="userId == $store.getters[`userStore/getUserId`] && !profile"
+          >
             <v-icon @click="updateProfile">fas fa-cog</v-icon>
           </v-col>
         </v-row>
-        <h3>{{$t('profile_score')}}</h3>
+        <h3>{{ $t("profile_score") }}</h3>
         <div v-if="userId != $store.getters[`userStore/getUserId`]">
-          <button v-if="isFollow" @click="addFollow">{{$t('profile_follow_add')}}</button>
-          <button v-else @click="delFollow">{{$t('profile_follow_no')}}</button>
+          <button v-if="isFollow" @click="addFollow">
+            {{ $t("profile_follow_add") }}
+          </button>
+          <button v-else @click="delFollow">
+            {{ $t("profile_follow_no") }}
+          </button>
         </div>
       </v-col>
       <v-col>
@@ -41,8 +48,11 @@
         </v-dialog>
 
         <button @click="followerDialog = true">
-          <v-icon>mdi-heart</v-icon>{{$t('profile_follower')}}
+          <v-icon>mdi-heart</v-icon>{{ $t("profile_follower") }}
         </button>
+        <span>
+          {{count.follower}}
+        </span>
       </v-col>
       <v-col>
         <v-dialog v-model="followingDialog" max-width="300px" scrollable>
@@ -52,7 +62,12 @@
             @onCloseDialog="followingDialog = false"
           />
         </v-dialog>
-        <button @click="followingDialog = true">{{$t('profile_following')}}</button>
+        <button @click="followingDialog = true">
+          {{ $t("profile_following") }}
+        </button>
+         <span>
+          {{count.following}}
+        </span>
       </v-col>
       <v-col>
         <v-row>
@@ -72,7 +87,7 @@
         </v-row>
         <v-row>
           <span>
-            <h3>{{$t('profile_introduce')}}</h3>
+            <h3>{{ $t("profile_introduce") }}</h3>
             <div v-if="!profile">
               {{ user.introduction }}
             </div>
@@ -96,9 +111,9 @@
       <v-col class="col-12 col-md-8">
         <!-- NOTE: 탭 메뉴 -->
         <v-tabs centered v-model="tab">
-          <v-tab>{{$t('profile_history')}}</v-tab>
-          <v-tab>{{$t('profile_receive_review')}}</v-tab>
-          <v-tab>{{$t('profile_written_review')}}</v-tab>
+          <v-tab>{{ $t("profile_history") }}</v-tab>
+          <v-tab>{{ $t("profile_receive_review") }}</v-tab>
+          <v-tab>{{ $t("profile_written_review") }}</v-tab>
         </v-tabs>
         <v-tabs-items v-model="tab" :touchless="true">
           <!-- NOTE: 만난 사람들 -->
@@ -175,6 +190,10 @@ export default {
         isEnd: false,
       },
       profile: false,
+      count:{
+        follower: 0,
+        following : 0
+      }
     };
   },
   computed: {
@@ -210,7 +229,7 @@ export default {
             text: "수정 완료.",
             color: "success",
           });
-          this.profile=false
+          this.profile = false;
         }
       });
     },
@@ -263,6 +282,20 @@ export default {
           console.error(err);
           this.$log("이미 요청한 팔로우");
         });
+    },
+    // NOTE: 팔로워 개수
+    countFollower() {
+      http.get(`/follow/countfollower/${this.userId}`).then((res) => {
+        console.log("팔로워", res);
+        this.count.follower=res.data
+      });
+    },
+    // NOTE: 팔로잉 개수
+    countFollowing() {
+      http.get(`/follow/countfollowing/${this.userId}`).then((res) => {
+        console.log("팔로잉", res);
+        this.count.following=res.data
+      });
     },
     // NOTE: 응답 리뷰 목록 추가
     pushReviews(reviews, res) {
@@ -324,6 +357,8 @@ export default {
     this.requestReviews(this.giveReviews);
     this.reuqestHistoryUser();
     this.checkFollow();
+    this.countFollower();
+    this.countFollowing();
   },
   components: {
     FollowDialog,

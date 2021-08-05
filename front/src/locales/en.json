@@ -32,6 +32,8 @@
   "profile_score": "Average score",
   "profile_follower" : "Follwer",
   "profile_following" : "Following",
+  "profile_follow_add" : "Add Follwer",
+  "profile_follow_no" : "Delete Follwer",
   "profile_history": "User History",
   "profile_receive_review": "Receive Review",
   "profile_written_review": "Written Review"

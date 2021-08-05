@@ -26,10 +26,12 @@
     <!-- 방조건 검색시 이벤트 처리 나누기 -->
 
     <span v-if="!flag">
-      <infinite-loading @infinite="requestRooms"> </infinite-loading>
+      <infinite-loading @infinite="requestRooms">
+         </infinite-loading>
     </span>
     <span v-else>
-      <infinite-loading @infinite="requestSearchRooms"> </infinite-loading>
+      <infinite-loading @infinite="requestSearchRooms">
+         </infinite-loading>
     </span>
     <v-fab-transition>
       <v-btn
@@ -102,6 +104,7 @@ export default {
           $state.loaded();
         } else {
           $state.complete();
+        
         }
       });
     },
