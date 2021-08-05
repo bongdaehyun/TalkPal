@@ -7,7 +7,10 @@
     <v-row class="mt-12 mb-5" justify="center">
       <v-col>
         <v-img src="@/assets/image/flag/en.png"> </v-img>
+        <v-file-input label="File input" @change="selectFile"></v-file-input>
+        <v-btn @click="submitimg"></v-btn>
       </v-col>
+
       <v-col>
         <v-row>
           <v-col>
@@ -51,7 +54,7 @@
           <v-icon>mdi-heart</v-icon>{{ $t("profile_follower") }}
         </button>
         <span>
-          {{count.follower}}
+          {{ count.follower }}
         </span>
       </v-col>
       <v-col>
@@ -65,8 +68,8 @@
         <button @click="followingDialog = true">
           {{ $t("profile_following") }}
         </button>
-         <span>
-          {{count.following}}
+        <span>
+          {{ count.following }}
         </span>
       </v-col>
       <v-col>
@@ -155,6 +158,7 @@ export default {
   name: "Profile",
   data() {
     return {
+      image: "",
       followers: {
         items: [],
         page: 0,
@@ -190,10 +194,10 @@ export default {
         isEnd: false,
       },
       profile: false,
-      count:{
+      count: {
         follower: 0,
-        following : 0
-      }
+        following: 0,
+      },
     };
   },
   computed: {
@@ -234,6 +238,27 @@ export default {
       });
     },
 
+    async submitimg() {
+      const imgFile = new FormData();
+      imgFile.append("imgFile", this.image);
+
+      try {
+        const { data } = await http.put("/users/saveimg/30", imgFile, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log(data);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    selectFile(file) {
+      this.image = file;
+      console.log(this.image);
+    },
+
     // NOTE : 팔로우 체크
     checkFollow() {
       // this.$log("팔로우 체크 실행");
@@ -255,10 +280,10 @@ export default {
         touserid: this.userId,
       };
       this.$store.dispatch(url, followInfo).then(() => {
-         this.$store.dispatch("onSnackbar", {
-            text: "팔로우 해제",
-            color: "success",
-          });
+        this.$store.dispatch("onSnackbar", {
+          text: "팔로우 해제",
+          color: "success",
+        });
         this.isFollow = true;
         // TODO: 팔로워 목록 다시 불러와야함.
       });
@@ -277,7 +302,7 @@ export default {
       this.$store
         .dispatch(url, followInfo)
         .then(() => {
-           this.$store.dispatch("onSnackbar", {
+          this.$store.dispatch("onSnackbar", {
             text: "팔로우 추가",
             color: "success",
           });
@@ -292,15 +317,15 @@ export default {
     // NOTE: 팔로워 개수
     countFollower() {
       http.get(`/follow/countfollower/${this.userId}`).then((res) => {
-       //console.log("팔로워", res);
-        this.count.follower=res.data
+        console.log("팔로워", res);
+        this.count.follower = res.data;
       });
     },
     // NOTE: 팔로잉 개수
     countFollowing() {
       http.get(`/follow/countfollowing/${this.userId}`).then((res) => {
         //console.log("팔로잉", res);
-        this.count.following=res.data
+        this.count.following = res.data;
       });
     },
     // NOTE: 응답 리뷰 목록 추가
