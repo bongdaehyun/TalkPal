@@ -1,4 +1,6 @@
 {
+  "ko": "korean",
+  "en": "english",
   "message": "안녕 i18n !!",
   "main_login": "Login",
   "main_register": "Register",
@@ -19,13 +21,11 @@
   "create_food": "FOOD",
   "create_free": "FREE",
   "error_404": "NOT FOUND PAGE.",
-  "search_topic" : "Topic",
-  "search_name" : "Room Name",
-  "search_lang" : "Lang",
-  "search_classification" :"classification",
-  "search_ko" : "korean",
-  "search_en" : "english",
-  "search_none" : "Total",
-  "alert_nolist_01" : "There are no existing rooms.",
-  "alert_nolist_02" : "Please create a new room or search for a room in a different subject and language."
-} 
+  "search_topic": "Topic",
+  "search_name": "Room Name",
+  "search_lang": "Lang",
+  "search_classification": "classification",
+  "search_none": "Total",
+  "alert_nolist_01": "There are no existing rooms.",
+  "alert_nolist_02": "Please create a new room or search for a room in a different subject and language."
+}

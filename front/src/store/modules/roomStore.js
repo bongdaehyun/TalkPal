@@ -37,8 +37,14 @@ const roomStore = {
   },
 
   actions: {
-    requestRooms(context, page) {
-      return http.get(`/rooms/${page}`)
+    requestRooms(context, payload) {
+      console.log(payload)
+      return http.get(`/rooms/${payload.page}`, {
+        params: {
+          topic: payload.topic,
+          lang: payload.lang
+        }
+      })
     },
     requestCreate(context, payload) {
       return http.post('/rooms/create', payload)
@@ -55,15 +61,6 @@ const roomStore = {
     },
     exitRoom(context) {
       context.commit("EXIT_ROOM");
-    },
-    requestSearch(context, payload) {
-      //console.log(payload)
-      return http.get(`/rooms/search/${payload.page}`, {
-        params: {
-          topic: payload.topic,
-          lang: payload.lang
-        }
-      })
     },
     reqeustRoomInfo(context, payload) {
       return http.get(`/rooms/get/${payload.uuid}`)

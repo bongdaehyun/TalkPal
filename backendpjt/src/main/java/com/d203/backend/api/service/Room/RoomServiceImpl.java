@@ -89,9 +89,17 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Page<Room> getRoomList(int pageno) {
+    public Page<Room> getRoomList(String topic, String lang, int pageno) {
         Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
-        return roomRepository.findAllByUnderMax(firstPageWithTwoElements);
+        long langId = 0;
+        if (!lang.equals("")) {
+            Lang findlang = langRepository.findByName(lang);
+            langId = findlang.getId();
+        }
+        System.out.println("topic : " + topic);
+        System.out.println("lang : " + langId);
+        Page<Room> rooms = roomRepository.findAllBYLangAndTopic(topic, langId, firstPageWithTwoElements);
+        return rooms;
     }
 
     @Override
@@ -104,63 +112,33 @@ public class RoomServiceImpl implements RoomService {
     public boolean getCheckJoin(String uuid) {
         Room room = roomRepository.findByUuid(uuid);
         //찾을 수 없는 방
-        if (room==null){
+        if (room == null) {
             return false;
         }
         //최대 인원보다 현재 인원 수가 적을 경우
-        if(room.getCurnum()<room.getMaxnum()){
+        if (room.getCurnum() < room.getMaxnum()) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
 
     @Override
     public boolean doControlPeople(String uuid, Long people) {
-        Room room=roomRepository.findByUuid(uuid);
+        Room room = roomRepository.findByUuid(uuid);
         //찾고자 하는 방이 없을 경우
-        if(room==null){
+        if (room == null) {
             return false;
         }
-        Long curnum=room.getCurnum();
+        Long curnum = room.getCurnum();
         //현재인원에 더하거나 마이너스 한부분을 체크
-        Long newNum=curnum+people;
-        if(newNum>room.getMaxnum() ||  newNum<=0){
+        Long newNum = curnum + people;
+        if (newNum > room.getMaxnum() || newNum <= 0) {
             return false;
         }
         room.setCurnum(newNum);
         roomRepository.save(room);
         return true;
-    }
-
-    @Override
-    public Page<Room> getNameList(String name, int pageno) {
-        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
-        Page<Room> rooms = roomRepository.findAllByNameLike("%" + name + "%", firstPageWithTwoElements);
-        return rooms;
-    }
-
-    @Override
-    public Page<Room> getTopicList(String topic, int pageno) {
-        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
-        Page<Room> rooms = roomRepository.findAllByTopic(topic, firstPageWithTwoElements);
-        return rooms;
-    }
-
-    @Override
-    public Page<Room> getLangList(String lang, int pageno) {
-        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
-        Lang findlang = langRepository.findByName(lang);
-        Page<Room> rooms = roomRepository.findAllByGuest_lang(findlang.getId(), firstPageWithTwoElements);
-        return rooms;
-    }
-
-    @Override
-    public Page<Room> getSearchList(String topic, String lang, int pageno) {
-        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
-        Lang findlang = langRepository.findByName(lang);
-        Page<Room> rooms = roomRepository.findAllByTopicAndGuest_lang(topic, findlang.getId(), firstPageWithTwoElements);
-        return rooms;
     }
 
 }

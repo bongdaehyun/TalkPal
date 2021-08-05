@@ -15,7 +15,7 @@ public interface RoomService {
 
     boolean deleteRoom(Long room_id, Long tokenUserId);
 
-    Page<Room> getRoomList(int pageno);
+    Page<Room> getRoomList(String topic, String lang, int pageno);
 
     Room getRoom(String room_uuid);
 
@@ -23,13 +23,5 @@ public interface RoomService {
     boolean getCheckJoin(String uuid);
 
     //현재인원을 + -
-    boolean doControlPeople(String uuid,Long people);
-    //방 제목로 검색
-    Page<Room> getNameList(String name,int pageno);
-    //방 주제로 검색
-    Page<Room> getTopicList(String topic,int pageno);
-    //방 언어로 검색
-    Page<Room> getLangList(String lang,int pageno);
-    //방 제목과 언어로 검색
-    Page<Room> getSearchList(String topic,String lang,int pageno);
+    boolean doControlPeople(String uuid, Long people);
 }

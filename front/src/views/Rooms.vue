@@ -3,34 +3,30 @@
     <!-- 방 생성 -->
     <Create @onCreateRoom="onCreateRoom" :ws="ws" />
     <!-- 방 조건 검색 -->
-    <Search @setSearchData="setSearchData" />
+    <Search @setSearchData="changeSearchData" />
     <!-- 방 목록 -->
-    <v-row v-if="rooms.length > 1">
+    <v-row>
       <v-col v-for="item in rooms" :key="item.id" lg="4" md="3" sm="2" xs="1">
         <Item :item="item" @onEnterRoom="onEnterRoom" />
       </v-col>
     </v-row>
-    <v-row v-else>
-      <v-col>
-        <v-row justify="center">
-          <v-icon x-large color="secondary">mdi-close-box</v-icon>
-        </v-row>
-        <v-row justify="center">
-          <h1>{{ $t("alert_nolist_01") }}</h1>
-        </v-row>
-        <v-row justify="center">
-          <h3>{{ $t("alert_nolist_02") }}</h3>
-        </v-row>
-      </v-col>
-    </v-row>
-    <!-- 방조건 검색시 이벤트 처리 나누기 -->
-
-    <span v-if="!flag">
-      <infinite-loading @infinite="requestRooms"> </infinite-loading>
-    </span>
-    <span v-else>
-      <infinite-loading @infinite="requestSearchRooms"> </infinite-loading>
-    </span>
+    <infinite-loading :identifier="searchData" @infinite="requestRooms">
+      <!-- NOTE: 방조건 검색시 이벤트 처리 나누기 -->
+      <div slot="no-more"></div>
+      <div slot="no-results">
+        <v-col>
+          <v-row justify="center">
+            <v-icon x-large color="secondary">mdi-close-box</v-icon>
+          </v-row>
+          <v-row justify="center">
+            <h1>{{ $t("alert_nolist_01") }}</h1>
+          </v-row>
+          <v-row justify="center">
+            <h3>{{ $t("alert_nolist_02") }}</h3>
+          </v-row>
+        </v-col>
+      </div>
+    </infinite-loading>
     <v-fab-transition>
       <v-btn
         bottom
@@ -67,11 +63,9 @@ export default {
       page: 1,
       rooms: [],
       ws: null,
-      flag: false,
-      search: {
+      searchData: {
         topic: "",
         lang: "",
-        page: 1,
       },
       btnShow: false,
       loadingAnswer: false,
@@ -88,23 +82,6 @@ export default {
       this.sendMessage(message);
       this.$router.push({ name: "Room", params: { UUID: uuid } });
     },
-    /*
-    NOTE: 방 목록 요청
-    NOTE: https://www.npmjs.com/package/vue-infinite-loading
-     */
-    requestRooms($state) {
-      this.$store.dispatch("roomStore/requestRooms", this.page).then((res) => {
-        const data = res.data.roomResList;
-        this.$log(data);
-        if (data.length) {
-          this.rooms.push(...data);
-          this.page += 1;
-          $state.loaded();
-        } else {
-          $state.complete();
-        }
-      });
-    },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
         this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
@@ -114,34 +91,27 @@ export default {
       this.$log("[sendMessage] message: " + jsonMessage);
       this.ws.send(jsonMessage);
     },
-    // NOTE: 방 조건 검색 시 받아오는 데이터
-    setSearchData(data) {
-      this.$log("방조건 검색", data);
-      //search 데이터 초기화
-      (this.search.topic = data.topic), (this.search.lang = data.lang);
-      this.search.page = 1;
-
-      this.$store
-        .dispatch("roomStore/requestSearch", this.search)
-        .then((res) => {
-          //현재 rooms초기화
-          this.rooms.length = 0;
-          const data = res.data.roomResList;
-          this.rooms.push(...data);
-          this.search.page += 1;
-          //조건 검색
-
-          this.flag = true;
-          this.$log(data);
-        });
+    /*
+    NOTE: 방 목록 요청
+    NOTE: https://www.npmjs.com/package/vue-infinite-loading
+     */
+    changeSearchData(changeData) {
+      this.searchData = changeData;
+      this.page = 1;
+      this.rooms = [];
     },
-    requestSearchRooms($state) {
+    requestRooms($state) {
+      console.log(this.searchData);
       this.$store
-        .dispatch("roomStore/requestSearch", this.search)
+        .dispatch("roomStore/requestRooms", {
+          topic: this.searchData.topic,
+          lang: this.searchData.lang,
+          page: this.page,
+        })
         .then((res) => {
           const data = res.data.roomResList;
           if (data.length) {
-            this.search.page += 1;
+            this.page += 1;
             this.rooms.push(...data);
             $state.loaded();
           } else {
@@ -210,8 +180,8 @@ export default {
                 text: "입장 요청이 수락 됐습니다.",
                 color: "success",
               });
-              this.ws.close();
-              console.log("%%%%% WS CLOSE %%%%%%%%%%");
+              // this.ws.close();
+              // console.log("%%%%% WS CLOSE %%%%%%%%%%");
               this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
             }
           })
@@ -229,6 +199,7 @@ export default {
     // this.$log(this.$store.getters["userStore/getLocale"]);
     // TODO: 언어 설정 다른 방식이 필요해보임
     this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
+    this.$store.dispatch("roomStore/exitRoom");
     this.connect();
   },
   mounted() {

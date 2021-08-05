@@ -30,15 +30,6 @@ public class RoomController {
     @Autowired
     RoomService roomService;
 
-    @GetMapping("{pageno}")
-    public ResponseEntity<RoomListRes> findAll(@PathVariable int pageno) {
-        Page<Room> firstPage = roomService.getRoomList(pageno);
-        List<Room> pageContents = firstPage.getContent();
-
-        return ResponseEntity.status(200).body(RoomListRes.getList(pageContents));
-
-    }
-
     //CRUD
     @PostMapping("/create")
     @ApiOperation(value = "방생성", notes = "방생성 작업")
@@ -99,25 +90,17 @@ public class RoomController {
 
     //방 조건 검색
     @ApiOperation(value = "방 정보 검색", notes = "방 조건에 따라 검색.")
-    @GetMapping("search/{pageno}")
-    public ResponseEntity<?> ConditionSearch(String topic,String lang,@PathVariable int pageno){
-
-        List<Room> rooms=null;
-        Page<Room> pagerooms=null;
-        if(lang.length()>1){
-            lang=lang.substring(7,9);
-            pagerooms=roomService.getSearchList(topic,lang,pageno);
-        }else if(topic.length()>1 && lang.equals("") ){
-            pagerooms=roomService.getTopicList(topic,pageno);
-        }else{
-            pagerooms = roomService.getRoomList(pageno);
-        }
+    @GetMapping("{pageno}")
+    public ResponseEntity<?> ConditionSearch(String topic, String lang, @PathVariable int pageno) {
+        List<Room> rooms = null;
+        Page<Room> pagerooms = null;
+        pagerooms = roomService.getRoomList(topic, lang, pageno);
 
         if (pagerooms != null) {
             rooms = pagerooms.getContent();
         }
         if (rooms == null) {
-            return ResponseEntity.status(401).body("No Room");
+            return ResponseEntity.status(404).body("No Room");
         } else {
             return ResponseEntity.status(200).body(RoomListRes.getList(rooms));
         }
@@ -126,21 +109,21 @@ public class RoomController {
     //현재인원 체크
     @ApiOperation(value = "방 현재인원 체크", notes = "uuid를 받아와 현재인원 체크")
     @GetMapping("/check/{uuid}")
-    public ResponseEntity<?> doCheckJoin(@PathVariable String uuid){
-        if(roomService.getCheckJoin(uuid)){
+    public ResponseEntity<?> doCheckJoin(@PathVariable String uuid) {
+        if (roomService.getCheckJoin(uuid)) {
             return ResponseEntity.status(200).body("join ok");
-        }else{
-            return ResponseEntity.status(401).body("Max people");
+        } else {
+            return ResponseEntity.status(404).body("Max people");
         }
     }
 
     //현재인원 산술 계산
     @ApiOperation(value = "방 현재인원 수정", notes = "uuid를 받아와 현재인원 + -.")
     @PutMapping("/cal/{uuid}")
-    public ResponseEntity<?> doCalPeople(@PathVariable String uuid,Long num){
-        if(roomService.doControlPeople(uuid,num)){
+    public ResponseEntity<?> doCalPeople(@PathVariable String uuid, Long num) {
+        if (roomService.doControlPeople(uuid, num)) {
             return ResponseEntity.status(200).body("ok");
         }
-        return ResponseEntity.status(401).body("No Join");
+        return ResponseEntity.status(404).body("No Join");
     }
 }
