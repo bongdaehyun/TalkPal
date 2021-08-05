@@ -1,12 +1,12 @@
 <template>
   <v-app>
-    <v-app-bar app color="white" v-if="loginStatus">
+    <v-app-bar app="true" color="white" v-if="loginStatus && !isRoom">
       <div class="d-flex align-center">
         <!-- NOTE: 네비게이션바 왼쪽 -->
         <v-img src="@/assets/image/logo.png" max-width="224px" contain></v-img>
       </div>
       <v-spacer></v-spacer>
-      <!-- NOTE: 네비게이션바 모바일도 가능하게-->
+      <!-- NOTE: 데스크탑 버전 -->
       <div v-if="!isMobile">
         <v-btn text>
           <span class="mr-2" @click="goRooms">
@@ -24,7 +24,7 @@
           </span>
         </v-btn>
       </div>
-      <!-- NOTE: 모바일 버전일때  -->
+      <!-- NOTE: 모바일 버전  -->
       <!-- 모바일 특석상 간단한 아이콘이 좋아보인다는 생각 -->
       <div v-else>
         <v-menu bottom left>
@@ -62,7 +62,7 @@
         </v-menu>
       </div>
     </v-app-bar>
-    <v-main class="header">
+    <v-main class="header" :class="{ 'pa-0': isRoom }">
       <router-view />
       <v-snackbar
         v-model="snackbarStatus"
