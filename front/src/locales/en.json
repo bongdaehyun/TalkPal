@@ -37,5 +37,15 @@
   "profile_history": "User History",
   "profile_receive_review": "Receive Review",
   "profile_written_review": "Written Review",
-  "profile_follow" : "Follow"
+  "profile_follow": "Follow",
+  "guide_01": "Nice to have met you. It`s been a pleasure meeting you.",
+  "guide_02": "How`re you been doing?",
+  "guide_03": "What`s the weather like there?",
+  "guide_04": "What have you been up to lately?",
+  "guide_05": "In winter I enjoy skiing and I play tennis in the summer.",
+  "guide_06": "I got it wrong, but can you tell me again?",
+  "guide_07": "See you later.",
+  "guide_08": "Let me see if I understand you correctly.",
+  "guide_09": "Please accept my apologies.",
+  "guide_10": "I`m sorry that I asked. Sorry I asked."
 }
