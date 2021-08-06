@@ -46,16 +46,15 @@ public class UserController {
 			     					@RequestPart("imgFile") MultipartFile imgFile ) throws IOException {
 
 		//경로설정
-		String basePath = "C:/Users/KyeongHan/Desktop/project1/S05P12D203/front/src/assets/image/";
+		String basePath = "/volumes/profile/";
 		String filePath = basePath+  userId.toString() + "profileImg.jpg";
 
 		File dest= new File(filePath);
-
-
 		imgFile.transferTo(dest);//파일 생성
+
 		//DB에 저장
 		Long userid = Long.parseLong(userId);
-		String savePath ="@/assets/image/"+userId.toString()+"profileImg.jpg";
+		String savePath ="/file/"+userId.toString()+"profileImg.jpg";
 		if(userService.saveImgFile(userid, savePath))
 		{
 			return ResponseEntity.status(200).body(imgFile.getOriginalFilename());
