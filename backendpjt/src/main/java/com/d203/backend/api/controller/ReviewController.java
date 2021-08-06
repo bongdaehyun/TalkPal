@@ -3,7 +3,6 @@ package com.d203.backend.api.controller;
 import java.util.List;
 
 import com.d203.backend.api.response.Review.ReviewAvgRes;
-import com.d203.backend.db.entity.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -40,114 +39,112 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("/api/v1/review")
 public class ReviewController {
 
-	//CRUD
-	
-	@Autowired
-	ReviewService reviewService;
-	
-	@Autowired
-	UserService userService;
-	
-	@PostMapping()
-	@ApiOperation(value = "리뷰작성 ", notes = "<strong>유저간 리뷰와 점수strong>를 작성한다.")
-	@ApiResponses({
-			@ApiResponse(code = 200, message = "성공"),
-			@ApiResponse(code = 401, message = "인증 실패"),
-			@ApiResponse(code = 404, message = "사용자 없음"),
-			@ApiResponse(code = 500, message = "서버 오류")
-	})
-	public ResponseEntity<? extends BaseResponseBody> register(
-			@RequestBody @ApiParam(value="평가 작성 정보", required = true) ReviewResiterReq reviewInfo) {
-			
-		Review review = reviewService.createReview(reviewInfo);
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
-		
-	}
-	
-	@GetMapping("/from/{from_user_id}/{pageno}")
-	@ApiOperation(value = "작성한 리뷰 조회", notes = "요청하는 유저 pk값에 대응하는 작성한 리뷰를 조회한다.")
-	@ApiResponses({
-			@ApiResponse(code = 200, message = "성공"),
-			@ApiResponse(code = 500, message = "서버 오류")
-	})
-	public ResponseEntity<ReviewListRes> getReviewFrom (@PathVariable Long from_user_id ,@PathVariable int pageno) {
-		
-		System.out.println("ReqUser : try" );
-		User user = userService.getUserByuserId(from_user_id);
-		System.out.println("ReqUser : " + user.toString());
-		
-		System.out.println("ReqUser : " + user.getId());
+    //CRUD
 
-		Page<Review> firstPage = reviewService.getWriteReviewById(user, pageno);
+    @Autowired
+    ReviewService reviewService;
 
-		List<Review> review = firstPage.getContent();
-		
-		return ResponseEntity.status(200).body(ReviewListRes.getlist(review));
-		  
-	}
-	
-	@GetMapping("/to/{to_user_id}/{pageno}")
-	@ApiOperation(value = "리뷰 조회", notes = "요청하는 유저 pk값에 대응하는 작성된 리뷰를 조회한다.")
-	@ApiResponses({
-			@ApiResponse(code = 200, message = "성공"),
-			@ApiResponse(code = 401, message = "인증 실패"),
-			@ApiResponse(code = 404, message = "사용자 없음"),
-			@ApiResponse(code = 500, message = "서버 오류")
-	})
-	public ResponseEntity<ReviewListRes> getReviewTo (@PathVariable Long to_user_id , @PathVariable int pageno) {
-		
-		System.out.println("ReqUser : try" );
-		User user = userService.getUserByuserId(to_user_id);
-		System.out.println("ReqUser : " + user.toString());
-		
-		System.out.println("ReqUser : " + user.getId().longValue());
+    @Autowired
+    UserService userService;
 
-		Page<Review> firstPage = reviewService.getReviewById(user , pageno);
-		List<Review> review = firstPage.getContent();
+    @PostMapping()
+    @ApiOperation(value = "리뷰작성 ", notes = "<strong>유저간 리뷰와 점수strong>를 작성한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<? extends BaseResponseBody> register(
+            @RequestBody @ApiParam(value = "평가 작성 정보", required = true) ReviewResiterReq reviewInfo) {
 
-		return ResponseEntity.status(200).body(ReviewListRes.getlist(review));
-		  
-	}
-	
-	@PutMapping("{review_id}")
-	@ApiOperation(value = "리뷰 작성 수정", notes = "review의 pk 값을 받아와 수정한다.")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "성공")
-	})
-	public ResponseEntity<?> updateReview(
-			@RequestBody @ApiParam(value="평가 작성 수정 정보", required = true) ReviewUpdateReq updateReviewInfo,
-			@PathVariable Long review_id)
-			{
-		
-		System.out.println(updateReviewInfo.toString());
-		if(reviewService.updateReview(review_id,updateReviewInfo))
-		{
-			return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
-		}
-		
-		return new ResponseEntity<String>("FAIL", HttpStatus.NO_CONTENT);
-	}
-	
-	@DeleteMapping("{review_id}")
-	public ResponseEntity<?> deleteReview(
-			@PathVariable Long review_id,
-			@ApiIgnore Authentication authentication
-			){
-		
-		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
-		Long tokenUserId = userDetails.getUser().getId();
-		if(reviewService.deleteReview(review_id,tokenUserId)) {
-			return  ResponseEntity.status(204).body("Review delete success");
-		}
-		
-		return  ResponseEntity.status(401).body("User not macthed");
-	}
+        Review review = reviewService.createReview(reviewInfo);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 
-	@GetMapping("/avg/{touserid}")
-	public ResponseEntity<ReviewAvgRes> getReviewAvg(@PathVariable Long touserid){
+    }
 
-		double avg = reviewService.avgReview(touserid);
-		return ResponseEntity.status(200).body(ReviewAvgRes.of(avg));
-	}
+    @GetMapping("/from/{from_user_id}/{pageno}")
+    @ApiOperation(value = "작성한 리뷰 조회", notes = "요청하는 유저 pk값에 대응하는 작성한 리뷰를 조회한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<ReviewListRes> getReviewFrom(@PathVariable Long from_user_id, @PathVariable int pageno) {
+
+        System.out.println("ReqUser : try");
+        User user = userService.getUserByuserId(from_user_id);
+        System.out.println("ReqUser : " + user.toString());
+
+        System.out.println("ReqUser : " + user.getId());
+
+        Page<Review> firstPage = reviewService.getWriteReviewById(user, pageno);
+
+        List<Review> review = firstPage.getContent();
+
+        return ResponseEntity.status(200).body(ReviewListRes.getlist(review));
+
+    }
+
+    @GetMapping("/to/{to_user_id}/{pageno}")
+    @ApiOperation(value = "리뷰 조회", notes = "요청하는 유저 pk값에 대응하는 작성된 리뷰를 조회한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<ReviewListRes> getReviewTo(@PathVariable Long to_user_id, @PathVariable int pageno) {
+
+        System.out.println("ReqUser : try");
+        User user = userService.getUserByuserId(to_user_id);
+        System.out.println("ReqUser : " + user.toString());
+
+        System.out.println("ReqUser : " + user.getId().longValue());
+
+        Page<Review> firstPage = reviewService.getReviewById(user, pageno);
+        List<Review> review = firstPage.getContent();
+
+        return ResponseEntity.status(200).body(ReviewListRes.getlist(review));
+
+    }
+
+    @PutMapping("{review_id}")
+    @ApiOperation(value = "리뷰 작성 수정", notes = "review의 pk 값을 받아와 수정한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공")
+    })
+    public ResponseEntity<?> updateReview(
+            @RequestBody @ApiParam(value = "평가 작성 수정 정보", required = true) ReviewUpdateReq updateReviewInfo,
+            @PathVariable Long review_id) {
+
+        System.out.println(updateReviewInfo.toString());
+        if (reviewService.updateReview(review_id, updateReviewInfo)) {
+            return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<String>("FAIL", HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("{review_id}")
+    public ResponseEntity<?> deleteReview(
+            @PathVariable Long review_id,
+            @ApiIgnore Authentication authentication
+    ) {
+
+        SsafyUserDetails userDetails = (SsafyUserDetails) authentication.getDetails();
+        Long tokenUserId = userDetails.getUser().getId();
+        if (reviewService.deleteReview(review_id, tokenUserId)) {
+            return ResponseEntity.status(204).body("Review delete success");
+        }
+
+        return ResponseEntity.status(401).body("User not macthed");
+    }
+
+    @GetMapping("/avg/{touserid}")
+    public ResponseEntity<ReviewAvgRes> getReviewAvg(@PathVariable Long touserid) {
+
+        double avg = reviewService.avgReview(touserid);
+        return ResponseEntity.status(200).body(ReviewAvgRes.of(avg));
+    }
 
 }
