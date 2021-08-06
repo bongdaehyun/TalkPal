@@ -371,7 +371,7 @@ export default {
         .dispatch("userStore/requestUserInfo", this.userId)
         .then((res) => {
           this.user = res.data;
-          this.userImg = require("@/assets/image/"+this.userId+"profileImg.jpg");
+          this.userImg = "/file/"+this.userId+"profileImg.jpg"
           console.log(this.user.imgPath);
         })
         .catch((err) => {
