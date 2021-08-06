@@ -1,9 +1,6 @@
 package com.d203.backend.api.controller;
 
 import com.d203.backend.api.service.Email.EmailSenderService;
-import com.d203.backend.db.repository.UserRepository;
-import io.swagger.v3.oas.annotations.media.Content;
-import javafx.scene.canvas.GraphicsContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,22 +43,23 @@ public class UserController {
 
 
 	@PutMapping(value = "/saveimg/{userId}")
-	public ResponseEntity<String> profileImg(@PathVariable Long userId,
+	public ResponseEntity<String> profileImg(@PathVariable String userId,
 			     					@RequestPart("imgFile") MultipartFile imgFile ) throws IOException {
 
-
-		String basePath = System.getProperty("user.dir");;
-		String filePath = basePath+"/src/main/resources/static/"+imgFile.getOriginalFilename();
+		//경로설정
+		String basePath = "C:/Users/KyeongHan/Desktop/project1/S05P12D203/front/src/assets/image/";
+		String filePath = basePath+  userId.toString() + "profileImg.jpg";
 
 		File dest= new File(filePath);
 
 
 		imgFile.transferTo(dest);//파일 생성
 		//DB에 저장
-
-		if(userService.saveImgFile(userId, filePath))
+		Long userid = Long.parseLong(userId);
+		String savePath ="@/assets/image/"+userId.toString()+"profileImg.jpg";
+		if(userService.saveImgFile(userid, savePath))
 		{
-			return ResponseEntity.status(200).body(filePath);
+			return ResponseEntity.status(200).body(imgFile.getOriginalFilename());
 		}
 
 		return ResponseEntity.status(500).body("이미지저장 실패");

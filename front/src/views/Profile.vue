@@ -6,7 +6,7 @@
     <!-- TODO: 레이아웃 생각 중... -->
     <v-row class="mt-12 mb-5" justify="center">
       <v-col>
-        <v-img src="@/assets/image/flag/en.png"> </v-img>
+        <v-img :src="userImg"> </v-img>
         <v-file-input label="File input" @change="selectFile"></v-file-input>
         <v-btn @click="submitimg"></v-btn>
       </v-col>
@@ -158,7 +158,7 @@ export default {
   name: "Profile",
   data() {
     return {
-      image: "",
+      userImg: null,
       followers: {
         items: [],
         page: 0,
@@ -243,12 +243,17 @@ export default {
       imgFile.append("imgFile", this.image);
 
       try {
-        const { data } = await http.put("/users/saveimg/30", imgFile, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const { data } = await http.put(
+          "/users/saveimg/" + this.userId,
+          imgFile,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         console.log(data);
+        
       } catch (err) {
         console.log(err);
       }
@@ -366,6 +371,8 @@ export default {
         .dispatch("userStore/requestUserInfo", this.userId)
         .then((res) => {
           this.user = res.data;
+          this.userImg = require("@/assets/image/"+this.userId+"profileImg.jpg");
+          console.log(this.user.imgPath);
         })
         .catch((err) => {
           this.$log(err);
@@ -392,6 +399,7 @@ export default {
     this.checkFollow();
     this.countFollower();
     this.countFollowing();
+  
   },
   components: {
     FollowDialog,
