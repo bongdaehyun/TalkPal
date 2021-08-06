@@ -189,7 +189,6 @@ const WebRTCMixin = {
         audio: true,
         video: {
           mandatory: {
-            maxWidth: 320,
             maxFrameRate: 15,
             minFrameRate: 15,
           },

@@ -1,8 +1,7 @@
 <template>
-  <v-app>
-    <v-app-bar app color="white" v-if="loginStatus && !isRoom">
+  <v-app style="background-color: #f8f9fa">
+    <v-app-bar app elevation="1" color="#FFFFFF" v-if="loginStatus && !isRoom">
       <div class="d-flex align-center">
-        <!-- NOTE: 네비게이션바 왼쪽 -->
         <v-img src="@/assets/image/logo.png" max-width="224px" contain></v-img>
       </div>
       <v-spacer></v-spacer>
@@ -78,8 +77,11 @@
 </template>
 
 <script>
+import isMobile from "@/mixin/isMobile.js";
+
 export default {
   name: "App",
+  mixins: [isMobile],
   data() {
     return {
       timeout: 2000,
@@ -100,17 +102,6 @@ export default {
     },
     isRoom() {
       return this.$store.getters["roomStore/getIsRoom"];
-    },
-    isMobile() {
-      switch (this.$vuetify.breakpoint.name) {
-        // NOTE: 모바일에서 여백 조절
-        case "xs":
-          return true;
-        case "sm":
-          return true;
-        default:
-          return false;
-      }
     },
   },
   methods: {

@@ -3,7 +3,12 @@
     class="d-flex flex-column"
     style="background-color: red"
     :style="{ height: height }"
-  ></div>
+  >
+    <p>asjdkh</p>
+    <p>asjdkh</p>
+    <p>asjdkh</p>
+    <p>asjdkh</p>
+  </div>
 </template>
 
 <script>
