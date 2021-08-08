@@ -47,7 +47,7 @@ public class UserController {
 			     					@RequestPart("imgFile") MultipartFile imgFile ) throws IOException {
 
 		//경로설정
-		String basePath = "C:/Users/KyeongHan/Desktop/project1/S05P12D203/front/src/assets/image/";
+		String basePath = "C:/Users/multicampus/git/S05P13D203/front/src/assets/image/";
 		String filePath = basePath+  userId.toString() + "profileImg.jpg";
 
 		File dest= new File(filePath);

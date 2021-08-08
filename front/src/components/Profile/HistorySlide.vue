@@ -4,7 +4,7 @@
 <template>
   <swiper v-if="histories" ref="mySwiper" :options="swiperOption">
     <swiper-slide v-for="item in histories" :key="item.id">
-      {{ item }}
+      <Item :item="item"/>
     </swiper-slide>
   </swiper>
 </template>
@@ -12,6 +12,7 @@
 <script>
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
+import Item from "./HistorySlide/Item.vue";
 
 export default {
   name: "HistorySlide",
@@ -36,6 +37,7 @@ export default {
   components: {
     Swiper,
     SwiperSlide,
+    Item,
   },
 };
 </script>

@@ -23,7 +23,7 @@ export default {
 
   methods: {
     goProfile() {
-      console.log(this.item);
+      //console.log(this.item);
       this.$router.push({
         name: "Profile",
         params: { userId: this.item.user_id },

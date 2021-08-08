@@ -17,10 +17,12 @@
             <h1 v-if="!profile">{{ user.nickname }}</h1>
             <span v-else>
               <v-text-field
-                v-model="user.nickname"
-                :counter="10"
+                v-model="nickname"
+                :counter="16"
                 label="Nickname"
-                required
+                :error-messages="nicknameErrors"
+                @input="$v.nickname.$touch()"
+                @blur="$v.nickname.$touch()"
               ></v-text-field>
             </span>
           </v-col>
@@ -153,8 +155,16 @@ import ReviewSlide from "../components/Profile/ReviewSlide.vue";
 import HistorySlide from "../components/Profile/HistorySlide.vue";
 import FollowDialog from "../components/Profile/FollowDialog.vue";
 import http from "@/util/http-common";
+import { validationMixin } from "vuelidate";
+import {
+  required,
+  minLength,
+  maxLength,
+  alphaNum,
+} from "vuelidate/lib/validators";
 
 export default {
+  mixins: [validationMixin],
   name: "Profile",
   data() {
     return {
@@ -198,6 +208,7 @@ export default {
         follower: 0,
         following: 0,
       },
+      nickname: "",
     };
   },
   computed: {
@@ -211,15 +222,46 @@ export default {
           return true;
       }
     },
+    nicknameErrors() {
+      const errors = [];
+      if (!this.$v.nickname.$dirty) return errors;
+      !this.$v.nickname.required && errors.push("필수 항목입니다.");
+      (!this.$v.nickname.minLength) &&
+        errors.push("최소 2 글자 최대 16 글자를 입력해야 합니다.");
+      !this.$v.nickname.alphaNum &&
+        errors.push("영문 소문자 및 숫자만 입력해야 합니다.");
+      !this.$v.nickname.isUnique && errors.push("이미 존재하는 별명입니다.");
+      return errors;
+    },
   },
-
+  validations: {
+    nickname: {
+      required,
+      minLength: minLength(2),
+      maxLength: maxLength(16),
+      alphaNum,
+      async isUnique(nickname) {
+        console.log(nickname)
+        if (nickname === "") return true;
+        try {
+          // 중복 검사 통과
+          const res = await http.get(`/users/checknick/${nickname}`);
+          console.log("중복 검사");
+          return true;
+        } catch (error) {
+          // 중복 검사 실패
+          return false;
+        }
+      },
+    },
+  },
   methods: {
     // NOTE : 프로필 수정
     updateProfile() {
       this.profile = true;
     },
     submit() {
-      console.log(this.user);
+      //console.log(this.user);
       let updateUser = {
         email: this.user.email,
         introduction: this.user.introduction,
@@ -252,8 +294,8 @@ export default {
             },
           }
         );
+
         console.log(data);
-        
       } catch (err) {
         console.log(err);
       }
@@ -371,7 +413,10 @@ export default {
         .dispatch("userStore/requestUserInfo", this.userId)
         .then((res) => {
           this.user = res.data;
-          this.userImg = require("@/assets/image/"+this.userId+"profileImg.jpg");
+          this.nickname = this.user.nickname;
+          this.userImg = require("@/assets/image/" +
+            this.userId +
+            "profileImg.jpg");
           console.log(this.user.imgPath);
         })
         .catch((err) => {
@@ -386,6 +431,7 @@ export default {
           this.userId
         );
         this.histories = res.data.historyList;
+        //console.log(this.histories)
       } catch (error) {
         this.$log(error);
       }
@@ -399,7 +445,6 @@ export default {
     this.checkFollow();
     this.countFollower();
     this.countFollowing();
-  
   },
   components: {
     FollowDialog,
