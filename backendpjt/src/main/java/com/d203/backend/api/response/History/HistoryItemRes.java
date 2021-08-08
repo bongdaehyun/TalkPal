@@ -11,4 +11,6 @@ public class HistoryItemRes {
     private String nickname;
 
     private String email;
+
+    private String image;
 }

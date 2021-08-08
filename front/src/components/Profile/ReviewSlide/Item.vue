@@ -28,7 +28,7 @@
         <v-list-item-avatar tile size="80" color="grey"></v-list-item-avatar>
       </v-list-item>
       <v-card-actions>
-        <v-btn outlined rounded text> GO </v-btn>
+        <v-btn outlined rounded text> {{$t('profile_go')}} </v-btn>
       </v-card-actions>
     </v-card>
     <!-- NOTE: Desktop/Mobile width control -->
@@ -39,7 +39,7 @@
         </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="dialog = false"> 닫기 </v-btn>
+          <v-btn color="primary" text @click="dialog = false"> {{$t('profile_close')}} </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
