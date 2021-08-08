@@ -26,9 +26,6 @@ export default {
     };
   },
   props: {
-    isDesktop: {
-      type: Boolean,
-    },
     histories: {
       type: Array,
     },

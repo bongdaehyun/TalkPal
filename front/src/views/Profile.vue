@@ -1,116 +1,144 @@
 <template>
-  <v-container
-    v-if="user && receivedReviews && giveReviews && isFollow != null"
-  >
+  <v-container v-if="profileInfo && isFollow != null">
     <!-- NOTE: 사용자 정보 -->
-    <!-- TODO: 레이아웃 생각 중... -->
-    <v-row class="mt-12 mb-5" justify="center">
-      <v-col>
-        <v-img :src="userImg"> </v-img>
-        <v-file-input label="File input" @change="selectFile"></v-file-input>
-        <v-btn @click="submitimg"></v-btn>
-      </v-col>
-
-      <v-col>
-        <v-row>
-          <v-col>
-            <h1 v-if="!profile">{{ user.nickname }}</h1>
-            <span v-else>
+    <div class="d-flex flex-column my-12">
+      <v-row justify="center" no-gutters>
+        <v-col cols="6" class="d-flex flex-column align-end pe-6">
+          <!-- NOTE: 프로필 이미지 -->
+          <v-avatar size="128">
+            <v-img :src="profileImg"></v-img>
+          </v-avatar>
+          <!-- NOTE: 프로필 이미지 수정 -->
+          <div v-if="profileId == loginId">
+            <v-btn
+              class="mt-6 mb-3"
+              outlined
+              color="primary"
+              @click="clickChangeImage"
+            >
+              이미지 수정
+              <v-icon right dark> mdi-cloud-upload </v-icon>
+            </v-btn>
+            <div v-show="false">
+              <input ref="fileInput" type="file" @change="changeProfileImage" />
+            </div>
+          </div>
+        </v-col>
+        <v-col cols="6" md="3" class="d-flex flex-column justify-center ps-6">
+          <div v-if="!update" class="d-flex justify-start">
+            <!-- NOTE: 팔로우 목록 -->
+            <div class="pe-3">
+              <v-dialog
+                v-model="follower.dialog"
+                :max-width="dialogMaxWidth"
+                scrollable
+              >
+                <FollowDialog
+                  :profileId="profileId"
+                  :followItem="follower"
+                  ref="followDialog"
+                />
+              </v-dialog>
+              <button @click="follower.dialog = true">
+                {{ $t("profile_follower") }}
+                <span class="font-weight-bold text--black">
+                  {{ follower.count }}
+                </span>
+              </button>
+            </div>
+            <!-- NOTE: 팔로잉 목록 -->
+            <div class="ps-3">
+              <v-dialog
+                v-model="following.dialog"
+                :max-width="dialogMaxWidth"
+                scrollable
+              >
+                <FollowDialog :profileId="profileId" :followItem="following" />
+              </v-dialog>
+              <button @click="following.dialog = true">
+                {{ $t("profile_following") }}
+                <span class="font-weight-bold text--black">
+                  {{ following.count }}
+                </span>
+              </button>
+            </div>
+          </div>
+          <!-- NOTE: 닉네임 팔로우 자기소개 -->
+          <div class="d-flex align-center">
+            <div
+              v-if="!update"
+              class="font-weight-bold pe-1"
+              style="font-size: 2rem"
+            >
+              <!-- NOTE: 닉네임 -->
+              <span>
+                {{ profileInfo.nickname }}
+              </span>
+            </div>
+            <!-- NOTE: 닉네임 수정 -->
+            <div v-else>
               <v-text-field
                 v-model="nickname"
-                :counter="16"
                 label="Nickname"
+                solo
+                required
+                full-width
+                :counter="16"
                 :error-messages="nicknameErrors"
                 @input="$v.nickname.$touch()"
                 @blur="$v.nickname.$touch()"
               ></v-text-field>
-            </span>
-          </v-col>
-          <v-col
-            class="mt-3"
-            v-if="userId == $store.getters[`userStore/getUserId`] && !profile"
-          >
-            <v-icon @click="updateProfile">fas fa-cog</v-icon>
-          </v-col>
-        </v-row>
-        <h3>{{ $t("profile_score") }}</h3>
-        <div v-if="userId != $store.getters[`userStore/getUserId`]">
-          <button v-if="isFollow" @click="addFollow">
-            {{ $t("profile_follow_add") }}
-          </button>
-          <button v-else @click="delFollow">
-            {{ $t("profile_follow_no") }}
-          </button>
-        </div>
-      </v-col>
-      <v-col>
-        <v-dialog v-model="followerDialog" max-width="300px" scrollable>
-          <FollowDialog
-            :isDesktop="isDesktop"
-            :follows="followers"
-            @onCloseDialog="followerDialog = false"
-          />
-        </v-dialog>
-
-        <button @click="followerDialog = true">
-          <v-icon>mdi-heart</v-icon>{{ $t("profile_follower") }}
-        </button>
-        <span>
-          {{ count.follower }}
-        </span>
-      </v-col>
-      <v-col>
-        <v-dialog v-model="followingDialog" max-width="300px" scrollable>
-          <FollowDialog
-            :isDesktop="isDesktop"
-            :follows="followings"
-            @onCloseDialog="followingDialog = false"
-          />
-        </v-dialog>
-        <button @click="followingDialog = true">
-          {{ $t("profile_following") }}
-        </button>
-        <span>
-          {{ count.following }}
-        </span>
-      </v-col>
-      <v-col>
-        <v-row>
-          <span>
-            <h3>SNS</h3>
-            <div v-if="!profile">
-              {{ user.sns }}
             </div>
-            <div v-else>
-              <v-text-field
-                v-model="user.sns"
-                :counter="25"
-                label="SNS"
-              ></v-text-field>
+            <!-- NOTE: 정보 수정 전환 버튼-->
+            <div v-if="profileId == loginId && !update" class="ms-1 pb-1 ps-1">
+              <v-icon
+                @click="
+                  () => {
+                    this.nickname = this.profileInfo.nickname;
+                    update = true;
+                  }
+                "
+                >fas fa-cog</v-icon
+              >
             </div>
-          </span>
-        </v-row>
-        <v-row>
-          <span>
-            <h3>{{ $t("profile_introduce") }}</h3>
-            <div v-if="!profile">
-              {{ user.introduction }}
+            <!--  NOTE: 팔로우 버튼 -->
+            <div v-if="profileId != loginId" class="ms-1 pb-1 ps-1">
+              <button v-if="isFollow" dark @click="addFollow">
+                <v-icon color="purple">mdi-link-variant</v-icon>
+              </button>
+              <button v-else dark @click="delFollow">
+                <v-icon color="purple">mdi-link-variant-off</v-icon>
+              </button>
             </div>
-            <div v-else>
-              <v-textarea
-                name="input-7-1"
-                filled
-                auto-grow
-                v-model="user.introduction"
-              ></v-textarea>
-            </div>
-          </span>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-row justify="center">
-      <v-btn color="secondary" @click="submit" v-if="profile"> 제출 </v-btn>
-    </v-row>
+          </div>
+          <!-- NOTE: 자기소개 -->
+          <div v-if="!update">
+            {{ profileInfo.introduction }}
+          </div>
+          <!-- NOTE: 자기소개 수정 -->
+          <div v-else>
+            <v-textarea
+              rows="2"
+              outlined
+              hide-details
+              v-model="profileInfo.introduction"
+            ></v-textarea>
+          </div>
+          <div v-if="update" class="align-self-end">
+            <!-- NOTE: 수정 완료 버튼 -->
+            <v-btn
+              class="mt-3"
+              outlined
+              color="primary"
+              @click="submitUpdateButton"
+            >
+              수정완료
+            </v-btn>
+          </div>
+        </v-col>
+        <v-col></v-col>
+      </v-row>
+    </div>
     <!-- NOTE: 만난 사람들, 평가 내용 -->
     <v-row justify="center" class="mt-12">
       <v-col class="col-12 col-md-8">
@@ -123,23 +151,18 @@
         <v-tabs-items v-model="tab" :touchless="true">
           <!-- NOTE: 만난 사람들 -->
           <v-tab-item>
-            <HistorySlide :isDesktop="isDesktop" :histories="histories" />
+            <HistorySlide :histories="histories" />
           </v-tab-item>
           <!-- NOTE: 받은 평가 -->
           <v-tab-item>
             <ReviewSlide
-              :isDesktop="isDesktop"
               :reviews="receivedReviews"
               @onSlideEnd="requestReviews"
             />
           </v-tab-item>
           <!-- NOTE: 작성한 평가 -->
           <v-tab-item>
-            <ReviewSlide
-              :isDesktop="isDesktop"
-              :reviews="giveReviews"
-              @onSlideEnd="requestReviews"
-            />
+            <ReviewSlide :reviews="giveReviews" @onSlideEnd="requestReviews" />
           </v-tab-item>
         </v-tabs-items>
       </v-col>
@@ -163,70 +186,40 @@ import {
   alphaNum,
 } from "vuelidate/lib/validators";
 
+import isMobile from "@/mixin/isMobile.js";
+import ReviewMixin from "@/mixin/ReviewMixin.js";
+import FollowMixin from "@/mixin/FollowMixin.js";
+
 export default {
-  mixins: [validationMixin],
   name: "Profile",
+  mixins: [isMobile, ReviewMixin, FollowMixin, validationMixin],
+
   data() {
     return {
-      userImg: null,
-      followers: {
-        items: [],
-        page: 0,
-        url: "listFollower",
-        isEnd: false,
-      },
-      followings: {
-        items: [],
-        page: 0,
-        url: "listFollowing",
-        isEnd: false,
-      },
-      followingDialog: false,
-      followerDialog: false,
-      isFollow: null,
+      profileInfo: {},
+      nickname: null,
+      profileId: this.$route.params.userId,
+      profileImg: null,
+      isFollow: false,
+      loginId: this.$store.getters[`userStore/getUserId`],
       overlay: false,
-      userId: this.$route.params.userId,
-      user: null,
       tab: null,
       histories: [],
-      giveReviews: {
-        items: [],
-        page: 1,
-        category: "give",
-        url: "requestGiveReviews",
-        isEnd: false,
-      },
-      receivedReviews: {
-        items: [],
-        page: 1,
-        category: "receive",
-        url: "requestReceivedReviews",
-        isEnd: false,
-      },
-      profile: false,
-      count: {
-        follower: 0,
-        following: 0,
-      },
-      nickname: "",
+      update: false,
     };
   },
   computed: {
-    isDesktop() {
-      switch (this.$vuetify.breakpoint.name) {
-        case "xs":
-          return false;
-        case "sm":
-          return false;
-        default:
-          return true;
+    dialogMaxWidth() {
+      if (this.isMobile) {
+        return "90%";
       }
+      return "15%";
     },
     nicknameErrors() {
       const errors = [];
       if (!this.$v.nickname.$dirty) return errors;
       !this.$v.nickname.required && errors.push("필수 항목입니다.");
-      (!this.$v.nickname.minLength) &&
+      (!this.$v.nickname.minLength || !this.$v.nickname.maxLength) &&
         errors.push("최소 2 글자 최대 16 글자를 입력해야 합니다.");
       !this.$v.nickname.alphaNum &&
         errors.push("영문 소문자 및 숫자만 입력해야 합니다.");
@@ -241,12 +234,10 @@ export default {
       maxLength: maxLength(16),
       alphaNum,
       async isUnique(nickname) {
-        console.log(nickname)
         if (nickname === "") return true;
         try {
           // 중복 검사 통과
           const res = await http.get(`/users/checknick/${nickname}`);
-          console.log("중복 검사");
           return true;
         } catch (error) {
           // 중복 검사 실패
@@ -256,37 +247,59 @@ export default {
     },
   },
   methods: {
-    // NOTE : 프로필 수정
-    updateProfile() {
-      this.profile = true;
+    // NOTE: 프로필 유저 정보 요청
+    requestProfileInfo() {
+      this.$store
+        .dispatch("userStore/requestUserInfo", this.profileId)
+        .then((res) => {
+          this.profileInfo = res.data;
+          const imgPath = this.profileInfo.imgPath;
+          if (imgPath) {
+            this.profileImg = require(`@/assets/image/profile/${imgPath}`);
+          } else {
+            this.profileImg = require(`@/assets/image/profile/default_profileImg.png`);
+          }
+        })
+        .catch((err) => {
+          this.$log(err);
+        });
     },
-    submit() {
-      //console.log(this.user);
-      let updateUser = {
-        email: this.user.email,
-        introduction: this.user.introduction,
-        nickname: this.user.nickname,
-        sns: this.user.sns,
-      };
-      http.put("/users", updateUser).then((res) => {
-        console.log(res);
-        if (res.data == "SUCCESS") {
-          this.$store.dispatch("onSnackbar", {
-            text: "수정 완료.",
-            color: "success",
-          });
-          this.profile = false;
-        }
-      });
+    // NOTE: 수정 완료
+    submitUpdateButton() {
+      this.$v.$touch();
+      // NOTE: 유효성 검증
+      if (!this.$v.$invalid) {
+        let updateUser = {
+          email: this.profileInfo.email,
+          introduction: this.profileInfo.introduction,
+          nickname: this.nickname,
+          sns: this.profileInfo.sns,
+        };
+        http.put("/users", updateUser).then((res) => {
+          if (res.data == "SUCCESS") {
+            this.profileInfo.nickname = this.nickname;
+            this.$store.dispatch("onSnackbar", {
+              text: "수정 완료.",
+              color: "success",
+            });
+            this.update = false;
+          }
+        });
+      }
     },
-
-    async submitimg() {
+    // NOTE: 이미지 수정 버튼 클릭
+    clickChangeImage() {
+      this.$refs.fileInput.click();
+    },
+    // NOTE: 프로필 이미지 수정
+    async changeProfileImage(e) {
+      this.image = e.target.files[0];
       const imgFile = new FormData();
       imgFile.append("imgFile", this.image);
 
       try {
         const { data } = await http.put(
-          "/users/saveimg/" + this.userId,
+          "/users/saveimg/" + this.profileId,
           imgFile,
           {
             headers: {
@@ -294,89 +307,13 @@ export default {
             },
           }
         );
-
+        this.loadingButtonImage = false;
         console.log(data);
       } catch (err) {
         console.log(err);
       }
     },
 
-    selectFile(file) {
-      this.image = file;
-      console.log(this.image);
-    },
-
-    // NOTE : 팔로우 체크
-    checkFollow() {
-      // this.$log("팔로우 체크 실행");
-      let url = "userStore/checkFollow";
-      let followInfo = {
-        fromuserid: this.$store.getters["userStore/getUserId"],
-        touserid: this.userId,
-      };
-      this.$store.dispatch(url, followInfo).then((res) => {
-        this.isFollow = res.data;
-        // this.$log(res.data);
-      });
-    },
-    // NOTE: 팔로우 제거
-    delFollow() {
-      let url = "userStore/deleteFollow";
-      let followInfo = {
-        fromuserid: this.$store.getters["userStore/getUserId"],
-        touserid: this.userId,
-      };
-      this.$store.dispatch(url, followInfo).then(() => {
-        this.$store.dispatch("onSnackbar", {
-          text: "팔로우 해제",
-          color: "success",
-        });
-        this.isFollow = true;
-        // TODO: 팔로워 목록 다시 불러와야함.
-        // this.$router.go();
-      });
-    },
-    // NOTE: 팔로우 추가
-    addFollow() {
-      // 로그인한 유저
-      // this.$log(this.$store.getters["userStore/getUserId"]);
-      // 프로필 페이지 유저
-      // this.$log(this.userId);
-      let url = "userStore/addFollow";
-      let followInfo = {
-        fromuserid: this.$store.getters["userStore/getUserId"],
-        touserid: this.userId,
-      };
-      this.$store
-        .dispatch(url, followInfo)
-        .then(() => {
-          this.$store.dispatch("onSnackbar", {
-            text: "팔로우 추가",
-            color: "success",
-          });
-          this.isFollow = false;
-          // TODO: 팔로워 목록 다시 불러와야함.
-          // this.$router.go();
-        })
-        .catch((err) => {
-          console.error(err);
-          this.$log("이미 요청한 팔로우");
-        });
-    },
-    // NOTE: 팔로워 개수
-    countFollower() {
-      http.get(`/follow/countfollower/${this.userId}`).then((res) => {
-        console.log("팔로워", res);
-        this.count.follower = res.data;
-      });
-    },
-    // NOTE: 팔로잉 개수
-    countFollowing() {
-      http.get(`/follow/countfollowing/${this.userId}`).then((res) => {
-        //console.log("팔로잉", res);
-        this.count.following = res.data;
-      });
-    },
     // NOTE: 응답 리뷰 목록 추가
     pushReviews(reviews, res) {
       // this.$log(res);
@@ -388,47 +325,12 @@ export default {
       }
       this.overlay = false;
     },
-    // NOTE: 평가 목록 요청
-    requestReviews(reviews) {
-      if (reviews.isEnd === true) {
-        return;
-      }
-      this.overlay = true;
-      let url = "userStore/" + reviews.url;
-      this.$store
-        .dispatch(url, {
-          userId: this.userId,
-          page: reviews.page,
-        })
-        .then((res) => {
-          this.pushReviews(reviews, res.data.reviewList);
-        })
-        .catch((err) => {
-          this.$log(err);
-        });
-    },
-    // NOTE: 유저 정보 요청
-    requestUserInfo() {
-      this.$store
-        .dispatch("userStore/requestUserInfo", this.userId)
-        .then((res) => {
-          this.user = res.data;
-          this.nickname = this.user.nickname;
-          this.userImg = require("@/assets/image/" +
-            this.userId +
-            "profileImg.jpg");
-          console.log(this.user.imgPath);
-        })
-        .catch((err) => {
-          this.$log(err);
-        });
-    },
     // NOTE: 만난 사람들 요청
     async reuqestHistoryUser() {
       try {
         const res = await this.$store.dispatch(
           "userStore/requestUserHistories",
-          this.userId
+          this.profileId
         );
         this.histories = res.data.historyList;
         //console.log(this.histories)
@@ -438,7 +340,7 @@ export default {
     },
   },
   created() {
-    this.requestUserInfo();
+    this.requestProfileInfo();
     this.requestReviews(this.receivedReviews);
     this.requestReviews(this.giveReviews);
     this.reuqestHistoryUser();

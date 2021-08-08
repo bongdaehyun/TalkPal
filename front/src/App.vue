@@ -91,8 +91,11 @@ export default {
     snackbarText() {
       return this.$store.getters["getSnackbarText"];
     },
-    snackbarStatus() {
-      return this.$store.getters["getSnackbarStatus"];
+    snackbarStatus: {
+      get() {
+        return this.$store.getters["getSnackbarStatus"];
+      },
+      set() {},
     },
     snackbarColor() {
       return this.$store.getters["getSnackbarColor"];

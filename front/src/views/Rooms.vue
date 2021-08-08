@@ -199,9 +199,6 @@ export default {
     },
   },
   created() {
-    // this.$log(this.$store.getters["userStore/getLocale"]);
-    // TODO: 언어 설정 다른 방식이 필요해보임
-    this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
     this.$store.dispatch("roomStore/exitRoom");
     this.connect();
   },

@@ -228,7 +228,7 @@ export default {
       const errors = [];
       if (!this.$v.nickname.$dirty) return errors;
       !this.$v.nickname.required && errors.push("필수 항목입니다.");
-      (!this.$v.nickname.minLength || !this.$v.password.maxLength) &&
+      (!this.$v.nickname.minLength || !this.$v.nickname.maxLength) &&
         errors.push("최소 2 글자 최대 16 글자를 입력해야 합니다.");
       !this.$v.nickname.alphaNum &&
         errors.push("영문 소문자 및 숫자만 입력해야 합니다.");

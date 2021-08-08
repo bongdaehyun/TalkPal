@@ -7,7 +7,7 @@ const getDefaultState = () => {
   return {
     accessToken: null,
     loginStatus: false,
-    lang: null,
+    lang: "ko",
     langId: null,
     userId: null,
     nickname: null,
@@ -53,6 +53,7 @@ const userStore = {
         langId: userInfo.langId,
         accessToken
       }
+      // root.$i18n.locale = userInfo.lang
       context.commit('LOGIN', payload)
     },
     // NOTE: 로그아웃

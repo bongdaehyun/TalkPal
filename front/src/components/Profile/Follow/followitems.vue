@@ -1,11 +1,9 @@
 
 <template>
-
   <v-row>
     <v-col>
-      <p>{{item.user_nickname}}</p>
+      <p>{{ item.user_nickname }}</p>
     </v-col>
-    
   </v-row>
 </template>
 
@@ -16,20 +14,13 @@ export default {
       type: Object,
     },
   },
-   data() {
-      return {
-  
-      }
-    },
-    created() {
- 
-    },
+  data() {
+    return {};
+  },
+  created() {},
 
-  methods: {
-    
-  }
+  methods: {},
 };
 </script>
 <style>
-
 </style>
