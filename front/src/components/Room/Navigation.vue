@@ -14,11 +14,11 @@
     </v-btn>
     <!-- TODO: 채팅창 구현 -->
     <v-btn @click="toggleChat()">
-      <v-icon v-if="activeChat" color="teal darken-2">mdi-message-text</v-icon>
+      <v-icon v-if="activeChat" color="primary">mdi-message-text</v-icon>
       <v-icon v-else>mdi-message-text</v-icon>
     </v-btn>
     <v-btn @click="toggleGuide()">
-      <v-icon v-if="activeGuide" color="teal darken-2">mdi-notebook</v-icon>
+      <v-icon v-if="activeGuide" color="primary">mdi-notebook</v-icon>
       <v-icon v-else>mdi-notebook</v-icon>
     </v-btn>
   </v-bottom-navigation>

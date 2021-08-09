@@ -23,11 +23,10 @@
                   </div>
                   <v-btn
                     class="white--text"
-                    color="indigo"
+                    color="primary"
                     @click="clickChangeImage"
                   >
-                    {{ $t("profile_Updateimage") }}
-                    <v-icon right dark> fas fa-cog </v-icon>
+                    <v-icon dark> fas fa-cog </v-icon>
                   </v-btn>
                 </div>
               </v-img>
@@ -57,7 +56,7 @@
           </div>
           <div v-if="!update" class="d-flex justify-start">
             <!-- NOTE: 팔로우 목록 -->
-            <div class="pe-3">
+            <div :class="[isMobile ? 'pe-1' : 'pe-3']">
               <v-dialog
                 v-model="follower.dialog"
                 :max-width="dialogMaxWidth"
@@ -71,13 +70,14 @@
               </v-dialog>
               <button @click="follower.dialog = true">
                 {{ $t("profile_follower") }}
-                <span class="font-weight-bold text--black">
+                <br v-if="isMobile" />
+                <span class="font-weight-bold">
                   {{ profileInfo.cntFollower }}
                 </span>
               </button>
             </div>
             <!-- NOTE: 팔로잉 목록 -->
-            <div class="ps-3">
+            <div :class="[isMobile ? 'ps-1' : 'ps-3']">
               <v-dialog
                 v-model="following.dialog"
                 :max-width="dialogMaxWidth"
@@ -91,6 +91,7 @@
               </v-dialog>
               <button @click="following.dialog = true">
                 {{ $t("profile_following") }}
+                <br v-if="isMobile" />
                 <span class="font-weight-bold text--black">
                   {{ profileInfo.cntFollowing }}
                 </span>
@@ -180,21 +181,27 @@
     <v-row justify="center" class="mt-12">
       <v-col class="col-12 col-md-8">
         <!-- NOTE: 탭 메뉴 -->
-        <v-tabs centered v-model="tab">
-          <!-- <v-tab>{{ $t("profile_history") }}</v-tab> -->
+        <v-tabs
+          centered
+          v-model="tab"
+          color="primary"
+          background-color="#f8f9fa"
+        >
           <v-tab>{{ $t("profile_receive_review") }}</v-tab>
           <v-tab>{{ $t("profile_written_review") }}</v-tab>
         </v-tabs>
-        <v-tabs-items v-model="tab" :touchless="true">
+        <v-tabs-items
+          v-model="tab"
+          :touchless="true"
+          style="background-color: #f8f9fa"
+        >
+          <!-- NOTE: 받은 평가 -->
           <v-tab-item>
-            <ReviewSlide
-              :reviews="receivedReviews"
-              @onSlideEnd="requestReviews"
-            />
+            <ReviewSlide :Item="receivedReviews" @onSlideEnd="requestReviews" />
           </v-tab-item>
           <!-- NOTE: 작성한 평가 -->
           <v-tab-item>
-            <ReviewSlide :reviews="giveReviews" @onSlideEnd="requestReviews" />
+            <ReviewSlide :Item="giveReviews" @onSlideEnd="requestReviews" />
           </v-tab-item>
         </v-tabs-items>
       </v-col>
@@ -360,17 +367,6 @@ export default {
       }
     },
 
-    // NOTE: 응답 리뷰 목록 추가
-    pushReviews(reviews, res) {
-      // this.$log(res);
-      if (res.length) {
-        reviews.items.push(...res);
-        reviews.page = reviews.page + 1;
-      } else {
-        reviews.isEnd = true;
-      }
-      this.overlay = false;
-    },
     // NOTE: 만난 사람들 요청
     async reuqestHistoryUser() {
       try {

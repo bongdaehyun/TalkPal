@@ -1,13 +1,20 @@
 <template>
   <v-dialog v-model="dialog" persistent :max-width="maxWidth">
     <template v-slot:activator="{ on, attrs }">
-      <v-row :justify="isMobile ? 'center' : 'start'">
-        <v-btn color="primary" outlined v-bind="attrs" v-on="on" tile>
+      <div class="mt-6" v-if="!isMobile">
+        <v-btn
+          width="100%"
+          color="primary"
+          outlined
+          v-bind="attrs"
+          v-on="on"
+          tile
+        >
           <span>
             {{ $t("room_create") }}
           </span>
         </v-btn>
-      </v-row>
+      </div>
     </template>
     <v-card>
       <v-card-text>

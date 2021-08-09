@@ -28,7 +28,7 @@
       <div v-else>
         <v-menu bottom left>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn dark icon v-bind="attrs" v-on="on" style="color: #a200e0">
+            <v-btn dark icon v-bind="attrs" v-on="on" color="primary">
               <i class="fas fa-bars"></i>
             </v-btn>
           </template>
@@ -125,8 +125,8 @@ export default {
       this.$store.dispatch("userStore/logout");
       this.$router.push({ name: "Main" });
       this.$store.dispatch("onSnackbar", {
-        text: i18n.t('App_logout'),
-        color: "success",
+        text: i18n.t("App_logout"),
+        color: "primary",
       });
     },
   },

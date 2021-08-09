@@ -42,7 +42,7 @@ export default {
           // NOTE: Toast Message 출력
           this.$store.dispatch("onSnackbar", {
             text: i18n.t('main_login_success'),
-            color: "success",
+            color: "primary",
           });
 
           // 인증 Token

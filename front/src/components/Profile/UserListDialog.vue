@@ -48,7 +48,6 @@ export default {
       this.$store
         .dispatch(url, param)
         .then((res) => {
-          console.log(res.data.userList);
           if (res.data.userList.length == 0) {
             $state.complete();
           } else {
@@ -68,7 +67,6 @@ export default {
       };
       this.$store.dispatch(url, param).then((res) => {
         this.Item.list = res.data.userList;
-        console.log(res.data.userList);
       });
     },
     closeDialog() {

@@ -195,6 +195,9 @@ export default {
   mounted() {
     window.addEventListener("resize", this.handleResize);
   },
+  unmounted() {
+    window.removeEventListener("resize", this.handleResize);
+  },
   created() {
     this.requestRoomInfo();
     this.connect();
