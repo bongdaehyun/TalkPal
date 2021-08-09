@@ -53,7 +53,7 @@
               <button @click="follower.dialog = true">
                 {{ $t("profile_follower") }}
                 <span class="font-weight-bold text--black">
-                  {{ follower.count }}
+                  {{ profileInfo.cntFollower }}
                 </span>
               </button>
             </div>
@@ -73,7 +73,7 @@
               <button @click="following.dialog = true">
                 {{ $t("profile_following") }}
                 <span class="font-weight-bold text--black">
-                  {{ following.count }}
+                  {{ profileInfo.cntFollowing}}
                 </span>
               </button>
             </div>
@@ -274,6 +274,7 @@ export default {
         .dispatch("userStore/requestUserInfo", this.profileId)
         .then((res) => {
           this.profileInfo = res.data;
+          console.log(this.profileInfo)
           const imgPath = this.profileInfo.imgPath;
           // NOTE: 프로필 유저 정보 배포된 서버 설정 필요
           if (imgPath) {
@@ -368,8 +369,6 @@ export default {
     this.requestReviews(this.giveReviews);
     this.reuqestHistoryUser();
     this.checkFollow();
-    this.countFollower();
-    this.countFollowing();
   },
   components: {
     FollowDialog,
