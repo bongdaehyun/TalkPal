@@ -308,6 +308,7 @@ const WebRTCMixin = {
       this.$log(msgInfo);
       let msg = {
         sender: msgInfo.senderId,
+        nick : msgInfo.senderNickName,
         time: msgInfo.sendTime,
         content: msgInfo.sendMsg,
       };
