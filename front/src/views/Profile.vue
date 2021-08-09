@@ -371,8 +371,13 @@ export default {
         .dispatch("userStore/requestUserInfo", this.userId)
         .then((res) => {
           this.user = res.data;
+          if(this.user.imgPath){
+             this.userImg = "/file/"+this.userId+"profileImg.jpg"
+          }else{
+             this.userImg = "/file/default_profileImg.jpg"
+          }
           this.userImg = "/file/"+this.userId+"profileImg.jpg"
-          console.log(this.user.imgPath);
+          //console.log(this.user.imgPath);
         })
         .catch((err) => {
           this.$log(err);
