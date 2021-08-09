@@ -98,24 +98,24 @@ public class FollowController {
         return followService.checkFollowing(myId, toId);
     }
 
-    //팔로우 카운트
-    @GetMapping("/countfollowing/{userId}")
-    @ApiOperation(value = "팔로우 개수 ", notes = "팔로우 목록 ")
-    public ResponseEntity<?> getCountFollow(@PathVariable Long userId ) {
-        User user = userService.getUserByuserId(userId);
-        //System.out.println("count : try" + user.toString());
-        Long num=followService.getCountFollowing(user);
-        return ResponseEntity.status(200).body(num);
-    }
-
-    //팔로워 카운트
-    @GetMapping("/countfollower/{userId}")
-    @ApiOperation(value = "팔로워 개수 ", notes = "팔로우 목록 ")
-    public ResponseEntity<?> getCountFollowing(@PathVariable Long userId) {
-        User user = userService.getUserByuserId(userId);
-        //System.out.println("count : try" + user.toString());
-        Long num=followService.getCountFollower(user);
-        return ResponseEntity.status(200).body(num);
-
-    }
+//    //팔로우 카운트
+//    @GetMapping("/countfollowing/{userId}")
+//    @ApiOperation(value = "팔로우 개수 ", notes = "팔로우 목록 ")
+//    public ResponseEntity<?> getCountFollow(@PathVariable Long userId ) {
+//        User user = userService.getUserByuserId(userId);
+//        //System.out.println("count : try" + user.toString());
+//        Long num=followService.getCountFollowing(user);
+//        return ResponseEntity.status(200).body(num);
+//    }
+//
+//    //팔로워 카운트
+//    @GetMapping("/countfollower/{userId}")
+//    @ApiOperation(value = "팔로워 개수 ", notes = "팔로우 목록 ")
+//    public ResponseEntity<?> getCountFollowing(@PathVariable Long userId) {
+//        User user = userService.getUserByuserId(userId);
+//        //System.out.println("count : try" + user.toString());
+//        Long num=followService.getCountFollower(user);
+//        return ResponseEntity.status(200).body(num);
+//
+//    }
 }
