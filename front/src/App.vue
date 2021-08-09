@@ -78,6 +78,7 @@
 
 <script>
 import isMobile from "@/mixin/isMobile.js";
+import i18n from "@/i18n.js";
 
 export default {
   name: "App",
@@ -124,7 +125,7 @@ export default {
       this.$store.dispatch("userStore/logout");
       this.$router.push({ name: "Main" });
       this.$store.dispatch("onSnackbar", {
-        text: "로그아웃 성공",
+        text: i18n.t('App_logout'),
         color: "success",
       });
     },

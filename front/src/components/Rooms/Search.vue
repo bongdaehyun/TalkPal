@@ -62,8 +62,8 @@ export default {
         topic: topic,
         lang: lang,
       };
-      this.$log("데이터 전달");
-      this.$log(changeData);
+      // this.$log("데이터 전달");
+      // this.$log(changeData);
       this.$emit("setSearchData", changeData);
     },
   },

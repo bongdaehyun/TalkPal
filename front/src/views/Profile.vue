@@ -26,7 +26,7 @@
                     color="indigo"
                     @click="clickChangeImage"
                   >
-                    이미지 수정
+                    {{$t('profile_Updateimage')}}
                     <v-icon right dark> fas fa-cog </v-icon>
                   </v-btn>
                 </div>
@@ -150,7 +150,7 @@
               color="primary"
               @click="submitUpdateButton"
             >
-              수정완료
+              {{$t('profile_submit')}}
             </v-btn>
           </div>
         </v-col>
@@ -203,7 +203,7 @@ import {
   maxLength,
   alphaNum,
 } from "vuelidate/lib/validators";
-
+import i18n from "@/i18n.js";
 import isMobile from "@/mixin/isMobile.js";
 import ReviewMixin from "@/mixin/ReviewMixin.js";
 import FollowMixin from "@/mixin/FollowMixin.js";
@@ -235,12 +235,12 @@ export default {
     nicknameErrors() {
       const errors = [];
       if (!this.$v.nickname.$dirty) return errors;
-      !this.$v.nickname.required && errors.push("필수 항목입니다.");
+      !this.$v.nickname.required && errors.push(i18n.t('register_required'));
       (!this.$v.nickname.minLength || !this.$v.nickname.maxLength) &&
-        errors.push("최소 2 글자 최대 16 글자를 입력해야 합니다.");
+        errors.push(i18n.t('register_error_nick_len'));
       !this.$v.nickname.alphaNum &&
-        errors.push("영문 소문자 및 숫자만 입력해야 합니다.");
-      !this.$v.nickname.isUnique && errors.push("이미 존재하는 별명입니다.");
+        errors.push(i18n.t('register_error_nick_alpha'));
+      !this.$v.nickname.isUnique && errors.push(i18n.t('register_error_nick_same'));
       return errors;
     },
   },
@@ -275,11 +275,15 @@ export default {
         .then((res) => {
           this.profileInfo = res.data;
           const imgPath = this.profileInfo.imgPath;
+          // NOTE: 프로필 유저 정보 배포된 서버 설정 필요
           if (imgPath) {
             this.profileImg = require(`@/assets/image/profile/${imgPath}`);
           } else {
             this.profileImg = require(`@/assets/image/profile/default_profileImg.png`);
           }
+          /*
+          
+          */
         })
         .catch((err) => {
           this.$log(err);
@@ -300,7 +304,7 @@ export default {
           if (res.data == "SUCCESS") {
             this.profileInfo.nickname = this.nickname;
             this.$store.dispatch("onSnackbar", {
-              text: "수정 완료.",
+              text: `{{$t('profile_submit')}}`,
               color: "success",
             });
             this.update = false;
