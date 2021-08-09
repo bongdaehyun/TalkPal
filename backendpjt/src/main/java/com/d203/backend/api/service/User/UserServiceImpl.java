@@ -1,5 +1,7 @@
 package com.d203.backend.api.service.User;
 
+import com.d203.backend.api.response.User.UserRes;
+import com.d203.backend.db.repository.FollowRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,10 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	LangRepository langRepository ;
-	
+
+	@Autowired
+	FollowRepository followRepository;
+
 	@Autowired
 	PasswordEncoder passwordEncoder;
 
@@ -51,8 +56,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByuserId(Long user_id) {
-		User user= userRepository.getOne(user_id);
-		
+		User user = userRepository.getOne(user_id);
+		user.setCntFollower(followRepository.countAllByTouserid(user));
+		user.setCntFollowing(followRepository.countAllByFromuserid(user));
+		userRepository.save(user);
 		return user;
 	}
 	

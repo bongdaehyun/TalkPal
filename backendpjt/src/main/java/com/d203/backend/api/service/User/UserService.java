@@ -13,6 +13,7 @@ public interface UserService {
 	boolean saveImgFile(Long userId, String imgFilePath);
 
 	User createUser(UserReq userRegisterInfo);
+
 	User getUserByEamil(String email);
 	//회원 수정
 	boolean updateUser(UserReq userUpdateInfo);

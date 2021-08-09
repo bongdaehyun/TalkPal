@@ -48,4 +48,8 @@ public class User extends BaseEntity{
     }
 
     String imgpath;
+
+    Long cntFollower;
+    Long cntFollowing;
+
 }
