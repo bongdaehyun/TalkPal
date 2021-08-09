@@ -86,8 +86,8 @@ const userStore = {
       return http.post('/history/add/', payload)
     },
     // NOTE: 만난 사람들 목록 요청
-    requestUserHistories(context, userId) {
-      return http.get(`/history/${userId}`)
+    requestHistories(context, payload) {
+      return http.get(`/history/${payload.userId}`)
     },
     // NOTE: 팔로우 신청
     addFollow(context, payload) {
@@ -102,11 +102,11 @@ const userStore = {
       return http.get(`/follow/checkFollowing/${payload.fromuserid}/${payload.touserid}`)
     },
     // NOTE: 팔로워 목록 가져오기
-    listFollower(context, payload) {
+    requestFollowers(context, payload) {
       return http.get(`/follow/er/${payload.userId}/${payload.page}`)
     },
     // NOTE: 팔로잉 목록 가져오기
-    listFollowing(context, payload) {
+    requestFollowings(context, payload) {
       return http.get(`/follow/ing/${payload.userId}/${payload.page}`)
     }
   },

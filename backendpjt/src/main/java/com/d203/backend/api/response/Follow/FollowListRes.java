@@ -18,7 +18,7 @@ import java.util.List;
 public class FollowListRes {
 
     @ApiModelProperty(name = "Follow List")
-    List<FollowRes> followList;
+    List<FollowRes> userList;
 
     public static FollowListRes getIngList(List<Follow> follow) {
         FollowListRes followListRes = new FollowListRes();
@@ -35,7 +35,7 @@ public class FollowListRes {
 
             followList.add(res);
         }
-        followListRes.setFollowList(followList);
+        followListRes.setUserList(followList);
         return followListRes;
     }
 
@@ -54,7 +54,7 @@ public class FollowListRes {
 
             followList.add(res);
         }
-        followListRes.setFollowList(followList);
+        followListRes.setUserList(followList);
         return followListRes;
     }
 }

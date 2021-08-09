@@ -46,7 +46,7 @@
       @input="$v.lang.$touch()"
       @blur="$v.lang.$touch()"
     ></v-select>
-    <v-btn class="ma-2" color="primary" @click="requestRegister">
+    <v-btn class="ma-2" outlined color="primary" @click="requestRegister">
       {{ $t("main_register") }}
       <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
     </v-btn>

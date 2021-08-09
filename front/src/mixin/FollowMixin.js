@@ -5,15 +5,15 @@ const FollowMixin = {
     return {
       isFollow: null,
       follower: {
-        items: [],
-        url: "listFollower",
+        list: [],
+        url: "requestFollowers",
         page: 0,
         count: 0,
         dialog: false,
       },
       following: {
-        items: [],
-        url: "listFollowing",
+        list: [],
+        url: "requestFollowings",
         page: 0,
         count: 0,
         dialog: false,

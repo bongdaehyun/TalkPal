@@ -1,14 +1,14 @@
 <template>
   <v-card>
-    <v-card-title>{{ head }} </v-card-title>
+    <v-card-title>{{ head }}</v-card-title>
     <v-divider></v-divider>
     <v-card-text style="height: 50vh; overflow-y: scroll">
-      <div v-for="item in followItem.items" :key="item.id">
+      <div v-for="item in Item.list" :key="item.id">
         <Item :item="item" />
       </div>
       <infinite-loading
+        v-if="Item.url != 'requestHistories'"
         @infinite="requestItems"
-        :identifier="infiniteId"
         ref="infiniteLoading"
         spinner="waveDots"
       >
@@ -23,15 +23,10 @@
 
 <script>
 import InfiniteLoading from "vue-infinite-loading";
-import Item from "@/components/Profile/FollowDialog/Item.vue";
+import Item from "@/components/Profile/UserListDialog/Item.vue";
 
 export default {
   name: "FollowDialog",
-  data() {
-    return {
-      infiniteId: +new Date(),
-    };
-  },
   props: {
     head: {
       type: String,
@@ -39,24 +34,26 @@ export default {
     profileId: {
       type: Number,
     },
-    followItem: {
+    Item: {
       type: Object,
     },
   },
   methods: {
     requestItems($state) {
-      let url = "userStore/" + this.followItem.url;
+      let url = "userStore/" + this.Item.url;
+      const param = {
+        userId: this.profileId,
+        page: this.Item.page + 1,
+      };
       this.$store
-        .dispatch(url, {
-          userId: this.profileId,
-          page: this.followItem.page + 1,
-        })
+        .dispatch(url, param)
         .then((res) => {
-          if (res.data.followList.length == 0) {
+          console.log(res.data.userList);
+          if (res.data.userList.length == 0) {
             $state.complete();
           } else {
-            this.followItem.items.push(...res.data.followList);
-            this.followItem.page += 1;
+            this.Item.list.push(...res.data.userList);
+            this.Item.page += 1;
             $state.loaded();
           }
         })
@@ -64,9 +61,24 @@ export default {
           $state.complete();
         });
     },
-    closeDialog() {
-      this.followItem.dialog = false;
+    requestHistories() {
+      let url = "userStore/" + this.Item.url;
+      const param = {
+        userId: this.profileId,
+      };
+      this.$store.dispatch(url, param).then((res) => {
+        this.Item.list = res.data.userList;
+        console.log(res.data.userList);
+      });
     },
+    closeDialog() {
+      this.Item.dialog = false;
+    },
+  },
+  created() {
+    if (this.Item.url == "requestHistories") {
+      this.requestHistories();
+    }
   },
 
   components: {

@@ -10,14 +10,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FollowRepository extends JpaRepository<Follow,Long> {
+public interface FollowRepository extends JpaRepository<Follow, Long> {
 
-    @Query(value= "select follow.*  from follow  where follow.fromuserid = ?1 and follow.touserid=?2" ,nativeQuery = true)
-    Follow isExist(User fromUserId , User toUserid);
+    @Query(value = "select follow.*  from follow  where follow.fromuserid = ?1 and follow.touserid=?2", nativeQuery = true)
+    Follow isExist(User fromUserId, User toUserid);
 
     Page<Follow> findAllByTouserid(User touserid, Pageable pageable);
 
-    Page<Follow> findAllByFromuserid(User fromuserid , Pageable pageable);
+    Page<Follow> findAllByFromuserid(User fromuserid, Pageable pageable);
 
     Long countAllByTouserid(User touserid);
 
