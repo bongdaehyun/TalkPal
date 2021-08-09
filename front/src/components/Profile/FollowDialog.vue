@@ -1,8 +1,8 @@
 <template>
   <v-card>
-    <v-card-title>{{ $t("profile_follow") }} </v-card-title>
+    <v-card-title>{{ head }} </v-card-title>
     <v-divider></v-divider>
-    <v-card-text style="height: 300px">
+    <v-card-text style="height: 50vh; overflow-y: scroll">
       <div v-for="item in followItem.items" :key="item.id">
         <Item :item="item" />
       </div>
@@ -33,8 +33,11 @@ export default {
     };
   },
   props: {
-    profileId: {
+    head: {
       type: String,
+    },
+    profileId: {
+      type: Number,
     },
     followItem: {
       type: Object,
@@ -42,7 +45,6 @@ export default {
   },
   methods: {
     requestItems($state) {
-      console.log($state);
       let url = "userStore/" + this.followItem.url;
       this.$store
         .dispatch(url, {
@@ -50,7 +52,6 @@ export default {
           page: this.followItem.page + 1,
         })
         .then((res) => {
-          this.$log(res.data);
           if (res.data.followList.length == 0) {
             $state.complete();
           } else {

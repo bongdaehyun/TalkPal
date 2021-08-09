@@ -6,23 +6,33 @@
         <v-col cols="6" class="d-flex flex-column align-end pe-6">
           <!-- NOTE: 프로필 이미지 -->
           <v-avatar size="128">
-            <v-img :src="profileImg"></v-img>
+            <v-hover v-slot="{ hover }">
+              <v-img :src="profileImg">
+                <div
+                  v-if="hover && profileId == loginId"
+                  class="d-flex justify-center align-center"
+                  style="height: 100%; width: 100%"
+                >
+                  <!-- NOTE: [Hover] 프로필 이미지 수정 버튼 -->
+                  <div v-show="false">
+                    <input
+                      ref="fileInput"
+                      type="file"
+                      @change="changeProfileImage"
+                    />
+                  </div>
+                  <v-btn
+                    class="white--text"
+                    color="indigo"
+                    @click="clickChangeImage"
+                  >
+                    이미지 수정
+                    <v-icon right dark> fas fa-cog </v-icon>
+                  </v-btn>
+                </div>
+              </v-img>
+            </v-hover>
           </v-avatar>
-          <!-- NOTE: 프로필 이미지 수정 -->
-          <div v-if="profileId == loginId">
-            <v-btn
-              class="mt-6 mb-3"
-              outlined
-              color="primary"
-              @click="clickChangeImage"
-            >
-              이미지 수정
-              <v-icon right dark> mdi-cloud-upload </v-icon>
-            </v-btn>
-            <div v-show="false">
-              <input ref="fileInput" type="file" @change="changeProfileImage" />
-            </div>
-          </div>
         </v-col>
         <v-col cols="6" md="3" class="d-flex flex-column justify-center ps-6">
           <div v-if="!update" class="d-flex justify-start">
@@ -34,6 +44,7 @@
                 scrollable
               >
                 <FollowDialog
+                  :head="$t('profile_follower')"
                   :profileId="profileId"
                   :followItem="follower"
                   ref="followDialog"
@@ -53,7 +64,11 @@
                 :max-width="dialogMaxWidth"
                 scrollable
               >
-                <FollowDialog :profileId="profileId" :followItem="following" />
+                <FollowDialog
+                  :head="$t('profile_following')"
+                  :profileId="profileId"
+                  :followItem="following"
+                />
               </v-dialog>
               <button @click="following.dialog = true">
                 {{ $t("profile_following") }}
@@ -102,7 +117,10 @@
               >
             </div>
             <!--  NOTE: 팔로우 버튼 -->
-            <div v-if="profileId != loginId" class="ms-1 pb-1 ps-1">
+            <div
+              v-if="profileId != loginId && isFollow != null"
+              class="ms-1 pb-1 ps-1"
+            >
               <button v-if="isFollow" dark @click="addFollow">
                 <v-icon color="purple">mdi-link-variant</v-icon>
               </button>
@@ -196,12 +214,11 @@ export default {
 
   data() {
     return {
-      profileInfo: {},
-      nickname: null,
-      profileId: this.$route.params.userId,
-      profileImg: null,
-      isFollow: false,
+      profileId: Number(this.$route.params.userId),
       loginId: this.$store.getters[`userStore/getUserId`],
+      profileInfo: {},
+      profileImg: null,
+      nickname: null,
       overlay: false,
       tab: null,
       histories: [],
@@ -235,6 +252,10 @@ export default {
       alphaNum,
       async isUnique(nickname) {
         if (nickname === "") return true;
+        // 현재 닉네임과 동일한지
+        if (nickname == this.profileInfo.nickname) {
+          return true;
+        }
         try {
           // 중복 검사 통과
           const res = await http.get(`/users/checknick/${nickname}`);
@@ -308,7 +329,6 @@ export default {
           }
         );
         this.loadingButtonImage = false;
-        console.log(data);
       } catch (err) {
         console.log(err);
       }
@@ -333,7 +353,6 @@ export default {
           this.profileId
         );
         this.histories = res.data.historyList;
-        //console.log(this.histories)
       } catch (error) {
         this.$log(error);
       }

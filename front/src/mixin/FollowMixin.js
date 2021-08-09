@@ -3,7 +3,7 @@ import http from "@/util/http-common";
 const FollowMixin = {
   data() {
     return {
-
+      isFollow: null,
       follower: {
         items: [],
         url: "listFollower",
