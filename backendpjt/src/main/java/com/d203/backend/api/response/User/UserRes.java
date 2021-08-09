@@ -15,40 +15,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Getter
 @Setter
 @ApiModel("UserResponse")
-public class UserRes{
+public class UserRes {
 
-	@ApiModelProperty(name="User ID")
-	String email;
-	
-	@ApiModelProperty(name="User lang")
-	String lang;
-	
-	@ApiModelProperty(name="User nickname")
-	String nickname;
+    @ApiModelProperty(name = "User ID")
+    String email;
 
+    @ApiModelProperty(name = "User lang")
+    String lang;
 
-
-	String sns;
-	String introduction;
-	String imgPath;
-
-	Long cntFollower;
-	Long cntFollowing;
+    @ApiModelProperty(name = "User nickname")
+    String nickname;
 
 
-	public static UserRes of(User user) {
-		
-		UserRes res = new UserRes();
-		res.setEmail(user.getEmail());
-		res.setLang(user.getLang().getName());
-		res.setNickname(user.getNickname());
-		res.setSns(user.getSns());
-		res.setIntroduction(user.getIntroduction());
-		res.setImgPath(user.getImgpath());
+    String sns;
+    String introduction;
+    String imgPath;
 
-		res.setCntFollower(user.getCntFollower());
-		res.setCntFollowing(user.getCntFollowing());
-		return res;
+    Long cntFollower;
+    Long cntFollowing;
+    Long cntHistories;
 
-	}
+    public static UserRes of(User user) {
+
+        UserRes res = new UserRes();
+        res.setEmail(user.getEmail());
+        res.setLang(user.getLang().getName());
+        res.setNickname(user.getNickname());
+        res.setSns(user.getSns());
+        res.setIntroduction(user.getIntroduction());
+        res.setImgPath(user.getImgpath());
+
+        res.setCntFollower(user.getCntFollower());
+        res.setCntFollowing(user.getCntFollowing());
+        res.setCntHistories(user.getCntHistories());
+
+        return res;
+
+    }
 }

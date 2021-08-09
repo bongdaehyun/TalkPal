@@ -23,11 +23,10 @@
                   </div>
                   <v-btn
                     class="white--text"
-                    color="indigo"
+                    color="primary"
                     @click="clickChangeImage"
                   >
-                    {{$t('profile_Updateimage')}}
-                    <v-icon right dark> fas fa-cog </v-icon>
+                    <v-icon dark> fas fa-cog </v-icon>
                   </v-btn>
                 </div>
               </v-img>
@@ -35,45 +34,66 @@
           </v-avatar>
         </v-col>
         <v-col cols="6" md="3" class="d-flex flex-column justify-center ps-6">
+          <!-- NOTE: 만난 사람들 목록 -->
+          <div v-if="!update">
+            <v-dialog
+              v-model="histories.dialog"
+              :max-width="dialogMaxWidth"
+              scrollable
+            >
+              <UserListDialog
+                :head="$t('profile_history')"
+                :profileId="profileId"
+                :Item="histories"
+              />
+            </v-dialog>
+            <button @click="histories.dialog = true">
+              {{ $t("profile_history") }}
+              <span class="font-weight-bold text--black">
+                {{ histories.count }}
+              </span>
+            </button>
+          </div>
           <div v-if="!update" class="d-flex justify-start">
             <!-- NOTE: 팔로우 목록 -->
-            <div class="pe-3">
+            <div :class="[isMobile ? 'pe-1' : 'pe-3']">
               <v-dialog
                 v-model="follower.dialog"
                 :max-width="dialogMaxWidth"
                 scrollable
               >
-                <FollowDialog
+                <UserListDialog
                   :head="$t('profile_follower')"
                   :profileId="profileId"
-                  :followItem="follower"
-                  ref="followDialog"
+                  :Item="follower"
                 />
               </v-dialog>
               <button @click="follower.dialog = true">
                 {{ $t("profile_follower") }}
-                <span class="font-weight-bold text--black">
+                <br v-if="isMobile" />
+                <span class="font-weight-bold">
                   {{ profileInfo.cntFollower }}
                 </span>
               </button>
             </div>
             <!-- NOTE: 팔로잉 목록 -->
-            <div class="ps-3">
+            <div :class="[isMobile ? 'ps-1' : 'ps-3']">
               <v-dialog
                 v-model="following.dialog"
                 :max-width="dialogMaxWidth"
                 scrollable
               >
-                <FollowDialog
+                <UserListDialog
                   :head="$t('profile_following')"
                   :profileId="profileId"
-                  :followItem="following"
+                  :Item="following"
                 />
               </v-dialog>
               <button @click="following.dialog = true">
                 {{ $t("profile_following") }}
+                <br v-if="isMobile" />
                 <span class="font-weight-bold text--black">
-                  {{ profileInfo.cntFollowing}}
+                  {{ profileInfo.cntFollowing }}
                 </span>
               </button>
             </div>
@@ -150,7 +170,7 @@
               color="primary"
               @click="submitUpdateButton"
             >
-              {{$t('profile_submit')}}
+              {{ $t("profile_submit") }}
             </v-btn>
           </div>
         </v-col>
@@ -161,26 +181,27 @@
     <v-row justify="center" class="mt-12">
       <v-col class="col-12 col-md-8">
         <!-- NOTE: 탭 메뉴 -->
-        <v-tabs centered v-model="tab">
-          <v-tab>{{ $t("profile_history") }}</v-tab>
+        <v-tabs
+          centered
+          v-model="tab"
+          color="primary"
+          background-color="#f8f9fa"
+        >
           <v-tab>{{ $t("profile_receive_review") }}</v-tab>
           <v-tab>{{ $t("profile_written_review") }}</v-tab>
         </v-tabs>
-        <v-tabs-items v-model="tab" :touchless="true">
-          <!-- NOTE: 만난 사람들 -->
-          <v-tab-item>
-            <HistorySlide :histories="histories" />
-          </v-tab-item>
+        <v-tabs-items
+          v-model="tab"
+          :touchless="true"
+          style="background-color: #f8f9fa"
+        >
           <!-- NOTE: 받은 평가 -->
           <v-tab-item>
-            <ReviewSlide
-              :reviews="receivedReviews"
-              @onSlideEnd="requestReviews"
-            />
+            <ReviewSlide :Item="receivedReviews" @onSlideEnd="requestReviews" />
           </v-tab-item>
           <!-- NOTE: 작성한 평가 -->
           <v-tab-item>
-            <ReviewSlide :reviews="giveReviews" @onSlideEnd="requestReviews" />
+            <ReviewSlide :Item="giveReviews" @onSlideEnd="requestReviews" />
           </v-tab-item>
         </v-tabs-items>
       </v-col>
@@ -193,8 +214,7 @@
 
 <script>
 import ReviewSlide from "../components/Profile/ReviewSlide.vue";
-import HistorySlide from "../components/Profile/HistorySlide.vue";
-import FollowDialog from "../components/Profile/FollowDialog.vue";
+import UserListDialog from "../components/Profile/UserListDialog.vue";
 import http from "@/util/http-common";
 import { validationMixin } from "vuelidate";
 import {
@@ -221,7 +241,12 @@ export default {
       nickname: null,
       overlay: false,
       tab: null,
-      histories: [],
+      histories: {
+        list: [],
+        url: "requestHistories",
+        count: 0,
+        dialog: false,
+      },
       update: false,
     };
   },
@@ -235,12 +260,13 @@ export default {
     nicknameErrors() {
       const errors = [];
       if (!this.$v.nickname.$dirty) return errors;
-      !this.$v.nickname.required && errors.push(i18n.t('register_required'));
+      !this.$v.nickname.required && errors.push(i18n.t("register_required"));
       (!this.$v.nickname.minLength || !this.$v.nickname.maxLength) &&
-        errors.push(i18n.t('register_error_nick_len'));
+        errors.push(i18n.t("register_error_nick_len"));
       !this.$v.nickname.alphaNum &&
-        errors.push(i18n.t('register_error_nick_alpha'));
-      !this.$v.nickname.isUnique && errors.push(i18n.t('register_error_nick_same'));
+        errors.push(i18n.t("register_error_nick_alpha"));
+      !this.$v.nickname.isUnique &&
+        errors.push(i18n.t("register_error_nick_same"));
       return errors;
     },
   },
@@ -274,7 +300,9 @@ export default {
         .dispatch("userStore/requestUserInfo", this.profileId)
         .then((res) => {
           this.profileInfo = res.data;
-          console.log(this.profileInfo)
+          this.follower.count = res.data.cntFollower;
+          this.following.count = res.data.cntFollowing;
+          this.histories.count = res.data.cntHistories;
           const imgPath = this.profileInfo.imgPath;
           // NOTE: 프로필 유저 정보 배포된 서버 설정 필요
           if (imgPath) {
@@ -339,17 +367,6 @@ export default {
       }
     },
 
-    // NOTE: 응답 리뷰 목록 추가
-    pushReviews(reviews, res) {
-      // this.$log(res);
-      if (res.length) {
-        reviews.items.push(...res);
-        reviews.page = reviews.page + 1;
-      } else {
-        reviews.isEnd = true;
-      }
-      this.overlay = false;
-    },
     // NOTE: 만난 사람들 요청
     async reuqestHistoryUser() {
       try {
@@ -367,13 +384,11 @@ export default {
     this.requestProfileInfo();
     this.requestReviews(this.receivedReviews);
     this.requestReviews(this.giveReviews);
-    this.reuqestHistoryUser();
     this.checkFollow();
   },
   components: {
-    FollowDialog,
+    UserListDialog,
     ReviewSlide,
-    HistorySlide,
   },
 };
 </script>

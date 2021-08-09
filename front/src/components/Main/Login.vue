@@ -11,9 +11,9 @@
       v-model="password"
       type="password"
     ></v-text-field>
-    <v-btn class="ma-2" color="primary" dark @click="requestLogin">
+    <v-btn class="ma-2" outlined color="primary" dark @click="requestLogin">
       {{ $t("main_login") }}
-      <v-icon dark right> mdi-login </v-icon>
+      <v-icon right> mdi-login </v-icon>
     </v-btn>
   </v-container>
 </template>
@@ -42,7 +42,7 @@ export default {
           // NOTE: Toast Message 출력
           this.$store.dispatch("onSnackbar", {
             text: i18n.t('main_login_success'),
-            color: "success",
+            color: "primary",
           });
 
           // 인증 Token

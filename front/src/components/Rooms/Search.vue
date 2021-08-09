@@ -1,28 +1,29 @@
 <template>
-  <v-row :justify="isMobile ? 'center' : 'end'">
-    <v-col cols="6" lg="2" md="3" sm="4">
-      <v-select
-        @change="search"
-        :items="topicItems | searchi18n"
-        :label="$t('create_topic')"
-        item-text="name"
-        item-value="value"
-        v-model="input.topic"
-        item-color="#a200e0"
-        style="color: #a200e0"
-      ></v-select>
-    </v-col>
-    <v-col cols="6" lg="2" md="3" sm="4">
-      <v-select
-        @change="search"
-        :items="LangItems | searchi18n"
-        :label="$t('search_lang')"
-        item-text="name"
-        item-value="value"
-        v-model="input.lang"
-      ></v-select>
-    </v-col>
-  </v-row>
+  <div :class="[isMobile ? 'd-flex align-end' : 'd-flex flex-column']">
+    <v-select
+      v-model="input.topic"
+      :class="[isMobile ? 'me-3' : '']"
+      @change="search"
+      :items="topicItems | searchi18n"
+      :label="$t('create_topic')"
+      hide-details
+      item-text="name"
+      item-value="value"
+    ></v-select>
+    <v-select
+      v-model="input.lang"
+      :class="[isMobile ? 'ms-3' : '']"
+      @change="search"
+      :items="LangItems | searchi18n"
+      :label="$t('search_lang')"
+      hide-details
+      item-text="name"
+      item-value="value"
+    ></v-select>
+    <v-btn v-if="isMobile" @click="openCreateDialog" icon>
+      <v-icon color="primary" x-large>mdi-plus</v-icon>
+    </v-btn>
+  </div>
 </template>
 
 <script>
@@ -50,12 +51,16 @@ export default {
     };
   },
   methods: {
+    openCreateDialog() {
+      this.$emit("openCreateDialog");
+    },
     search() {
       let topic = this.input.topic;
       let lang = this.input.lang;
       if (topic == "search_total") {
         topic = "";
-      } else if (lang == "search_total") {
+      }
+      if (lang == "search_total") {
         lang = "";
       }
       let changeData = {
@@ -63,7 +68,7 @@ export default {
         lang: lang,
       };
       // this.$log("데이터 전달");
-      // this.$log(changeData);
+      this.$log(changeData);
       this.$emit("setSearchData", changeData);
     },
   },
