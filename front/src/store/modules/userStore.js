@@ -11,6 +11,9 @@ const getDefaultState = () => {
     langId: null,
     userId: null,
     nickname: null,
+    // TODO: ws
+    // ws: null,
+    // socketUrl: process.env.VUE_APP_SOCKET_URL,
   }
 }
 
@@ -25,6 +28,8 @@ const userStore = {
       state.langId = payload.langId;
       state.userId = payload.userId;
       state.nickname = payload.nickname;
+      // TODO: ws
+      // state.ws = new WebSocket(state.socketUrl);
     },
     LOGOUT(state) {
       Object.assign(state, getDefaultState());
@@ -127,6 +132,10 @@ const userStore = {
     getHeader(state) {
       return { Authorization: `Bearer ${state.accessToken}` }
     },
+    // TODO: ws
+    // getWS(state) {
+    //   return state.ws;
+    // }
   },
 }
 export default userStore

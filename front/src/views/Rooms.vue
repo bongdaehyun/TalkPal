@@ -128,6 +128,7 @@ export default {
       this.btnShow = window.scrollY > 400;
     },
     connect() {
+      // this.ws = this.$store.getters["userStore/getWS"];
       this.ws = new WebSocket(this.socketUrl);
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);

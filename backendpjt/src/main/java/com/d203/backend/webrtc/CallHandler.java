@@ -89,12 +89,17 @@ public class CallHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        UserSession user = userManager.removeBySession(session);
-        roomManager.getRoom(user.getUuid()).leave(user);
+        try {
+            UserSession user = userManager.removeBySession(session);
+            roomManager.getRoom(user.getUuid()).leave(user);
+        } catch(NullPointerException e) {
+            log.error("No User in UserManager");
+        }
     }
 
     private void sendChat(JsonObject params) throws IOException {
         final String senderId = params.get("senderId").getAsString();
+        final String senderNickName = params.get("senderNickName").getAsString();
         final String sendMsg = params.get("sendMsg").getAsString();
 
         SimpleDateFormat format = new SimpleDateFormat("HH:mm");
@@ -106,6 +111,7 @@ public class CallHandler extends TextWebSocketHandler {
         final JsonObject chatInfo = new JsonObject();
         chatInfo.addProperty("id", "receiveChat");
         chatInfo.addProperty("senderId", senderId);
+        chatInfo.addProperty("senderNickName", senderNickName);
         chatInfo.addProperty("sendMsg", sendMsg);
         chatInfo.addProperty("sendTime", sendTime);
 
