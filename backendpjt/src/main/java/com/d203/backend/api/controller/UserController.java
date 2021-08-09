@@ -69,6 +69,7 @@ public class UserController {
         } else {
             // 서버단 저장될 위치
             basePath = "/volumes/profile/";
+            frontPath="";
         }
 
         fileName = userId.toString() + "_profileImg.jpg";
