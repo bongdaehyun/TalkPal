@@ -67,17 +67,9 @@ public class UserController {
 
             frontPath = "/front/src/assets/image/profile/";
         } else {
-            // 배포 서버 설정 필요
-            String[] splitPath =
-                    (new File("").getCanonicalPath().split("\\\\"));
-
-            int splitPathLen = splitPath.length;
-
-            // 프로젝트경로
-            basePath = String.join("/", Arrays.copyOfRange(splitPath, 0,
-                    splitPathLen - 1));
-
-            frontPath = "/front/src/assets/image/profile/";
+            // 서버단 저장될 위치
+            basePath = "/volumes/profile/";
+            frontPath="";
         }
 
         fileName = userId.toString() + "_profileImg.jpg";
@@ -90,8 +82,7 @@ public class UserController {
         //파일 생성
         imgFile.transferTo(dest);
 
-
-        // DB에 경로 저장
+        // DB에 이미지 원본 이름만 저장
         Long userid = Long.parseLong(userId);
         if (userService.saveImgFile(userid, fileName)) {
             return ResponseEntity.status(200).body(imgFile.getOriginalFilename());

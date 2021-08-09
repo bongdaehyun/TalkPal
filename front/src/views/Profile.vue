@@ -6,23 +6,33 @@
         <v-col cols="6" class="d-flex flex-column align-end pe-6">
           <!-- NOTE: 프로필 이미지 -->
           <v-avatar size="128">
-            <v-img :src="profileImg"></v-img>
+            <v-hover v-slot="{ hover }">
+              <v-img :src="profileImg">
+                <div
+                  v-if="hover && profileId == loginId"
+                  class="d-flex justify-center align-center"
+                  style="height: 100%; width: 100%"
+                >
+                  <!-- NOTE: [Hover] 프로필 이미지 수정 버튼 -->
+                  <div v-show="false">
+                    <input
+                      ref="fileInput"
+                      type="file"
+                      @change="changeProfileImage"
+                    />
+                  </div>
+                  <v-btn
+                    class="white--text"
+                    color="indigo"
+                    @click="clickChangeImage"
+                  >
+                    {{$t('profile_Updateimage')}}
+                    <v-icon right dark> fas fa-cog </v-icon>
+                  </v-btn>
+                </div>
+              </v-img>
+            </v-hover>
           </v-avatar>
-          <!-- NOTE: 프로필 이미지 수정 -->
-          <div v-if="profileId == loginId">
-            <v-btn
-              class="mt-6 mb-3"
-              outlined
-              color="primary"
-              @click="clickChangeImage"
-            >
-              이미지 수정
-              <v-icon right dark> mdi-cloud-upload </v-icon>
-            </v-btn>
-            <div v-show="false">
-              <input ref="fileInput" type="file" @change="changeProfileImage" />
-            </div>
-          </div>
         </v-col>
         <v-col cols="6" md="3" class="d-flex flex-column justify-center ps-6">
           <div v-if="!update" class="d-flex justify-start">
@@ -34,6 +44,7 @@
                 scrollable
               >
                 <FollowDialog
+                  :head="$t('profile_follower')"
                   :profileId="profileId"
                   :followItem="follower"
                   ref="followDialog"
@@ -42,7 +53,7 @@
               <button @click="follower.dialog = true">
                 {{ $t("profile_follower") }}
                 <span class="font-weight-bold text--black">
-                  {{ follower.count }}
+                  {{ profileInfo.cntFollower }}
                 </span>
               </button>
             </div>
@@ -53,12 +64,16 @@
                 :max-width="dialogMaxWidth"
                 scrollable
               >
-                <FollowDialog :profileId="profileId" :followItem="following" />
+                <FollowDialog
+                  :head="$t('profile_following')"
+                  :profileId="profileId"
+                  :followItem="following"
+                />
               </v-dialog>
               <button @click="following.dialog = true">
                 {{ $t("profile_following") }}
                 <span class="font-weight-bold text--black">
-                  {{ following.count }}
+                  {{ profileInfo.cntFollowing}}
                 </span>
               </button>
             </div>
@@ -102,7 +117,10 @@
               >
             </div>
             <!--  NOTE: 팔로우 버튼 -->
-            <div v-if="profileId != loginId" class="ms-1 pb-1 ps-1">
+            <div
+              v-if="profileId != loginId && isFollow != null"
+              class="ms-1 pb-1 ps-1"
+            >
               <button v-if="isFollow" dark @click="addFollow">
                 <v-icon color="purple">mdi-link-variant</v-icon>
               </button>
@@ -132,7 +150,7 @@
               color="primary"
               @click="submitUpdateButton"
             >
-              수정완료
+              {{$t('profile_submit')}}
             </v-btn>
           </div>
         </v-col>
@@ -185,7 +203,7 @@ import {
   maxLength,
   alphaNum,
 } from "vuelidate/lib/validators";
-
+import i18n from "@/i18n.js";
 import isMobile from "@/mixin/isMobile.js";
 import ReviewMixin from "@/mixin/ReviewMixin.js";
 import FollowMixin from "@/mixin/FollowMixin.js";
@@ -196,12 +214,11 @@ export default {
 
   data() {
     return {
-      profileInfo: {},
-      nickname: null,
-      profileId: this.$route.params.userId,
-      profileImg: null,
-      isFollow: false,
+      profileId: Number(this.$route.params.userId),
       loginId: this.$store.getters[`userStore/getUserId`],
+      profileInfo: {},
+      profileImg: null,
+      nickname: null,
       overlay: false,
       tab: null,
       histories: [],
@@ -218,12 +235,12 @@ export default {
     nicknameErrors() {
       const errors = [];
       if (!this.$v.nickname.$dirty) return errors;
-      !this.$v.nickname.required && errors.push("필수 항목입니다.");
+      !this.$v.nickname.required && errors.push(i18n.t('register_required'));
       (!this.$v.nickname.minLength || !this.$v.nickname.maxLength) &&
-        errors.push("최소 2 글자 최대 16 글자를 입력해야 합니다.");
+        errors.push(i18n.t('register_error_nick_len'));
       !this.$v.nickname.alphaNum &&
-        errors.push("영문 소문자 및 숫자만 입력해야 합니다.");
-      !this.$v.nickname.isUnique && errors.push("이미 존재하는 별명입니다.");
+        errors.push(i18n.t('register_error_nick_alpha'));
+      !this.$v.nickname.isUnique && errors.push(i18n.t('register_error_nick_same'));
       return errors;
     },
   },
@@ -235,6 +252,10 @@ export default {
       alphaNum,
       async isUnique(nickname) {
         if (nickname === "") return true;
+        // 현재 닉네임과 동일한지
+        if (nickname == this.profileInfo.nickname) {
+          return true;
+        }
         try {
           // 중복 검사 통과
           const res = await http.get(`/users/checknick/${nickname}`);
@@ -253,12 +274,17 @@ export default {
         .dispatch("userStore/requestUserInfo", this.profileId)
         .then((res) => {
           this.profileInfo = res.data;
+          console.log(this.profileInfo)
           const imgPath = this.profileInfo.imgPath;
+          // NOTE: 프로필 유저 정보 배포된 서버 설정 필요
           if (imgPath) {
             this.profileImg = require(`@/assets/image/profile/${imgPath}`);
           } else {
             this.profileImg = require(`@/assets/image/profile/default_profileImg.png`);
           }
+          /*
+          
+          */
         })
         .catch((err) => {
           this.$log(err);
@@ -279,7 +305,7 @@ export default {
           if (res.data == "SUCCESS") {
             this.profileInfo.nickname = this.nickname;
             this.$store.dispatch("onSnackbar", {
-              text: "수정 완료.",
+              text: `{{$t('profile_submit')}}`,
               color: "success",
             });
             this.update = false;
@@ -308,7 +334,6 @@ export default {
           }
         );
         this.loadingButtonImage = false;
-        console.log(data);
       } catch (err) {
         console.log(err);
       }
@@ -333,7 +358,6 @@ export default {
           this.profileId
         );
         this.histories = res.data.historyList;
-        //console.log(this.histories)
       } catch (error) {
         this.$log(error);
       }
@@ -345,8 +369,6 @@ export default {
     this.requestReviews(this.giveReviews);
     this.reuqestHistoryUser();
     this.checkFollow();
-    this.countFollower();
-    this.countFollowing();
   },
   components: {
     FollowDialog,

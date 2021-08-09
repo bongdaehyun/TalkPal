@@ -17,19 +17,21 @@ import java.util.List;
 @ToString
 public class FollowListRes {
 
-    @ApiModelProperty(name="Follow List")
+    @ApiModelProperty(name = "Follow List")
     List<FollowRes> followList;
 
-    public static FollowListRes getIngList(List<Follow> follow){
+    public static FollowListRes getIngList(List<Follow> follow) {
         FollowListRes followListRes = new FollowListRes();
 
         List<FollowRes> followList = new ArrayList<FollowRes>();
-        for(int i=0; i< follow.size() ; i++)
-        {
+        for (int i = 0; i < follow.size(); i++) {
             FollowRes res = new FollowRes();
-            res.setUser_id(follow.get(i).getTouserid().getId());
-            res.setUser_nickname(follow.get(i).getTouserid().getNickname());
-            res.setUser_email(follow.get(i).getTouserid().getEmail());
+            res.setId(follow.get(i).getTouserid().getId());
+            res.setNickname(follow.get(i).getTouserid().getNickname());
+            res.setEmail(follow.get(i).getTouserid().getEmail());
+            res.setImgPath(follow.get(i).getTouserid().getImgpath());
+            res.setLang(follow.get(i).getTouserid().getLang().getName());
+
 
             followList.add(res);
         }
@@ -38,16 +40,17 @@ public class FollowListRes {
     }
 
 
-    public static FollowListRes getErList(List<Follow> follow){
+    public static FollowListRes getErList(List<Follow> follow) {
         FollowListRes followListRes = new FollowListRes();
 
         List<FollowRes> followList = new ArrayList<FollowRes>();
-        for(int i=0; i< follow.size() ; i++)
-        {
+        for (int i = 0; i < follow.size(); i++) {
             FollowRes res = new FollowRes();
-            res.setUser_id(follow.get(i).getFromuserid().getId());
-            res.setUser_nickname(follow.get(i).getFromuserid().getNickname());
-            res.setUser_email(follow.get(i).getFromuserid().getEmail());
+            res.setId(follow.get(i).getFromuserid().getId());
+            res.setNickname(follow.get(i).getFromuserid().getNickname());
+            res.setEmail(follow.get(i).getFromuserid().getEmail());
+            res.setImgPath(follow.get(i).getFromuserid().getImgpath());
+            res.setLang(follow.get(i).getFromuserid().getLang().getName());
 
             followList.add(res);
         }

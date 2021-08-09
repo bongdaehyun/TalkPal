@@ -12,14 +12,20 @@ import java.util.List;
 @Setter
 @ApiModel("follow Response")
 public class FollowRes {
-    @ApiModelProperty(name="user_id")
-    Long user_id;
+    @ApiModelProperty(name = "id")
+    Long id;
 
-    @ApiModelProperty(name="user_nickname")
-    String user_nickname;
+    @ApiModelProperty(name = "nickname")
+    String nickname;
 
-    @ApiModelProperty(name="user_eamil")
-    String user_email;
+    @ApiModelProperty(name = "eamil")
+    String email;
+
+    @ApiModelProperty(name = "profile_path")
+    String imgPath;
+
+    @ApiModelProperty(name = "lang")
+    String lang;
 
 
 }

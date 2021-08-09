@@ -3,7 +3,7 @@ import http from "@/util/http-common";
 const FollowMixin = {
   data() {
     return {
-
+      isFollow: null,
       follower: {
         items: [],
         url: "listFollower",
@@ -67,18 +67,6 @@ const FollowMixin = {
           console.error(err);
           this.$log("이미 요청한 팔로우");
         });
-    },
-    // NOTE: 팔로워 개수
-    countFollower() {
-      http.get(`/follow/countfollower/${this.profileId}`).then((res) => {
-        this.follower.count = res.data;
-      });
-    },
-    // NOTE: 팔로잉 개수
-    countFollowing() {
-      http.get(`/follow/countfollowing/${this.profileId}`).then((res) => {
-        this.following.count = res.data;
-      });
     },
 
   }

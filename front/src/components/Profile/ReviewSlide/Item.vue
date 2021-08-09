@@ -28,7 +28,7 @@
         <v-list-item-avatar tile size="80" color="grey"></v-list-item-avatar>
       </v-list-item>
       <v-card-actions>
-        <v-btn outlined rounded text> {{$t('profile_go')}} </v-btn>
+        <v-btn outlined rounded text @click="goProfile"> {{$t('profile_go')}} </v-btn>
       </v-card-actions>
     </v-card>
     <!-- NOTE: Desktop/Mobile width control -->
@@ -77,6 +77,14 @@ export default {
   methods: {
     openDialog() {
       console.log("openDialog");
+    },
+    goProfile() {
+      //console.log(this.item);
+      this.$router.push({
+        name: "Profile",
+        params: { userId: this.item.from_user_id },
+      });
+      this.$router.go();
     },
   },
   mounted() {},

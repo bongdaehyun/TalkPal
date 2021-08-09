@@ -46,7 +46,6 @@ export default {
     const topic = this.item.topic;
     if (topic == "create_food") {
       this.name = "/src/assets/image/food.jpg";
-      console.log(this.name);
     }
   },
 };
