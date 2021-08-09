@@ -374,7 +374,7 @@ export default {
           if(this.user.imgPath){
              this.userImg = "/file/"+this.userId+"profileImg.jpg"
           }else{
-             this.userImg = "/file/default_profileImg.jpg"
+             this.userImg = "/file/default_profileImg.png"
           }
           //this.userImg = "/file/"+this.userId+"profileImg.jpg"
           //console.log(this.user.imgPath);
