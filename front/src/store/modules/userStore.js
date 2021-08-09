@@ -1,7 +1,5 @@
-import axios from 'axios';
 import Cookies from 'js-cookie';
 import jwt_decode from 'jwt-decode';
-
 import http from '@/util/http-common';
 
 
@@ -9,7 +7,8 @@ const getDefaultState = () => {
   return {
     accessToken: null,
     loginStatus: false,
-    lang: 'en',
+    lang: "ko",
+    langId: null,
     userId: null,
     nickname: null,
   }
@@ -23,6 +22,7 @@ const userStore = {
       state.accessToken = payload.accessToken;
       state.loginStatus = true;
       state.lang = payload.lang;
+      state.langId = payload.langId;
       state.userId = payload.userId;
       state.nickname = payload.nickname;
     },
@@ -42,7 +42,7 @@ const userStore = {
       let body = payload
       return http.post('/auth/login', body)
     },
-    // NOTE: 로그인
+    // NOTE: 로그인 상태 설정
     login(context, accessToken) {
       const decoded = jwt_decode(accessToken);
       const userInfo = decoded.userinfo;
@@ -50,15 +50,15 @@ const userStore = {
         userId: Number(userInfo.id),
         nickname: userInfo.nickname,
         lang: userInfo.lang,
+        langId: userInfo.langId,
         accessToken
       }
-      console.log(decoded);
+      // root.$i18n.locale = userInfo.lang
       context.commit('LOGIN', payload)
     },
     // NOTE: 로그아웃
     logout(context) {
       context.commit('LOGOUT')
-      axios.defaults.headers.common['Authorization'] = undefined
     },
     // NOTE: 유저 정보 요청
     requestUserInfo(context, userId) {
@@ -76,9 +76,33 @@ const userStore = {
     requestReceivedReviews(context, payload) {
       return http.get(`/review/to/${payload.userId}/${payload.page}`)
     },
-    // NOTE: 만난 사람들 요청
+    // NOTE: 만난 사람 추가
+    addUserHistorie(context, payload) {
+      return http.post('/history/add/', payload)
+    },
+    // NOTE: 만난 사람들 목록 요청
     requestUserHistories(context, userId) {
       return http.get(`/history/${userId}`)
+    },
+    // NOTE: 팔로우 신청
+    addFollow(context, payload) {
+      return http.post(`/follow/${payload.fromuserid}/${payload.touserid}`)
+    },
+    //NOTE: 팔로우 해제
+    deleteFollow(context, payload) {
+      return http.delete(`/follow/${payload.fromuserid}/${payload.touserid}`)
+    },
+    // NOTE: 팔로우 확인
+    checkFollow(context, payload) {
+      return http.get(`/follow/checkFollowing/${payload.fromuserid}/${payload.touserid}`)
+    },
+    // NOTE: 팔로워 목록 가져오기
+    listFollower(context, payload) {
+      return http.get(`/follow/er/${payload.userId}/${payload.page}`)
+    },
+    // NOTE: 팔로잉 목록 가져오기
+    listFollowing(context, payload) {
+      return http.get(`/follow/ing/${payload.userId}/${payload.page}`)
     }
   },
   getters: {
@@ -91,12 +115,18 @@ const userStore = {
     getLocale(state) {
       return state.lang;
     },
+    getLangId(state) {
+      return state.langId;
+    },
     getUserId(state) {
       return state.userId;
     },
     getNickName(state) {
       return state.nickname;
-    }
+    },
+    getHeader(state) {
+      return { Authorization: `Bearer ${state.accessToken}` }
+    },
   },
 }
 export default userStore

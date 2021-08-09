@@ -1,5 +1,7 @@
 package com.d203.backend.api.service.User;
 
+import com.d203.backend.api.response.User.UserRes;
+import com.d203.backend.db.repository.FollowRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,10 +24,22 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	LangRepository langRepository ;
-	
+
+	@Autowired
+	FollowRepository followRepository;
+
 	@Autowired
 	PasswordEncoder passwordEncoder;
 
+
+	@Override
+	public boolean saveImgFile(Long userId, String imgFilePath) {
+		User user = userRepository.findById(userId).get();
+
+		user.setImgpath(imgFilePath);
+		userRepository.save(user);
+		return true;
+	}
 
 	@Override
 	public User createUser(UserReq userRegisterInfo) {
@@ -42,8 +56,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByuserId(Long user_id) {
-		User user= userRepository.getOne(user_id);
-		
+		User user = userRepository.getOne(user_id);
+		user.setCntFollower(followRepository.countAllByTouserid(user));
+		user.setCntFollowing(followRepository.countAllByFromuserid(user));
+		userRepository.save(user);
 		return user;
 	}
 	
@@ -61,10 +77,12 @@ public class UserServiceImpl implements UserService {
 		//유저 정보가 있다면
 		User updateUser = user.get();
 		
-		updateUser.setLang(langRepository.getOne(userUpdateInfo.getLang()));
+		//updateUser.setLang(langRepository.getOne(userUpdateInfo.getLang()));
 		updateUser.setNickname(userUpdateInfo.getNickname());
-		updateUser.setPassword(passwordEncoder.encode(userUpdateInfo.getPassword()));
-		
+		//updateUser.setPassword(passwordEncoder.encode(userUpdateInfo.getPassword()));
+		updateUser.setSns(userUpdateInfo.getSns());
+		updateUser.setIntroduction(userUpdateInfo.getIntroduction());
+
 		if(user.isPresent()){
 			//System.out.println(updateUser.toString());
 			userRepository.save(updateUser);

@@ -18,22 +18,21 @@
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
 import Item from "./ReviewSlide/Item.vue";
+import isMobile from "@/mixin/isMobile.js";
 
 export default {
   name: "ReviewSlide",
+  mixins: [isMobile],
   data() {
     return {
       swiperOption: {
-        slidesPerView: this.isDesktop ? 3 : 1,
-        spaceBetween: this.isDesktop ? 10 : 10,
+        slidesPerView: this.isMobile ? 1 : 3,
+        spaceBetween: this.isMobile ? 10 : 10,
         centeredSlides: true,
       },
     };
   },
   props: {
-    isDesktop: {
-      type: Boolean,
-    },
     reviews: {
       type: Object,
     },

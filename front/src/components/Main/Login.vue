@@ -13,14 +13,12 @@
     ></v-text-field>
     <v-btn class="ma-2" color="primary" dark @click="requestLogin">
       {{ $t("main_login") }}
-      <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
+      <v-icon dark right> mdi-login </v-icon>
     </v-btn>
   </v-container>
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name: "Login",
   data() {
@@ -40,16 +38,14 @@ export default {
           password: this.password,
         })
         .then((res) => {
-          // TODO Toast 구현
-          alert("로그인 성공");
+          // NOTE: Toast Message 출력
+          this.$store.dispatch("onSnackbar", {
+            text: "로그인 성공",
+            color: "success",
+          });
 
           // 인증 Token
           let accessToken = res.data.accessToken;
-
-          // Axios 인증 Token 설정
-          axios.defaults.headers.common[
-            "Authorization"
-          ] = `Bearer ${accessToken}`;
 
           // 로그인 상태 설정
           this.$store.dispatch("userStore/login", accessToken);
@@ -58,8 +54,10 @@ export default {
           this.$router.push({ name: "Rooms" });
         })
         .catch((err) => {
-          alert("로그인 실패");
-          // console.log(err);
+          this.$store.dispatch("onSnackbar", {
+            text: "로그인 실패 ! , 아이디 및 비밀번호를 다시 확인해주세요",
+            color: "success",
+          });
         });
     },
   },

@@ -5,8 +5,8 @@ import Rooms from "@/views/Rooms.vue";
 import Room from "@/views/Room.vue";
 import Profile from "@/views/Profile.vue";
 import ERROR404 from '@/views/ERROR404.vue';
-
 import store from '@/store/index';
+import i18n from '@/i18n'
 
 
 Vue.use(VueRouter);
@@ -17,7 +17,6 @@ const routes = [
     name: "Main",
     component: Main,
     meta: { auth: false },
-
   },
   {
     path: "/rooms",
@@ -32,7 +31,7 @@ const routes = [
     meta: { auth: true },
   },
   {
-    path: "/profie/:userId",
+    path: "/profile/:userId",
     name: "Profile",
     component: Profile,
     meta: { auth: true },
@@ -51,6 +50,8 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const loginStatus = store.getters["userStore/getLoginStatus"]
+  i18n.locale = store.getters["userStore/getLocale"];
+
   if (to.meta.auth && !loginStatus) {
     // TODO: Toast 처리
     console.log('로그인이 필요합니다');

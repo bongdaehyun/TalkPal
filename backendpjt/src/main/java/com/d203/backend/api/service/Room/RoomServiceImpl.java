@@ -2,6 +2,7 @@ package com.d203.backend.api.service.Room;
 
 import com.d203.backend.api.request.Room.RoomReq;
 import com.d203.backend.api.request.Room.RoomUpadateReq;
+import com.d203.backend.db.entity.Lang;
 import com.d203.backend.db.entity.Room;
 import com.d203.backend.db.repository.LangRepository;
 import com.d203.backend.db.repository.RoomRepository;
@@ -88,15 +89,56 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Page<Room> getRoomList(int pageno) {
-
+    public Page<Room> getRoomList(String topic, String lang, int pageno) {
         Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
-        return roomRepository.findAll(firstPageWithTwoElements);
+        long langId = 0;
+        if (!lang.equals("")) {
+            Lang findlang = langRepository.findByName(lang);
+            langId = findlang.getId();
+        }
+        System.out.println("topic : " + topic);
+        System.out.println("lang : " + langId);
+        Page<Room> rooms = roomRepository.findAllBYLangAndTopic(topic, langId, firstPageWithTwoElements);
+        return rooms;
     }
 
     @Override
-    public Room getRoom(Long room_id) {
-        Room room = roomRepository.findById(room_id).get();
+    public Room getRoom(String room_uuid) {
+        Room room = roomRepository.findByUuid(room_uuid);
         return room;
     }
+
+    @Override
+    public boolean getCheckJoin(String uuid) {
+        Room room = roomRepository.findByUuid(uuid);
+        //찾을 수 없는 방
+        if (room == null) {
+            return false;
+        }
+        //최대 인원보다 현재 인원 수가 적을 경우
+        if (room.getCurnum() < room.getMaxnum()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean doControlPeople(String uuid, Long people) {
+        Room room = roomRepository.findByUuid(uuid);
+        //찾고자 하는 방이 없을 경우
+        if (room == null) {
+            return false;
+        }
+        Long curnum = room.getCurnum();
+        //현재인원에 더하거나 마이너스 한부분을 체크
+        Long newNum = curnum + people;
+        if (newNum > room.getMaxnum() || newNum <= 0) {
+            return false;
+        }
+        room.setCurnum(newNum);
+        roomRepository.save(room);
+        return true;
+    }
+
 }

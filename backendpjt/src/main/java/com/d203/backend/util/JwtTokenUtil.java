@@ -52,16 +52,18 @@ public class JwtTokenUtil {
 
     public static String getToken(User user) {
         Date expires = JwtTokenUtil.getTokenExpiration(expirationTime);
-        
+
         Map<String, String> tokenMap = new HashMap<String, String>();
         // user_id 가 필요해서 추가함.
         // Long -> String 변환
-        tokenMap.put("id",String.valueOf(user.getId()));
+        tokenMap.put("id", String.valueOf(user.getId()));
         tokenMap.put("email", user.getEmail());
         tokenMap.put("lang", user.getLang().getName());
-        tokenMap.put("nickname",user.getNickname());
+        tokenMap.put("langId", String.valueOf(user.getLang().getId()));
+
+        tokenMap.put("nickname", user.getNickname());
         return JWT.create()
-                .withClaim("userinfo",tokenMap)
+                .withClaim("userinfo", tokenMap)
                 .withExpiresAt(expires)
                 .withIssuer(ISSUER)
                 .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))

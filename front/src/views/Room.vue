@@ -1,251 +1,224 @@
 <template>
-  <div>
-    <v-container fluid>
-      <div class="row" v-if="participants">
-        <!-- NOTE: 화상 구역 -->
-        <div
-          style="background-color: green"
-          class="col-9"
-          v-for="participant in participants"
-          :key="participant.userId"
-        >
+  <div :style="{ height: containerHeight }">
+    <v-container
+      fluid
+      class="pa-0 ma-0 maxHeight"
+      :class="[isMobile ? 'd-flex flex-column' : 'row']"
+    >
+      <!-- NOTE: 화상 구역 -->
+      <div
+        class="maxHeight"
+        :class="[
+          { 'col-10': showGuideChat && !isMobile },
+          { 'col-12': !showGuideChat && !isMobile },
+          { 'd-flex justify-center align-center maxHeight': !isMobile },
+        ]"
+        style="background-color: black"
+      >
+        <ResizeDetector observe-width observe-height @resize="onResize" />
+        <div v-for="participant in participants" :key="participant.userId">
           <Participant
+            v-show="checkMobile(participant.userId)"
             :ref="`participant-${participant.userId}`"
             :userId="participant.userId"
             :ws="ws"
+            :videoWidth="videoWidth"
+            :videoHeight="videoHeight"
           />
         </div>
-        <!-- NOTE:가이드 & 기타 버튼 구역 -->
-        <div class="col-3" style="background-color: red"></div>
+      </div>
+      <!-- NOTE: 가이드 & 채팅 -->
+      <!-- NOTE: 모바일 버전 -->
+      <div
+        v-if="showGuideChat && isMobile"
+        class="d-flex flex-column-reverse maxWidth maxHeight"
+        style="position: fixed; bottom: 56px"
+      >
+        <Guide v-if="showGuide" :height="guideHeight" />
+        <Chat
+          v-if="showChat"
+          :items="msgList"
+          :height="chatHeight"
+          @onSubmitMessage="submitMessage"
+        />
+      </div>
+      <!-- NOTE: 데스크탑 버전 -->
+      <div
+        v-if="showGuideChat && !isMobile"
+        :class="{ 'col-2': showGuideChat }"
+        class="d-flex flex-column maxHeight pa-0"
+      >
+        <Guide v-if="showGuide" :height="guideHeight" />
+        <Chat
+          v-if="showChat"
+          :items="msgList"
+          :height="chatHeight"
+          @onSubmitMessage="submitMessage"
+        />
       </div>
     </v-container>
-    <v-bottom-navigation app>
-      <v-btn @click="leaveRoom">
-        <v-icon>mdi-location-exit</v-icon>
-      </v-btn>
-    </v-bottom-navigation>
+    <Navigation
+      @onLeaveRoom="leaveRoom"
+      @onToggleChat="toggleChat"
+      @onToggleGuide="toggleGuide"
+    />
+    <QuestionDialog
+      :timer="timer"
+      :joinQuestionDialog="joinQuestionDialog"
+      @onQuestionResponse="questionResponse"
+    />
   </div>
 </template>
 
 <script>
-import kurentoUtils from "kurento-utils";
+// NOTE: 컴포넌트
 import Participant from "@/components/Room/Participant.vue";
+import Chat from "@/components/Room/Chat.vue";
+import Guide from "@/components/Room/Guide.vue";
+import QuestionDialog from "@/components/Room/QuestionDialog.vue";
+import Navigation from "@/components/Room/Navigation.vue";
+
+// NOTE: MIXIN
+import WebRTCMixin from "@/mixin/WebRTCMixin.js";
+import isMobile from "@/mixin/isMobile.js";
+
+// NOTE: 외부 모듈
+import adapter from "webrtc-adapter";
+import ResizeDetector from "vue-resize-detector";
 import _ from "lodash";
 
 export default {
   name: "Room",
+  mixins: [WebRTCMixin, isMobile],
   data() {
     return {
-      socketUrl: process.env.VUE_APP_SOCKET_URL,
-      // socketUrl: "wss://192.168.0.2:8080/groupcall",
-      UUID: this.$route.params.UUID,
-      userId: this.$store.getters["userStore/getUserId"],
-      participants: [],
-      participantComponents: [],
-      ws: null,
+      // NOTE: 채팅 관련 변수
+      msgList: [],
+
+      // NOTE: 레이아웃 관련 변수
+      showGuide: false,
+      showChat: false,
+      isRow: true,
+      videoWidth: null,
+      videoHeight: null,
+      innerHeight: window.innerHeight,
     };
   },
-  // TODO: leaveroom 메세지 보낼 때 hostUserId
-  // TODO: Host가 방 나갈 때 방 삭제 API도 호출
-  methods: {
-    sendMessage(message) {
-      if (this.ws.readyState !== this.ws.OPEN) {
-        this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
-        return;
-      }
-      const jsonMessage = JSON.stringify(message);
-      this.$log("[sendMessage] message: " + jsonMessage);
-      this.ws.send(jsonMessage);
+  computed: {
+    containerHeight() {
+      return `${this.innerHeight - 56}px`;
     },
-    sendError(message) {
-      this.$log("[errMessage] " + message);
-      this.sendMessage({
-        id: "ERROR",
-        message: message,
-      });
-    },
-    startVideo(video) {
-      video.play();
-    },
-    onNewParticipant(request) {
-      this.$log(request);
-      this.receiveVideo(request.userId);
-    },
-    onParticipantLeft(request) {
-      this.$log("Participant " + request.userId + " left");
-      let participant = this.participants[request.userId];
-      participant.dispose();
-      delete this.participants[request.userId];
-    },
-    receiveVideoResponse(result) {
-      this.$log("receiveVideoResponse");
-      this.$log(this.participantComponents[result.userId]);
 
-      this.participantComponents[result.userId].rtcPeer.processAnswer(
-        result.sdpAnswer,
-        (error) => {
-          if (error) return this.$error(error);
-        }
-      );
-    },
-    callResponse(message) {
-      if (message.response != "accepted") {
-        this.$log("Call not accepted by peer. Closing call");
-        stop();
+    guideHeight() {
+      if (this.isMobile) {
+        return "30%";
+      }
+      if (this.showChat) {
+        return "50%";
       } else {
-        this.webRtcPeer.processAnswer(message.sdpAnswer, (error) => {
-          if (error) return this.$error(error);
-        });
+        return "100%";
       }
     },
-    async receiveVideo(senderId) {
-      this.$log(senderId);
-      let res = await this.$store.dispatch(
-        "userStore/requestUserInfo",
-        senderId
-      );
-
-      const userInfo = { userId: senderId, ...res.data };
-      this.participants.push(userInfo);
-
-      this.$nextTick(() => {
-        let participant = this.$refs[`participant-${senderId}`][0];
-        this.participantComponents[senderId] = participant;
-        let video = participant.getVideoElement();
-        let options = {
-          remoteVideo: video,
-          onicecandidate: participant.onIceCandidate.bind(participant),
-        };
-
-        participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(
-          options,
-          function (error) {
-            if (error) {
-              return this.$error(error);
-            }
-            this.generateOffer(
-              participant.offerToReceiveVideo.bind(participant)
-            );
-          }
-        );
-      });
+    chatHeight() {
+      if (this.isMobile) {
+        return "30%";
+      }
+      if (this.showGuide) {
+        return "50%";
+      } else {
+        return "100%";
+      }
     },
-    async onExistingParticipants(msg) {
-      const constraints = {
-        audio: true,
-        video: {
-          mandatory: {
-            maxWidth: 320,
-            maxFrameRate: 15,
-            minFrameRate: 15,
-          },
-        },
-      };
-      this.$log(this.userId + " registered in room " + this.UUID);
-      let res = await this.$store.dispatch(
-        "userStore/requestUserInfo",
-        this.userId
-      );
-      const userInfo = { userId: this.userId, ...res.data };
-      // NOTE: 참가자 추가
-      this.participants.push(userInfo);
-
-      // NOTE: this.$nextTick - UI 작업이 끝나고 다음 작업을 실행함.
-      this.$nextTick(() => {
-        // NOTE: participant 컴포넌트
-        let participant = this.$refs[`participant-${this.userId}`][0];
-
-        //  NOTE: 컴포넌트 추가
-        this.participantComponents[this.userId] = participant;
-
-        // NOTE: 비디오 엘리먼트 가져오기
-        let video = participant.getVideoElement();
-
-        let options = {
-          localVideo: video,
-          mediaConstraints: constraints,
-          onicecandidate: participant.onIceCandidate.bind(participant),
-        };
-        participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(
-          options,
-          function (error) {
-            if (error) {
-              return this.$error(error);
-            }
-            this.generateOffer(
-              participant.offerToReceiveVideo.bind(participant)
-            );
-          }
-        );
-      });
-    },
-    connect() {
-      this.ws = new WebSocket(this.socketUrl);
-      this.ws.onmessage = (message) => {
-        let parsedMessage = JSON.parse(message.data);
-        this.$info(`[parsedMessage] : ${parsedMessage}`);
-        switch (parsedMessage.id) {
-          case "existingParticipants":
-            this.onExistingParticipants(parsedMessage);
-            break;
-          case "newParticipantArrived":
-            this.onNewParticipant(parsedMessage);
-            break;
-          case "participantLeft":
-            this.onParticipantLeft(parsedMessage);
-            break;
-          case "receiveVideoAnswer":
-            this.receiveVideoResponse(parsedMessage);
-            break;
-          case "iceCandidate":
-            this.participantComponents[
-              parsedMessage.userId
-            ].rtcPeer.addIceCandidate(parsedMessage.candidate, (error) => {
-              if (error) {
-                this.$error("Error adding candidate: " + error);
-                return;
-              }
-            });
-            break;
-          default:
-            this.$error("Unrecognized message", parsedMessage);
-        }
-      };
-      this.ws.onopen = () => {
-        this.$log(this.ws);
-        this.join();
-      };
-    },
-    join() {
-      let message = {
-        id: "joinRoom",
-        userId: this.userId,
-        uuid: this.UUID,
-      };
-      this.sendMessage(message);
-    },
-    leaveRoom() {
-      this.$log("leaveRoom");
-      this.$destroy();
+    showGuideChat() {
+      return this.showGuide || this.showChat;
     },
   },
+  methods: {
+    toggleChat() {
+      if (this.isMobile) {
+        this.showGuide = false;
+        this.showChat = !this.showChat;
+      } else {
+        this.showChat = !this.showChat;
+      }
+    },
+    toggleGuide() {
+      if (this.isMobile) {
+        this.showGuide = !this.showGuide;
+        this.showChat = false;
+      } else {
+        this.showGuide = !this.showGuide;
+      }
+    },
+    checkMobile(userId) {
+      if (this.isMobile === false) {
+        return true;
+      }
+      const myUserId = this.$store.getters["userStore/getUserId"];
+
+      if (userId == myUserId) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    requestRoomInfo() {
+      this.$store
+        .dispatch("roomStore/reqeustRoomInfo", { uuid: this.UUID })
+        .then((res) => {
+          this.hostId = res.data.hostId;
+          this.roomId = res.data.roomId;
+        });
+    },
+    onResize(width, height) {
+      console.log(width, height);
+      if (this.isMobile) {
+        this.videoHeight = height * 0.95;
+        this.videoWidth = width;
+        return;
+      }
+      if (width * 3 >= height * 4) {
+        this.isRow = true;
+        this.videoWidth = width / 2.2;
+        this.videoHeight = height;
+      } else {
+        this.isRow = false;
+        this.videoWidth = width;
+        this.videoHeight = height / 2.2;
+      }
+    },
+    handleResize() {
+      this.innerHeight = window.innerHeight;
+      console.log(this.innerHeight);
+    },
+  },
+  mounted() {
+    window.addEventListener("resize", this.handleResize);
+  },
   created() {
+    this.requestRoomInfo();
     this.connect();
+    this.$store.dispatch("roomStore/enterRoom");
   },
   beforeDestroy() {
     this.$log("Room Destory");
-    this.sendMessage({
-      id: "leaveRoom",
-    });
-    this.ws.close();
-    this.$router.push({ name: "Rooms" });
+    this.leaveRoom();
   },
   components: {
     Participant,
+    ResizeDetector,
+    Chat,
+    Guide,
+    QuestionDialog,
+    Navigation,
   },
 };
-</script>
-
-
+</script> 
 <style scoped>
+.maxHeight {
+  height: 100%;
+}
+.maxWidth {
+  width: 100%;
+}
 </style>

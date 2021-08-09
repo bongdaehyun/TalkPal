@@ -1,18 +1,19 @@
 <template>
-  <div>
-    <video
-      ref="video"
-      controls="false"
-      autoplay="true"
-      width="100%"
-      height="100%"
-    ></video>
-  </div>
+  <video
+    ref="video"
+    muted
+    autoplay
+    :width="videoWidth"
+    :height="[isMobile ? '' : videoHeight]"
+  ></video>
 </template>
 
 <script>
+import isMobile from "@/mixin/isMobile.js";
+
 export default {
   name: "Participant",
+  mixins: [isMobile],
   data() {
     return {
       rtcPeer: null,
@@ -25,7 +26,14 @@ export default {
     ws: {
       type: WebSocket,
     },
+    videoHeight: {
+      type: Number,
+    },
+    videoWidth: {
+      type: Number,
+    },
   },
+
   methods: {
     offerToReceiveVideo(error, offerSdp, wp) {
       if (error) return console.error("sdp offer error");

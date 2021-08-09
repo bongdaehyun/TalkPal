@@ -109,9 +109,12 @@ export default {
         this.$store
           .dispatch("userStore/requestRegister", credentials)
           .then(() => {
-            alert("인증메일을 발송했습니다.");
-            console.log(credentials);
-            //인증 메일 보내기 --> post는 params를 못보낸다..
+            // NOTE: Toast Message 출력
+            this.$store.dispatch("onSnackbar", {
+              text: "인증메일을 발송했습니다.",
+              color: "success",
+            });
+
             let email = credentials.email;
             http
               .post(`/auth/send/${email}`)
@@ -225,7 +228,7 @@ export default {
       const errors = [];
       if (!this.$v.nickname.$dirty) return errors;
       !this.$v.nickname.required && errors.push("필수 항목입니다.");
-      (!this.$v.nickname.minLength || !this.$v.password.maxLength) &&
+      (!this.$v.nickname.minLength || !this.$v.nickname.maxLength) &&
         errors.push("최소 2 글자 최대 16 글자를 입력해야 합니다.");
       !this.$v.nickname.alphaNum &&
         errors.push("영문 소문자 및 숫자만 입력해야 합니다.");

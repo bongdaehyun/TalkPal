@@ -31,6 +31,11 @@ public class User extends BaseEntity{
     
     String nickname;
 
+    //sns
+    String sns;
+    //자기소개
+    String introduction;
+
     //이메일 인증한 여부
     boolean valid;
 
@@ -41,4 +46,10 @@ public class User extends BaseEntity{
     public boolean getValid(){
         return valid;
     }
+
+    String imgpath;
+
+    Long cntFollower;
+    Long cntFollowing;
+
 }

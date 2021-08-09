@@ -1,51 +1,168 @@
 <template>
-  <v-container v-if="user && receivedReviews && giveReviews">
+  <v-container v-if="profileInfo && isFollow != null">
     <!-- NOTE: 사용자 정보 -->
-    <!-- TODO: 레이아웃 생각 중... -->
-    <v-row justify="center">
-      <v-col>
-        <v-img src="@/assets/image/flag/en.png"> </v-img>
-      </v-col>
-      <v-col>
-        <h1>{{ user.nickname }}</h1>
-        <h3>평균 평점</h3>
-      </v-col>
-      <v-col> 팔로워</v-col>
-      <v-col> 팔로우</v-col>
-      <v-col>
-        <h3>SNS</h3>
-        <h3>자기소개</h3>
-      </v-col>
-    </v-row>
+    <div class="d-flex flex-column my-12">
+      <v-row justify="center" no-gutters>
+        <v-col cols="6" class="d-flex flex-column align-end pe-6">
+          <!-- NOTE: 프로필 이미지 -->
+          <v-avatar size="128">
+            <v-img :src="profileImg"></v-img>
+          </v-avatar>
+          <!-- NOTE: 프로필 이미지 수정 -->
+          <div v-if="profileId == loginId">
+            <v-btn
+              class="mt-6 mb-3"
+              outlined
+              color="primary"
+              @click="clickChangeImage"
+            >
+              이미지 수정
+              <v-icon right dark> mdi-cloud-upload </v-icon>
+            </v-btn>
+            <div v-show="false">
+              <input ref="fileInput" type="file" @change="changeProfileImage" />
+            </div>
+          </div>
+        </v-col>
+        <v-col cols="6" md="3" class="d-flex flex-column justify-center ps-6">
+          <div v-if="!update" class="d-flex justify-start">
+            <!-- NOTE: 팔로우 목록 -->
+            <div class="pe-3">
+              <v-dialog
+                v-model="follower.dialog"
+                :max-width="dialogMaxWidth"
+                scrollable
+              >
+                <FollowDialog
+                  :profileId="profileId"
+                  :followItem="follower"
+                  ref="followDialog"
+                />
+              </v-dialog>
+              <button @click="follower.dialog = true">
+                {{ $t("profile_follower") }}
+                <span class="font-weight-bold text--black">
+                  {{ follower.count }}
+                </span>
+              </button>
+            </div>
+            <!-- NOTE: 팔로잉 목록 -->
+            <div class="ps-3">
+              <v-dialog
+                v-model="following.dialog"
+                :max-width="dialogMaxWidth"
+                scrollable
+              >
+                <FollowDialog :profileId="profileId" :followItem="following" />
+              </v-dialog>
+              <button @click="following.dialog = true">
+                {{ $t("profile_following") }}
+                <span class="font-weight-bold text--black">
+                  {{ following.count }}
+                </span>
+              </button>
+            </div>
+          </div>
+          <!-- NOTE: 닉네임 팔로우 자기소개 -->
+          <div class="d-flex align-center">
+            <div
+              v-if="!update"
+              class="font-weight-bold pe-1"
+              style="font-size: 2rem"
+            >
+              <!-- NOTE: 닉네임 -->
+              <span>
+                {{ profileInfo.nickname }}
+              </span>
+            </div>
+            <!-- NOTE: 닉네임 수정 -->
+            <div v-else>
+              <v-text-field
+                v-model="nickname"
+                label="Nickname"
+                solo
+                required
+                full-width
+                :counter="16"
+                :error-messages="nicknameErrors"
+                @input="$v.nickname.$touch()"
+                @blur="$v.nickname.$touch()"
+              ></v-text-field>
+            </div>
+            <!-- NOTE: 정보 수정 전환 버튼-->
+            <div v-if="profileId == loginId && !update" class="ms-1 pb-1 ps-1">
+              <v-icon
+                @click="
+                  () => {
+                    this.nickname = this.profileInfo.nickname;
+                    update = true;
+                  }
+                "
+                >fas fa-cog</v-icon
+              >
+            </div>
+            <!--  NOTE: 팔로우 버튼 -->
+            <div v-if="profileId != loginId" class="ms-1 pb-1 ps-1">
+              <button v-if="isFollow" dark @click="addFollow">
+                <v-icon color="purple">mdi-link-variant</v-icon>
+              </button>
+              <button v-else dark @click="delFollow">
+                <v-icon color="purple">mdi-link-variant-off</v-icon>
+              </button>
+            </div>
+          </div>
+          <!-- NOTE: 자기소개 -->
+          <div v-if="!update">
+            {{ profileInfo.introduction }}
+          </div>
+          <!-- NOTE: 자기소개 수정 -->
+          <div v-else>
+            <v-textarea
+              rows="2"
+              outlined
+              hide-details
+              v-model="profileInfo.introduction"
+            ></v-textarea>
+          </div>
+          <div v-if="update" class="align-self-end">
+            <!-- NOTE: 수정 완료 버튼 -->
+            <v-btn
+              class="mt-3"
+              outlined
+              color="primary"
+              @click="submitUpdateButton"
+            >
+              수정완료
+            </v-btn>
+          </div>
+        </v-col>
+        <v-col></v-col>
+      </v-row>
+    </div>
     <!-- NOTE: 만난 사람들, 평가 내용 -->
-    <v-row justify="center">
+    <v-row justify="center" class="mt-12">
       <v-col class="col-12 col-md-8">
         <!-- NOTE: 탭 메뉴 -->
         <v-tabs centered v-model="tab">
-          <v-tab>만난 사람들</v-tab>
-          <v-tab>받은 평가</v-tab>
-          <v-tab>작성한 평가</v-tab>
+          <v-tab>{{ $t("profile_history") }}</v-tab>
+          <v-tab>{{ $t("profile_receive_review") }}</v-tab>
+          <v-tab>{{ $t("profile_written_review") }}</v-tab>
         </v-tabs>
         <v-tabs-items v-model="tab" :touchless="true">
           <!-- NOTE: 만난 사람들 -->
           <v-tab-item>
-            <HistorySlide :isDesktop="isDesktop" :histories="histories" />
+            <HistorySlide :histories="histories" />
           </v-tab-item>
           <!-- NOTE: 받은 평가 -->
           <v-tab-item>
             <ReviewSlide
-              :isDesktop="isDesktop"
               :reviews="receivedReviews"
               @onSlideEnd="requestReviews"
             />
           </v-tab-item>
           <!-- NOTE: 작성한 평가 -->
           <v-tab-item>
-            <ReviewSlide
-              :isDesktop="isDesktop"
-              :reviews="giveReviews"
-              @onSlideEnd="requestReviews"
-            />
+            <ReviewSlide :reviews="giveReviews" @onSlideEnd="requestReviews" />
           </v-tab-item>
         </v-tabs-items>
       </v-col>
@@ -59,49 +176,147 @@
 <script>
 import ReviewSlide from "../components/Profile/ReviewSlide.vue";
 import HistorySlide from "../components/Profile/HistorySlide.vue";
+import FollowDialog from "../components/Profile/FollowDialog.vue";
+import http from "@/util/http-common";
+import { validationMixin } from "vuelidate";
+import {
+  required,
+  minLength,
+  maxLength,
+  alphaNum,
+} from "vuelidate/lib/validators";
+
+import isMobile from "@/mixin/isMobile.js";
+import ReviewMixin from "@/mixin/ReviewMixin.js";
+import FollowMixin from "@/mixin/FollowMixin.js";
 
 export default {
   name: "Profile",
+  mixins: [isMobile, ReviewMixin, FollowMixin, validationMixin],
+
   data() {
     return {
+      profileInfo: {},
+      nickname: null,
+      profileId: this.$route.params.userId,
+      profileImg: null,
+      isFollow: false,
+      loginId: this.$store.getters[`userStore/getUserId`],
       overlay: false,
-      userId: this.$route.params.userId,
-      user: null,
       tab: null,
       histories: [],
-      giveReviews: {
-        items: [],
-        page: 1,
-        category: "give",
-        url: "requestGiveReviews",
-        isEnd: false,
-      },
-      receivedReviews: {
-        items: [],
-        page: 1,
-        category: "receive",
-        url: "requestReceivedReviews",
-        isEnd: false,
-      },
+      update: false,
     };
   },
   computed: {
-    isDesktop() {
-      switch (this.$vuetify.breakpoint.name) {
-        case "xs":
-          return false;
-        case "sm":
-          return false;
-        default:
-          return true;
+    dialogMaxWidth() {
+      if (this.isMobile) {
+        return "90%";
       }
+      return "15%";
+    },
+    nicknameErrors() {
+      const errors = [];
+      if (!this.$v.nickname.$dirty) return errors;
+      !this.$v.nickname.required && errors.push("필수 항목입니다.");
+      (!this.$v.nickname.minLength || !this.$v.nickname.maxLength) &&
+        errors.push("최소 2 글자 최대 16 글자를 입력해야 합니다.");
+      !this.$v.nickname.alphaNum &&
+        errors.push("영문 소문자 및 숫자만 입력해야 합니다.");
+      !this.$v.nickname.isUnique && errors.push("이미 존재하는 별명입니다.");
+      return errors;
     },
   },
-
+  validations: {
+    nickname: {
+      required,
+      minLength: minLength(2),
+      maxLength: maxLength(16),
+      alphaNum,
+      async isUnique(nickname) {
+        if (nickname === "") return true;
+        try {
+          // 중복 검사 통과
+          const res = await http.get(`/users/checknick/${nickname}`);
+          return true;
+        } catch (error) {
+          // 중복 검사 실패
+          return false;
+        }
+      },
+    },
+  },
   methods: {
+    // NOTE: 프로필 유저 정보 요청
+    requestProfileInfo() {
+      this.$store
+        .dispatch("userStore/requestUserInfo", this.profileId)
+        .then((res) => {
+          this.profileInfo = res.data;
+          const imgPath = this.profileInfo.imgPath;
+          if (imgPath) {
+            this.profileImg = require(`@/assets/image/profile/${imgPath}`);
+          } else {
+            this.profileImg = require(`@/assets/image/profile/default_profileImg.png`);
+          }
+        })
+        .catch((err) => {
+          this.$log(err);
+        });
+    },
+    // NOTE: 수정 완료
+    submitUpdateButton() {
+      this.$v.$touch();
+      // NOTE: 유효성 검증
+      if (!this.$v.$invalid) {
+        let updateUser = {
+          email: this.profileInfo.email,
+          introduction: this.profileInfo.introduction,
+          nickname: this.nickname,
+          sns: this.profileInfo.sns,
+        };
+        http.put("/users", updateUser).then((res) => {
+          if (res.data == "SUCCESS") {
+            this.profileInfo.nickname = this.nickname;
+            this.$store.dispatch("onSnackbar", {
+              text: "수정 완료.",
+              color: "success",
+            });
+            this.update = false;
+          }
+        });
+      }
+    },
+    // NOTE: 이미지 수정 버튼 클릭
+    clickChangeImage() {
+      this.$refs.fileInput.click();
+    },
+    // NOTE: 프로필 이미지 수정
+    async changeProfileImage(e) {
+      this.image = e.target.files[0];
+      const imgFile = new FormData();
+      imgFile.append("imgFile", this.image);
+
+      try {
+        const { data } = await http.put(
+          "/users/saveimg/" + this.profileId,
+          imgFile,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        this.loadingButtonImage = false;
+        console.log(data);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
     // NOTE: 응답 리뷰 목록 추가
     pushReviews(reviews, res) {
-      // console.log(res);
+      // this.$log(res);
       if (res.length) {
         reviews.items.push(...res);
         reviews.page = reviews.page + 1;
@@ -110,56 +325,31 @@ export default {
       }
       this.overlay = false;
     },
-    // NOTE: 평가 목록 요청
-    requestReviews(reviews) {
-      if (reviews.isEnd === true) {
-        return;
-      }
-      this.overlay = true;
-      let url = "userStore/" + reviews.url;
-      this.$store
-        .dispatch(url, {
-          userId: this.userId,
-          page: reviews.page,
-        })
-        .then((res) => {
-          this.pushReviews(reviews, res.data.reviewList);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    // NOTE: 유저 정보 요청
-    requestUserInfo() {
-      this.$store
-        .dispatch("userStore/requestUserInfo", this.userId)
-        .then((res) => {
-          this.user = res.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
     // NOTE: 만난 사람들 요청
     async reuqestHistoryUser() {
       try {
         const res = await this.$store.dispatch(
           "userStore/requestUserHistories",
-          this.userId
+          this.profileId
         );
         this.histories = res.data.historyList;
+        //console.log(this.histories)
       } catch (error) {
-        console.log(error);
+        this.$log(error);
       }
     },
   },
   created() {
-    this.requestUserInfo();
+    this.requestProfileInfo();
     this.requestReviews(this.receivedReviews);
     this.requestReviews(this.giveReviews);
     this.reuqestHistoryUser();
+    this.checkFollow();
+    this.countFollower();
+    this.countFollowing();
   },
   components: {
+    FollowDialog,
     ReviewSlide,
     HistorySlide,
   },

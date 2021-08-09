@@ -10,4 +10,5 @@ import com.d203.backend.db.entity.User;
 
 @Repository
 public interface LangRepository extends JpaRepository<Lang, Long>{
+    Lang findByName(String name);
 }

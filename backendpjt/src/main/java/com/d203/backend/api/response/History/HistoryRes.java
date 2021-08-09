@@ -28,7 +28,8 @@ public class HistoryRes {
             item.setNickname(list.get(i).getTo_user_id().getNickname());
             //만났던 사람의 이메일
             item.setEmail(list.get(i).getTo_user_id().getEmail());
-
+            //만났던 사람의 프로필 사진
+            item.setImage(list.get(i).getTo_user_id().getImgpath());
             historyList.add(item);
         }
         res.setHistoryList(historyList);
