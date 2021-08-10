@@ -1,36 +1,70 @@
 <template>
   <div
     class="d-flex flex-column"
-    style="background-color: red"
+    style="background-color: #f8f9fa"
     :style="{ height: height }"
   >
-    <div id="range" class="demo">
-      <select v-model="locale">
-        <option>en</option>
-        <option>ko</option>
-      </select>
-      <p v-for="n in 10" :key="n" @click="speech($t(`guide_${n}`))">
-        {{ $t(`guide_${n}`) }}
-      </p>
+    <div class="d-flex justify-center align-center py-2 text-button">
+      <v-icon>mdi-web</v-icon>
+      <div class="d-flex justify-center align-center">
+        <span
+          class="ms-3 me-3"
+          :class="[isHost ? 'font-weight-black' : 'font-weight-thin']"
+        >
+          {{ hostLang }}
+        </span>
+        <v-btn icon @click="changeLocale">
+          <v-icon color="primary"> mdi-swap-horizontal-bold </v-icon>
+        </v-btn>
+        <span
+          class="ms-3 me-3"
+          :class="[isGuest ? 'font-weight-black' : 'font-weight-thin']"
+        >
+          {{ guestLang }}
+        </span>
+      </div>
     </div>
-
-    <!--<p @click="speech($t('guide_1'))">{{ $t("guide_1") }}</p> !-->
+    <v-divider></v-divider>
+    <div style="overflow: auto; height: 100%">
+      <div v-for="n in 10" :key="n">
+        <v-sheet
+          elevation="1"
+          class="d-flex justify-space-between align-center pa-1"
+        >
+          <span>
+            {{ $t(`guide_${n}`) }}
+          </span>
+          <div class="d-flex">
+            <v-divider vertical></v-divider>
+            <v-btn icon @click="speech($t(`guide_${n}`))">
+              <v-icon color="primary">mdi-bullhorn-outline</v-icon>
+            </v-btn>
+          </div>
+        </v-sheet>
+        <v-divider></v-divider>
+      </div>
+    </div>
   </div>
 </template>
-
 <script>
+import isMobile from "@/mixin/isMobile.js";
+
+// NOTE: TTS API 문서
+// https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisUtterance
 export default {
   name: "Guide",
+  mixins: [isMobile],
+
   data() {
     return {
+      isHost: true,
+      isGuest: false,
       locale: this.$i18n.locale,
       n: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       isLoading: true,
       selectedVoice: 1,
       synth: window.speechSynthesis,
       voice: this.$t("voicelang"),
-      //TTS API 문서
-      //https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisUtterance
       Speech: new window.SpeechSynthesisUtterance(),
     };
   },
@@ -44,10 +78,26 @@ export default {
     height: {
       type: String,
     },
+    hostLang: {
+      type: String,
+    },
+    guestLang: {
+      type: String,
+    },
   },
-  mounted() {},
 
   methods: {
+    changeLocale() {
+      if (this.isHost) {
+        this.isHost = false;
+        this.isGuest = true;
+        this.locale = this.guestLang;
+      } else {
+        this.isHost = true;
+        this.isGuest = false;
+        this.locale = this.hostLang;
+      }
+    },
     speech(value) {
       // it should be 'craic', but it doesn't sound right
       console.log(value);
