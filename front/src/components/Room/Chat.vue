@@ -1,43 +1,53 @@
 <template>
   <!-- NOTE: 채팅 -->
-  <v-card
-    class="d-flex flex-column justify-space-between"
-    style="position: relative; background-color: #f8f9fa"
+  <div
+    class="d-flex flex-column"
+    style="position: relative; background-color: #ffffff"
     :style="{ height: height }"
-    color="#0288d1"
   >
+    <v-sheet
+      elevation="1"
+      class="d-flex justify-center align-center py-2 text-button"
+      color="#f8f9fa"
+    >
+      <v-icon>mdi-keyboard-outline</v-icon>
+      <span class="ms-3 font-weight-black">chat</span>
+    </v-sheet>
+    <v-divider></v-divider>
     <!-- NOTE: 채팅 내역 -->
     <v-list ref="chatList" style="overflow: auto">
       <template v-for="(message, index) in items">
         <v-list-item :key="index">
-          <v-list-item-content class="mb-3 pb-0">
-            {{ message.nick }} {{message.time}}<br />
+          <v-list-item-content class="mb-2 mt-2 pa-0">
+            <div class="d-flex align-center">
+              <span class="font-weight-bold">{{ message.nick }}</span>
+              <span class="grey--text caption ms-1">
+                {{ message.time }}
+              </span>
+            </div>
             {{ message.content }}
           </v-list-item-content>
         </v-list-item>
         <v-divider
-          :key="index"
-          
+          :key="index + 'r'"
           v-if="index != Object.keys(items).length - 1"
         ></v-divider>
       </template>
     </v-list>
-
     <!-- NOTE: 채팅 입력 -->
-    <v-card-actions class="pa-0">
-      <v-text-field
+    <v-card-actions class="pa-0 mt-auto">
+      <v-textarea
         style="position: sticky; bottom: 0px; width: 100%"
         v-model="inputMessage"
         placeholder="메세지를 입력하세요."
         @keyup.13="submitMessage"
-        single-line
+        hide-details="false"
+        rows="2"
         filled
         dense
-        
-        hide-details="false"
-      ></v-text-field>
+      ></v-textarea>
     </v-card-actions>
-  </v-card>
+  </div>
 </template>
 
 <script>
@@ -57,9 +67,7 @@ export default {
       this.inputMessage = "";
     },
   },
-  created(){
-    console.log(this.items)
-  },
+  created() {},
   props: {
     items: {
       type: Array,
@@ -82,18 +90,16 @@ export default {
 </script>
 
 <style scoped>
-
 .msg {
-    display: inline-block;
-    border-radius: 15px;
-    padding: 7px 15px;
-    /* margin-bottom: 10px;
+  display: inline-block;
+  border-radius: 15px;
+  padding: 7px 15px;
+  /* margin-bottom: 10px;
     margin-top: 5px; */
-    background-color: #0288d1;
+  background-color: #0288d1;
 }
 .myMsg {
-    text-align: right;
-    color: #fff;
+  text-align: right;
+  color: #fff;
 }
-
 </style>

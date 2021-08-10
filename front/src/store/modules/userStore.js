@@ -108,6 +108,10 @@ const userStore = {
     // NOTE: 팔로잉 목록 가져오기
     requestFollowings(context, payload) {
       return http.get(`/follow/ing/${payload.userId}/${payload.page}`)
+    },
+    // NOTE: 리뷰 평점 가져오기
+    requestAvgScore(context,payload){
+      return http.get(`review/avg/${payload}`)
     }
   },
   getters: {

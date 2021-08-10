@@ -1,5 +1,5 @@
 <template>
-  <v-bottom-navigation app dark>
+  <v-bottom-navigation app background-color="#f8f9fa">
     <!-- TODO: 마이크 ON/OFF 함수 구현 -->
     <v-btn>
       <v-icon>mdi-microphone-off </v-icon>

@@ -7,7 +7,7 @@
           <!-- NOTE: 프로필 이미지 -->
           <v-avatar size="128">
             <v-hover v-slot="{ hover }">
-              <v-img :src="profileImg">
+              <v-img :src="profilePath">
                 <div
                   v-if="hover && profileId == loginId"
                   class="d-flex justify-center align-center"
@@ -21,11 +21,7 @@
                       @change="changeProfileImage"
                     />
                   </div>
-                  <v-btn
-                    class="white--text"
-                    color="primary"
-                    @click="clickChangeImage"
-                  >
+                  <v-btn color="primary" @click="clickChangeImage" tile>
                     <v-icon dark> fas fa-cog </v-icon>
                   </v-btn>
                 </div>
@@ -227,17 +223,18 @@ import i18n from "@/i18n.js";
 import isMobile from "@/mixin/isMobile.js";
 import ReviewMixin from "@/mixin/ReviewMixin.js";
 import FollowMixin from "@/mixin/FollowMixin.js";
+import getProfilePath from "@/mixin/getProfilePath.js";
 
 export default {
   name: "Profile",
-  mixins: [isMobile, ReviewMixin, FollowMixin, validationMixin],
+  mixins: [getProfilePath, isMobile, ReviewMixin, FollowMixin, validationMixin],
 
   data() {
     return {
       profileId: Number(this.$route.params.userId),
       loginId: this.$store.getters[`userStore/getUserId`],
       profileInfo: {},
-      profileImg: null,
+      profilePath: null,
       nickname: null,
       overlay: false,
       tab: null,
@@ -303,16 +300,7 @@ export default {
           this.follower.count = res.data.cntFollower;
           this.following.count = res.data.cntFollowing;
           this.histories.count = res.data.cntHistories;
-          const imgPath = this.profileInfo.imgPath;
-          // NOTE: 프로필 유저 정보 배포된 서버 설정 필요
-          if (imgPath) {
-            this.profileImg = require(`@/assets/image/profile/${imgPath}`);
-          } else {
-            this.profileImg = require(`@/assets/image/profile/default_profileImg.png`);
-          }
-          /*
-          
-          */
+          this.profilePath = this.getProfilePath(res.data.imgPath);
         })
         .catch((err) => {
           this.$log(err);
@@ -333,7 +321,7 @@ export default {
           if (res.data == "SUCCESS") {
             this.profileInfo.nickname = this.nickname;
             this.$store.dispatch("onSnackbar", {
-              text: `{{$t('profile_submit')}}`,
+              text: i18n.t('profile_submit'),
               color: "success",
             });
             this.update = false;
@@ -361,6 +349,7 @@ export default {
             },
           }
         );
+        console.log(data);
         this.loadingButtonImage = false;
       } catch (err) {
         console.log(err);

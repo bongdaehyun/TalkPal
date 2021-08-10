@@ -34,7 +34,12 @@
         class="d-flex flex-column-reverse maxWidth maxHeight"
         style="position: fixed; bottom: 56px"
       >
-        <Guide v-if="showGuide" :height="guideHeight" />
+        <Guide
+          v-if="showGuide"
+          :height="guideHeight"
+          :hostLang="hostLang"
+          :guestLang="guestLang"
+        />
         <Chat
           v-if="showChat"
           :items="msgList"
@@ -48,7 +53,12 @@
         :class="{ 'col-2': showGuideChat }"
         class="d-flex flex-column maxHeight pa-0"
       >
-        <Guide v-if="showGuide" :height="guideHeight" />
+        <Guide
+          v-if="showGuide"
+          :height="guideHeight"
+          :hostLang="hostLang"
+          :guestLang="guestLang"
+        />
         <Chat
           v-if="showChat"
           :items="msgList"
@@ -102,16 +112,18 @@ export default {
       videoWidth: null,
       videoHeight: null,
       innerHeight: window.innerHeight,
+
+      hostLang: null,
+      guestLang: null,
     };
   },
   computed: {
     containerHeight() {
       return `${this.innerHeight - 56}px`;
     },
-
     guideHeight() {
       if (this.isMobile) {
-        return "30%";
+        return "50%";
       }
       if (this.showChat) {
         return "50%";
@@ -121,7 +133,7 @@ export default {
     },
     chatHeight() {
       if (this.isMobile) {
-        return "30%";
+        return "50%";
       }
       if (this.showGuide) {
         return "50%";
@@ -166,12 +178,14 @@ export default {
       this.$store
         .dispatch("roomStore/reqeustRoomInfo", { uuid: this.UUID })
         .then((res) => {
+          console.log(res.data);
           this.hostId = res.data.hostId;
           this.roomId = res.data.roomId;
+          this.hostLang = res.data.host_lang;
+          this.guestLang = res.data.guest_lang;
         });
     },
     onResize(width, height) {
-      console.log(width, height);
       if (this.isMobile) {
         this.videoHeight = height * 0.95;
         this.videoWidth = width;
@@ -189,7 +203,6 @@ export default {
     },
     handleResize() {
       this.innerHeight = window.innerHeight;
-      console.log(this.innerHeight);
     },
   },
   mounted() {
@@ -204,7 +217,6 @@ export default {
     this.$store.dispatch("roomStore/enterRoom");
   },
   beforeDestroy() {
-    this.$log("Room Destory");
     this.leaveRoom();
   },
   components: {

@@ -49,10 +49,11 @@
 
 <script>
 import isMobile from "@/mixin/isMobile.js";
+import getProfilePath from "@/mixin/getProfilePath.js";
 
 export default {
   name: "item",
-  mixins: [isMobile],
+  mixins: [isMobile, getProfilePath],
 
   data() {
     return {
@@ -72,17 +73,9 @@ export default {
     profilePath: {
       get() {
         if (this.category == "receive") {
-          try {
-            return require(`@/assets/image/profile/${this.item.from_user_profile}`);
-          } catch {
-            return require(`@/assets/image/profile/default_profileImg.png`);
-          }
+          return this.getProfilePath(this.item.from_user_profile);
         } else {
-          try {
-            return require(`@/assets/image/profile/${this.item.to_user_profile}`);
-          } catch {
-            return require(`@/assets/image/profile/default_profileImg.png`);
-          }
+          return this.getProfilePath(this.item.to_user_profile);
         }
       },
       set() {},

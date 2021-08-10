@@ -43,7 +43,7 @@ public class RoomRes {
         roomRes.setName(room.getName());
         roomRes.setHostId(room.getHostId().getId());
         roomRes.setGuest_lang(room.getGuest_lang().getName());
-        roomRes.setHost_lang(room.getGuest_lang().getName());
+        roomRes.setHost_lang(room.getHost_lang().getName());
         roomRes.setUuid(room.getUuid());
         return roomRes;
     }
