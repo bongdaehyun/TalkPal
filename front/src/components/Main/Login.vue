@@ -11,10 +11,22 @@
       v-model="password"
       type="password"
     ></v-text-field>
-    <v-btn class="ma-2" outlined color="primary" dark @click="requestLogin">
-      {{ $t("main_login") }}
-      <v-icon right> mdi-login </v-icon>
-    </v-btn>
+    <div class="d-flex justify-space-between">
+      <v-btn
+        class="ma-2"
+        outlined
+        color="primary"
+        dark
+        @click="$emit(`onBackStep`)"
+      >
+        <v-icon left> mdi-arrow-left </v-icon>
+        {{ $t("main_back") }}
+      </v-btn>
+      <v-btn class="ma-2" outlined color="primary" dark @click="requestLogin">
+        {{ $t("main_login") }}
+        <v-icon right> mdi-login </v-icon>
+      </v-btn>
+    </div>
   </v-container>
 </template>
 
@@ -41,7 +53,7 @@ export default {
         .then((res) => {
           // NOTE: Toast Message 출력
           this.$store.dispatch("onSnackbar", {
-            text: i18n.t('main_login_success'),
+            text: i18n.t("main_login_success"),
             color: "primary",
           });
 
@@ -56,7 +68,7 @@ export default {
         })
         .catch((err) => {
           this.$store.dispatch("onSnackbar", {
-            text: i18n.t('main_login_error'),
+            text: i18n.t("main_login_error"),
             color: "error",
           });
         });

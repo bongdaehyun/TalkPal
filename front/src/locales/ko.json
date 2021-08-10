@@ -2,6 +2,7 @@
   "voicelang": "ko",
   "ko": "한국어",
   "en": "영어",
+  "main_back" : "뒤로가기",
   "message": "hello i18n !!",
   "App_logout": "로그아웃 성공",
   "main_login_success": "로그인 성공",
