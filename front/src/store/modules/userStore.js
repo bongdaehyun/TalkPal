@@ -11,7 +11,9 @@ const getDefaultState = () => {
     langId: null,
     userId: null,
     nickname: null,
-    socket: null,
+    socket: {
+      readyState: null,
+    },
     socketUrl: process.env.VUE_APP_SOCKET_URL,
   }
 }
@@ -35,7 +37,7 @@ const userStore = {
       state.accessToken = Cookies.get('accessToken');
     },
     SET_WEB_SOCKET(state) {
-      if (state.socket.readyState != 1) {
+      if (state.socket.readyState !== state.socket.OPEN) {
         state.socket = new WebSocket(state.socketUrl);
         state.socket.onopen = () => {
           let message = {
