@@ -7,7 +7,7 @@ const getProfilePath = {
           return `/file/${imgPath}`;
         }
         else {
-         // return require(`@/assets/image/profile/${imgPath}`);
+          return require(`@/assets/image/profile/${imgPath}`);
         }
       }
       catch {
@@ -15,7 +15,7 @@ const getProfilePath = {
           return `/file/default_profileImg`;
         }
         else {
-         // return require(`@/assets/image/default_profileImg.png`);
+          return require(`@/assets/image/default_profileImg.png`);
         }
       }
     },

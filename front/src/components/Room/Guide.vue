@@ -1,13 +1,10 @@
 <template>
   <div
     class="d-flex flex-column"
-    style="background-color: #f8f9fa"
+    style="background-color: #ffffff"
     :style="{ height: height }"
   >
-    <v-sheet
-      elevation="1"
-      class="d-flex justify-center align-center py-2 text-button"
-    >
+    <div class="d-flex justify-center align-center text-button">
       <v-icon>mdi-web</v-icon>
       <div class="d-flex justify-center align-center">
         <span
@@ -26,7 +23,7 @@
           {{ guestLang }}
         </span>
       </div>
-    </v-sheet>
+    </div>
     <v-divider></v-divider>
     <div style="overflow: auto; height: 100%">
       <div v-for="n in 10" :key="n">

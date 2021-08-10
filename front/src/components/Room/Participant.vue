@@ -1,11 +1,13 @@
 <template>
-  <video
-    ref="video"
-    muted
-    autoplay
-    :width="videoWidth"
-    :height="[isMobile ? '' : videoHeight]"
-  ></video>
+  <div>
+    <video
+      ref="video"
+      muted
+      autoplay
+      :width="videoWidth"
+      :height="[isMobile ? '' : videoHeight]"
+    ></video>
+  </div>
 </template>
 
 <script>

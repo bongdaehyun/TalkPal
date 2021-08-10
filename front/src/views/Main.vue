@@ -1,13 +1,13 @@
 <template>
   <v-stepper v-model="e1">
     <v-stepper-items>
-      <v-stepper-content step="1">
+      <v-stepper-content step="1" class="pa-0">
         <v-container>
           <v-row class="tab-wrap" justify="center" align="center">
             <v-sheet
               color="white"
-              class="col-1 col-md-3 pa-6"
-              elevation="15"
+              class="col-10 col-md-3 pa-6"
+              elevation="10"
               rounded="xl"
             >
               <Country @onSettingLang="settingLang" />
@@ -18,8 +18,7 @@
           </v-row>
         </v-container>
       </v-stepper-content>
-
-      <v-stepper-content step="2">
+      <v-stepper-content step="2" class="pa-0">
         <v-container>
           <v-row class="tab-wrap" justify="center" align="center">
             <!-- NOTE: col 클래스로 width 조절 -->

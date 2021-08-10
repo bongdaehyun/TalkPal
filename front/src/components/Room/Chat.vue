@@ -5,14 +5,10 @@
     style="position: relative; background-color: #ffffff"
     :style="{ height: height }"
   >
-    <v-sheet
-      elevation="1"
-      class="d-flex justify-center align-center py-2 text-button"
-      color="#f8f9fa"
-    >
+    <div class="d-flex justify-center align-center text-button">
       <v-icon>mdi-keyboard-outline</v-icon>
       <span class="ms-3 font-weight-black">chat</span>
-    </v-sheet>
+    </div>
     <v-divider></v-divider>
     <!-- NOTE: 채팅 내역 -->
     <v-list ref="chatList" style="overflow: auto">
@@ -25,13 +21,17 @@
                 {{ message.time }}
               </span>
             </div>
-            {{ message.content }}
+            <v-textarea
+              :value="message.content"
+              rows="1"
+              readonly
+              auto-grow
+              hide-details
+              dense
+            >
+            </v-textarea>
           </v-list-item-content>
         </v-list-item>
-        <v-divider
-          :key="index + 'r'"
-          v-if="index != Object.keys(items).length - 1"
-        ></v-divider>
       </template>
     </v-list>
     <!-- NOTE: 채팅 입력 -->
@@ -41,10 +41,12 @@
         v-model="inputMessage"
         placeholder="메세지를 입력하세요."
         @keyup.13="submitMessage"
-        hide-details="false"
-        rows="2"
+        hide-details
+        rows="1"
         filled
         dense
+        rounded
+        auto-grow
       ></v-textarea>
     </v-card-actions>
   </div>

@@ -47,13 +47,7 @@
       @blur="$v.lang.$touch()"
     ></v-select>
     <div class="d-flex justify-space-between">
-      <v-btn
-        class="ma-2"
-        outlined
-        color="primary"
-        dark
-        @click="$emit(`onBackStep`)"
-      >
+      <v-btn class="ma-2" outlined color="primary" @click="$emit(`onBackStep`)">
         <v-icon left> mdi-arrow-left </v-icon>
         {{ $t("main_back") }}
       </v-btn>

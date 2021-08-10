@@ -12,17 +12,11 @@
       type="password"
     ></v-text-field>
     <div class="d-flex justify-space-between">
-      <v-btn
-        class="ma-2"
-        outlined
-        color="primary"
-        dark
-        @click="$emit(`onBackStep`)"
-      >
+      <v-btn class="ma-2" color="primary" outlined @click="$emit(`onBackStep`)">
         <v-icon left> mdi-arrow-left </v-icon>
         {{ $t("main_back") }}
       </v-btn>
-      <v-btn class="ma-2" outlined color="primary" dark @click="requestLogin">
+      <v-btn class="ma-2" color="primary" outlined @click="requestLogin">
         {{ $t("main_login") }}
         <v-icon right> mdi-login </v-icon>
       </v-btn>

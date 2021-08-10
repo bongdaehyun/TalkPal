@@ -3,8 +3,9 @@
     <div :class="[isMobile ? 'd-flex flex-column' : 'row no-gutters']">
       <v-sheet
         elevation="2"
-        :class="[isMobile ? 'sticky-mobile' : 'col-2']"
         class="sticky"
+        :class="[isMobile ? 'sticky-mobile' : 'col-2']"
+        rounded="xl"
       >
         <!-- NOTE: 방 조건 검색 -->
         <Search
@@ -145,7 +146,7 @@ export default {
     connect() {
       this.$store.dispatch("userStore/setWebSocket");
       this.ws = this.$store.getters["userStore/getWebSocket"];
-      
+
       console.log(this.ws);
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);

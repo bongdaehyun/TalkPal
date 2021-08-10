@@ -5,10 +5,10 @@
         <v-btn
           width="100%"
           color="primary"
-          outlined
           v-bind="attrs"
           v-on="on"
-          tile
+          rounded
+          outlined
         >
           <span>
             {{ $t("room_create") }}
@@ -16,47 +16,35 @@
         </v-btn>
       </div>
     </template>
-    <v-card>
-      <v-card-text>
-        <v-container>
-          <v-row align="center">
-            <v-col class="d-flex" cols="12">
-              <v-text-field
-                :label="$t('create_name')"
-                v-model="inputs.name"
-              ></v-text-field>
-            </v-col>
-            <v-col class="d-flex" cols="12">
-              <v-select
-                :items="langItems"
-                :label="$t('create_guest')"
-                item-text="name"
-                item-value="value"
-                v-model="inputs.guest_lang"
-              ></v-select>
-            </v-col>
-            <v-col class="d-flex" cols="12">
-              <v-select
-                :items="topicItems | topicsi18n"
-                :label="$t('create_topic')"
-                item-text="name"
-                item-value="value"
-                v-model="inputs.topic"
-              ></v-select>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="dialog = false">
+    <v-sheet rounded="xl" class="d-flex flex-column pa-6">
+      <v-text-field
+        :label="$t('create_name')"
+        v-model="inputs.name"
+      ></v-text-field>
+      <v-select
+        :items="langItems"
+        :label="$t('create_guest')"
+        item-text="name"
+        item-value="value"
+        v-model="inputs.guest_lang"
+      ></v-select>
+      <v-select
+        :items="topicItems | topicsi18n"
+        :label="$t('create_topic')"
+        item-text="name"
+        item-value="value"
+        v-model="inputs.topic"
+      ></v-select>
+      <v-spacer></v-spacer>
+      <div class="d-flex justify-end">
+        <v-btn color="error" class="ms-3" outlined @click="dialog = false">
           {{ $t("create_close") }}
         </v-btn>
-        <v-btn color="blue darken-1" text @click="reqeustCreateRoom">
+        <v-btn color="primary" class="ms-3" outlined @click="reqeustCreateRoom">
           {{ $t("create_save") }}
         </v-btn>
-      </v-card-actions>
-    </v-card>
+      </div>
+    </v-sheet>
   </v-dialog>
 </template>
 

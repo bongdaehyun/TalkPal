@@ -1,9 +1,9 @@
 <template>
-  <div :style="{ height: containerHeight }">
+  <div :style="{ height: containerHeight }" style="background-color: #202124">
     <v-container
       fluid
-      class="pa-0 ma-0 maxHeight"
-      :class="[isMobile ? 'd-flex flex-column' : 'row']"
+      class="ma-0 maxHeight"
+      :class="[isMobile ? 'd-flex flex-column pa-0' : 'row pa-3']"
     >
       <!-- NOTE: 화상 구역 -->
       <div
@@ -13,7 +13,7 @@
           { 'col-12': !showGuideChat && !isMobile },
           { 'd-flex justify-center align-center maxHeight': !isMobile },
         ]"
-        style="background-color: black"
+        style="background-color: #202124"
       >
         <ResizeDetector observe-width observe-height @resize="onResize" />
         <div v-for="participant in participants" :key="participant.userId">
@@ -48,10 +48,11 @@
         />
       </div>
       <!-- NOTE: 데스크탑 버전 -->
-      <div
+      <v-sheet
         v-if="showGuideChat && !isMobile"
         :class="{ 'col-2': showGuideChat }"
-        class="d-flex flex-column maxHeight pa-0"
+        class="d-flex flex-column maxHeight"
+        rounded="xl"
       >
         <Guide
           v-if="showGuide"
@@ -65,7 +66,7 @@
           :height="chatHeight"
           @onSubmitMessage="submitMessage"
         />
-      </div>
+      </v-sheet>
     </v-container>
     <Navigation
       @onLeaveRoom="leaveRoom"
@@ -147,20 +148,12 @@ export default {
   },
   methods: {
     toggleChat() {
-      if (this.isMobile) {
-        this.showGuide = false;
-        this.showChat = !this.showChat;
-      } else {
-        this.showChat = !this.showChat;
-      }
+      this.showGuide = false;
+      this.showChat = !this.showChat;
     },
     toggleGuide() {
-      if (this.isMobile) {
-        this.showGuide = !this.showGuide;
-        this.showChat = false;
-      } else {
-        this.showGuide = !this.showGuide;
-      }
+      this.showGuide = !this.showGuide;
+      this.showChat = false;
     },
     checkMobile(userId) {
       if (this.isMobile === false) {
@@ -178,7 +171,6 @@ export default {
       this.$store
         .dispatch("roomStore/reqeustRoomInfo", { uuid: this.UUID })
         .then((res) => {
-          console.log(res.data);
           this.hostId = res.data.hostId;
           this.roomId = res.data.roomId;
           this.hostLang = res.data.host_lang;
@@ -193,12 +185,12 @@ export default {
       }
       if (width * 3 >= height * 4) {
         this.isRow = true;
-        this.videoWidth = width / 2.2;
+        this.videoWidth = width / 2;
         this.videoHeight = height;
       } else {
         this.isRow = false;
         this.videoWidth = width;
-        this.videoHeight = height / 2.2;
+        this.videoHeight = height / 2;
       }
     },
     handleResize() {

@@ -11,7 +11,7 @@
         <span class="white black--text bold">{{ item.name }}</span>
       </v-card-title> -->
         <!-- NOTE : 이미지 클릭시 생성 -->
-        <v-expand-transition>
+        <v-expand-transition v-if="userInfo">
           <v-card
             v-if="hover"
             elevation="1"
@@ -31,7 +31,9 @@
             </v-card-subtitle>
             <v-card-text class="mt-3">
               <div style="color: black" class="d-flex justify-center">
-                <span v-for="item in avgScore" :key="item.id" > <i style="color:#0288d1;" class="fas fa-star"></i></span>
+                <span v-for="item in avgScore" :key="item.id">
+                  <i style="color: #0288d1" class="fas fa-star"></i
+                ></span>
                 {{ avgScore }}
               </div>
             </v-card-text>

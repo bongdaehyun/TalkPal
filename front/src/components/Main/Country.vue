@@ -1,35 +1,24 @@
 <template>
   <v-container>
-    <!-- <v-select
-      v-model="lang"
-      :items="items"
-      item-text="name"
-      item-value="value"
-      label="Select your language"
-      outlined
-    ></v-select> -->
-    <v-row>
-      <v-col>
-        <v-img src="@/assets/image/logo.png"></v-img>
-      </v-col>
-
-      <v-col cols="6">
+    <v-img src="@/assets/image/logo.png"></v-img>
+    <div class="d-flex justify-space-around">
+      <v-sheet class="col-5 click" elevation="3" rounded="xl">
         <v-img
           @click="SelectLang(`ko`)"
           width="100%"
           src="@/assets/image/flag/ko.png"
           value="ko"
         ></v-img>
-      </v-col>
-      <v-col cols="6">
+      </v-sheet>
+      <v-sheet class="col-5 click" elevation="3" rounded="xl">
         <v-img
           @click="SelectLang(`en`)"
           width="100%"
-          src="@/assets/image/flag/enb.png"
+          src="@/assets/image/flag/en.png"
           value="en"
         ></v-img>
-      </v-col>
-    </v-row>
+      </v-sheet>
+    </div>
   </v-container>
 </template>
 
@@ -47,7 +36,7 @@ export default {
   },
   methods: {
     SelectLang(val) {
-       this.lang = val;
+      this.lang = val;
       this.$emit("onSettingLang", val);
       console.log(val);
     },
@@ -61,3 +50,8 @@ export default {
   // },
 };
 </script>
+<style scoped>
+.click {
+  cursor: pointer;
+}
+</style>
