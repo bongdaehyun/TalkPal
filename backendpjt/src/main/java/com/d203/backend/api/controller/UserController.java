@@ -35,8 +35,8 @@ import java.util.Arrays;
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
-    @Value("${isDev}")
-    boolean isDev;
+    @Value("${isProd}")
+    boolean isProd;
 
     @Autowired
     UserService userService;
@@ -49,12 +49,16 @@ public class UserController {
     public ResponseEntity<String> profileImg(@PathVariable String userId,
                                              @RequestPart("imgFile") MultipartFile imgFile) throws IOException {
 
-        System.out.println("[isDev]" + isDev);
+        System.out.println("[isProd]" + isProd);
 
         System.out.println("이미지 수정");
         String basePath, frontPath, fileName, filePath;
 
-        if (isDev) {
+        if (isProd) {
+            // 배포 서버단 저장될 위치
+            basePath = "/volumes/profile/";
+            frontPath = "";
+        } else {
             // 개발 서버 설정
             String[] splitPath =
                     (new File("").getCanonicalPath().split("\\\\"));
@@ -66,10 +70,6 @@ public class UserController {
                     splitPathLen - 1));
 
             frontPath = "/front/src/assets/image/profile/";
-        } else {
-            // 배포 서버단 저장될 위치
-            basePath = "/volumes/profile/";
-            frontPath = "";
         }
 
         fileName = userId.toString() + "_profileImg.jpg";
@@ -80,7 +80,7 @@ public class UserController {
         System.out.println(filePath);
 
         File dest = new File(filePath);
-
+        System.out.println(dest);
         //파일 생성
         imgFile.transferTo(dest);
 

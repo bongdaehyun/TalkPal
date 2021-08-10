@@ -353,6 +353,7 @@ export default {
             },
           }
         );
+        console.log(data);
         this.loadingButtonImage = false;
       } catch (err) {
         console.log(err);
