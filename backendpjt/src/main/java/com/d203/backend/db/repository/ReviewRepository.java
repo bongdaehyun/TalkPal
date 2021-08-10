@@ -19,7 +19,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Page<Review> findAllByFromuserid(User fromuserid, Pageable pageable);
 
-    @Query(value = "select round(avg(score),1)  from review where review.touserid = ?1", nativeQuery = true)
+    @Query(value = "select round(avg(r.score),1)  from review as r where r.touserid = ?1", nativeQuery = true)
     double getReviewAvgByTouserid(Long touserid);
 }
 
