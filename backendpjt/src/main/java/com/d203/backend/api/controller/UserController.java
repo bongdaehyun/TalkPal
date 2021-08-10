@@ -73,9 +73,11 @@ public class UserController {
         }
 
         fileName = userId.toString() + "_profileImg.jpg";
+        System.out.println(fileName);
 
         //경로설정
         filePath = basePath + frontPath + fileName;
+        System.out.println(filePath);
 
         File dest = new File(filePath);
 
