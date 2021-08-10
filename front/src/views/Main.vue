@@ -5,7 +5,7 @@
       <!-- NOTE: 로그인 & 회원가입 TAB -->
       <v-sheet
         color="white"
-        class="col-10 col-md-3 pa-6"
+        class="col-10 col-md-4 pa-6"
         elevation="10"
         rounded="xl"
       >
@@ -34,8 +34,8 @@
         </v-row>
       </v-sheet>
       <!-- NOTE: 사진 -->
-      <v-col class="col-sm-12 col-md-4 d-none d-lg-block d-print-block">
-        <v-img class="" src="@/assets/image/talking.png"> </v-img>
+      <v-col class="col-12 col-md-6">
+        <v-img class="" src="@/assets/image/talking.png"></v-img>
       </v-col>
     </v-row>
   </v-container>

@@ -4,7 +4,10 @@
     style="background-color: #f8f9fa"
     :style="{ height: height }"
   >
-    <div class="d-flex justify-center align-center py-2 text-button">
+    <v-sheet
+      elevation="1"
+      class="d-flex justify-center align-center py-2 text-button"
+    >
       <v-icon>mdi-web</v-icon>
       <div class="d-flex justify-center align-center">
         <span
@@ -23,7 +26,7 @@
           {{ guestLang }}
         </span>
       </div>
-    </div>
+    </v-sheet>
     <v-divider></v-divider>
     <div style="overflow: auto; height: 100%">
       <div v-for="n in 10" :key="n">
@@ -35,7 +38,7 @@
             {{ $t(`guide_${n}`) }}
           </span>
           <div class="d-flex">
-            <v-divider vertical></v-divider>
+            <v-divider vertical class="mx-2"></v-divider>
             <v-btn icon @click="speech($t(`guide_${n}`))">
               <v-icon color="primary">mdi-bullhorn-outline</v-icon>
             </v-btn>

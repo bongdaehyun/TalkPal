@@ -2,14 +2,17 @@
   <!-- NOTE: 채팅 -->
   <div
     class="d-flex flex-column"
-    style="position: relative; background-color: #f8f9fa"
+    style="position: relative; background-color: #ffffff"
     :style="{ height: height }"
-    color="#0288d1"
   >
-    <div class="d-flex justify-center align-center py-2 text-button">
+    <v-sheet
+      elevation="1"
+      class="d-flex justify-center align-center py-2 text-button"
+      color="#f8f9fa"
+    >
       <v-icon>mdi-keyboard-outline</v-icon>
-      <span class="ms-3"> chat </span>
-    </div>
+      <span class="ms-3 font-weight-black">chat</span>
+    </v-sheet>
     <v-divider></v-divider>
     <!-- NOTE: 채팅 내역 -->
     <v-list ref="chatList" style="overflow: auto">

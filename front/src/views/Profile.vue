@@ -21,11 +21,7 @@
                       @change="changeProfileImage"
                     />
                   </div>
-                  <v-btn
-                    class="white--text"
-                    color="primary"
-                    @click="clickChangeImage"
-                  >
+                  <v-btn color="primary" @click="clickChangeImage" tile>
                     <v-icon dark> fas fa-cog </v-icon>
                   </v-btn>
                 </div>
