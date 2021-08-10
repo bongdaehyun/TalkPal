@@ -89,13 +89,7 @@ export default {
         maxnum: 2,
         curnum: 0,
       },
-      socketUrl: process.env.VUE_APP_SOCKET_URL,
     };
-  },
-  props: {
-    ws: {
-      type: WebSocket,
-    },
   },
   computed: {
     maxWidth() {
