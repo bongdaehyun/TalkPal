@@ -27,8 +27,10 @@ pipeline {
                                 sh 'docker images -f "dangling=true" -q \
                                         | xargs -r docker rmi'
 
-                                sh 'docker run -d --name front -p 80:80 -p 443:443 -v /home/ubuntu/yoon/cert:/usr/share/nginx/html/homepage/cert --network our_net front'
-                                sh 'docker run -d --name back -p 8080:8080 --network our_net back'
+                                sh 'docker run -d --name front -p 80:80 -p 443:443 -v /home/ubuntu/yoon/cert:/usr/share/nginx/html/homepage/cert \
+                                -v ~/volumes/profile:/usr/share/nginx/html/homepage/profile \
+                                --network our_net front'
+                                sh 'docker run -d --name back -p 8080:8080 -v ~/volumes/profile:/volumes/profile --network our_net back'
 
                                 discordSend(description: "${currentBuild.currentResult}: Job ${env.JOB_NAME} \nBuild: ${env.BUILD_NUMBER} \nMore info at: \n${env.BUILD_URL}", footer: '', unstable: true, link: env.BUILD_URL, result: "${currentBuild.currentResult}", title: "${JOB_NAME} SUCCESS", webhookURL: 'https://discord.com/api/webhooks/870524982504091648/oq_2jOfSRPB527X93MqWAs-IF8i_OI6sn1-ltAmQtSp82cIP-L8z6Ok8unc26wO8mols')
                         }

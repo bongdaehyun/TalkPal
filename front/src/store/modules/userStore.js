@@ -108,7 +108,8 @@ const userStore = {
     // NOTE: 팔로잉 목록 가져오기
     requestFollowings(context, payload) {
       return http.get(`/follow/ing/${payload.userId}/${payload.page}`)
-    }
+    },
+
   },
   getters: {
     getAccessToken(state) {

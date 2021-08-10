@@ -2,7 +2,6 @@ package com.d203.backend.api.controller;
 
 import com.d203.backend.api.request.Room.RoomReq;
 import com.d203.backend.api.request.Room.RoomUpadateReq;
-import com.d203.backend.api.response.Review.ReviewListRes;
 import com.d203.backend.api.response.Room.RoomListRes;
 import com.d203.backend.api.response.Room.RoomRes;
 import com.d203.backend.common.auth.SsafyUserDetails;
@@ -16,11 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.d203.backend.api.service.Room.RoomService;
-import com.d203.backend.common.model.response.BaseResponseBody;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
-import java.util.UUID;
 
 @Api(value = "방(회화 방) API", tags = {"Room"})
 @RestController

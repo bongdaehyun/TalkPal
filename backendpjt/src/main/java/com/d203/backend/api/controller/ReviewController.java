@@ -3,7 +3,6 @@ package com.d203.backend.api.controller;
 import java.util.List;
 
 import com.d203.backend.api.response.Review.ReviewAvgRes;
-import com.d203.backend.db.entity.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

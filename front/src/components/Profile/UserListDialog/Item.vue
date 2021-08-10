@@ -2,7 +2,7 @@
 <template>
   <div class="d-flex align-center mt-3" v-if="item != null && isFollow != null">
     <v-avatar size="32" @click="goProfile" style="cursor: pointer">
-      <img :src="profileImg" />
+      <img :src="profilePath" />
     </v-avatar>
     <span class="ms-3" @click="goProfile" style="cursor: pointer">
       {{ this.item.nickname }}
@@ -14,13 +14,9 @@
 </template>
 
 <script>
+import getProfilePath from "@/mixin/getProfilePath.js";
+
 export default {
-  props: {
-    item: {
-      type: Object,
-      default: null,
-    },
-  },
   data() {
     return {
       loginId: this.$store.getters[`userStore/getUserId`],
@@ -28,14 +24,19 @@ export default {
       isFollow: null,
     };
   },
+
+  props: {
+    item: {
+      type: Object,
+      default: null,
+    },
+  },
+  mixins: [getProfilePath],
+
   computed: {
-    profileImg: {
+    profilePath: {
       get() {
-        try {
-          return require(`@/assets/image/profile/${this.item.imgPath}`);
-        } catch (error) {
-          return require(`@/assets/image/profile/default_profileImg.png`);
-        }
+        return this.getProfilePath(this.item.imgPath);
       },
       set() {},
     },

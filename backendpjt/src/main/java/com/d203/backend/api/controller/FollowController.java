@@ -1,14 +1,11 @@
 package com.d203.backend.api.controller;
 
 
-import com.d203.backend.api.request.Review.ReviewResiterReq;
 import com.d203.backend.api.response.Follow.FollowListRes;
-import com.d203.backend.api.response.Review.ReviewListRes;
 import com.d203.backend.api.service.User.UserService;
 import com.d203.backend.api.service.follow.FollowService;
 import com.d203.backend.common.model.response.BaseResponseBody;
 import com.d203.backend.db.entity.Follow;
-import com.d203.backend.db.entity.Review;
 import com.d203.backend.db.entity.User;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,25 +94,5 @@ public class FollowController {
 
         return followService.checkFollowing(myId, toId);
     }
-
-//    //팔로우 카운트
-//    @GetMapping("/countfollowing/{userId}")
-//    @ApiOperation(value = "팔로우 개수 ", notes = "팔로우 목록 ")
-//    public ResponseEntity<?> getCountFollow(@PathVariable Long userId ) {
-//        User user = userService.getUserByuserId(userId);
-//        //System.out.println("count : try" + user.toString());
-//        Long num=followService.getCountFollowing(user);
-//        return ResponseEntity.status(200).body(num);
-//    }
-//
-//    //팔로워 카운트
-//    @GetMapping("/countfollower/{userId}")
-//    @ApiOperation(value = "팔로워 개수 ", notes = "팔로우 목록 ")
-//    public ResponseEntity<?> getCountFollowing(@PathVariable Long userId) {
-//        User user = userService.getUserByuserId(userId);
-//        //System.out.println("count : try" + user.toString());
-//        Long num=followService.getCountFollower(user);
-//        return ResponseEntity.status(200).body(num);
-//
-//    }
+ 
 }
