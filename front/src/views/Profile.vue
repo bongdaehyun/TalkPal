@@ -333,7 +333,7 @@ export default {
           if (res.data == "SUCCESS") {
             this.profileInfo.nickname = this.nickname;
             this.$store.dispatch("onSnackbar", {
-              text: `{{$t('profile_submit')}}`,
+              text: i18n.t('profile_submit'),
               color: "success",
             });
             this.update = false;
