@@ -1,18 +1,19 @@
 <template>
-  <div>
-    <video
-      ref="video"
-      muted
-      autoplay
-      :width="videoWidth"
-      :height="videoHeight"
-    ></video>
-  </div>
+  <video
+    ref="video"
+    muted
+    autoplay
+    :width="videoWidth"
+    :height="[isMobile ? '' : videoHeight]"
+  ></video>
 </template>
 
 <script>
+import isMobile from "@/mixin/isMobile.js";
+
 export default {
   name: "Participant",
+  mixins: [isMobile],
   data() {
     return {
       rtcPeer: null,

@@ -1,54 +1,66 @@
 <template>
-  <div>
-    <v-container fluid class="pa-0" style="height: 100vh">
-      <v-row style="background-color: black; height: 100%">
-        <!-- NOTE: 화상 구역 -->
-        <div
-          class="pa-0"
-          :class="[showGuideChat ? 'col-9' : 'col-12']"
-          style="height: 100%"
-        >
-          <ResizeDetector observe-width observe-height @resize="onResize" />
-          <v-card
-            class="d-flex justify-center align-center"
-            :class="[isRow ? `flex-row` : `flex-column`]"
-            style="height: 100%; background-color: black"
-            outlined
-          >
-            <div v-for="participant in participants" :key="participant.userId">
-              <Participant
-                class="pa-6"
-                v-show="checkMobile(participant.userId)"
-                :ref="`participant-${participant.userId}`"
-                :userId="participant.userId"
-                :ws="ws"
-                :videoWidth="videoWidth"
-                :videoHeight="videoHeight"
-              />
-            </div>
-          </v-card>
-        </div>
-        <!-- NOTE:가이드 & 채팅 -->
-        <div
-          v-if="showGuideChat"
-          :class="{ ' col-3': showGuideChat }"
-          class="d-flex flex-column"
-          style="height: 100%"
-        >
-          <Guide v-if="showGuide" :height="guideHeight" />
-          <Chat
-            v-if="showChat"
-            :items="msgList"
-            :height="chatHeight"
-            @onSubmitMessage="submitMessage"
+  <div :style="{ height: containerHeight }">
+    <v-container
+      fluid
+      class="pa-0 ma-0 maxHeight"
+      :class="[isMobile ? 'd-flex flex-column' : 'row']"
+    >
+      <!-- NOTE: 화상 구역 -->
+      <div
+        class="maxHeight"
+        :class="[
+          { 'col-10': showGuideChat && !isMobile },
+          { 'col-12': !showGuideChat && !isMobile },
+          { 'd-flex justify-center align-center maxHeight': !isMobile },
+        ]"
+        style="background-color: black"
+      >
+        <ResizeDetector observe-width observe-height @resize="onResize" />
+        <div v-for="participant in participants" :key="participant.userId">
+          <Participant
+            v-show="checkMobile(participant.userId)"
+            :ref="`participant-${participant.userId}`"
+            :userId="participant.userId"
+            :ws="ws"
+            :videoWidth="videoWidth"
+            :videoHeight="videoHeight"
           />
         </div>
-      </v-row>
+      </div>
+      <!-- NOTE: 가이드 & 채팅 -->
+      <!-- NOTE: 모바일 버전 -->
+      <div
+        v-if="showGuideChat && isMobile"
+        class="d-flex flex-column-reverse maxWidth maxHeight"
+        style="position: fixed; bottom: 56px"
+      >
+        <Guide v-if="showGuide" :height="guideHeight" />
+        <Chat
+          v-if="showChat"
+          :items="msgList"
+          :height="chatHeight"
+          @onSubmitMessage="submitMessage"
+        />
+      </div>
+      <!-- NOTE: 데스크탑 버전 -->
+      <div
+        v-if="showGuideChat && !isMobile"
+        :class="{ 'col-2': showGuideChat }"
+        class="d-flex flex-column maxHeight pa-0"
+      >
+        <Guide v-if="showGuide" :height="guideHeight" />
+        <Chat
+          v-if="showChat"
+          :items="msgList"
+          :height="chatHeight"
+          @onSubmitMessage="submitMessage"
+        />
+      </div>
     </v-container>
     <Navigation
       @onLeaveRoom="leaveRoom"
-      @onToggleChat="showChat = !showChat"
-      @onToggleGuide="showGuide = !showGuide"
+      @onToggleChat="toggleChat"
+      @onToggleGuide="toggleGuide"
     />
     <QuestionDialog
       :timer="timer"
@@ -87,14 +99,20 @@ export default {
       showGuide: false,
       showChat: false,
       isRow: true,
-      innerHeight: window.innerHeight,
-      innerWidth: window.innerWidth,
       videoWidth: null,
       videoHeight: null,
+      innerHeight: window.innerHeight,
     };
   },
   computed: {
+    containerHeight() {
+      return `${this.innerHeight - 56}px`;
+    },
+
     guideHeight() {
+      if (this.isMobile) {
+        return "30%";
+      }
       if (this.showChat) {
         return "50%";
       } else {
@@ -102,6 +120,9 @@ export default {
       }
     },
     chatHeight() {
+      if (this.isMobile) {
+        return "30%";
+      }
       if (this.showGuide) {
         return "50%";
       } else {
@@ -111,26 +132,29 @@ export default {
     showGuideChat() {
       return this.showGuide || this.showChat;
     },
-    videoContaierHeight() {
-      return `${window.innerHeight - 56} px`;
-    },
-    windowHeight() {
-      return `${window.innerHeight}px`;
-    },
-    windowWidth() {
-      return `${window.innerWidth}px`;
-    },
   },
   methods: {
+    toggleChat() {
+      if (this.isMobile) {
+        this.showGuide = false;
+        this.showChat = !this.showChat;
+      } else {
+        this.showChat = !this.showChat;
+      }
+    },
+    toggleGuide() {
+      if (this.isMobile) {
+        this.showGuide = !this.showGuide;
+        this.showChat = false;
+      } else {
+        this.showGuide = !this.showGuide;
+      }
+    },
     checkMobile(userId) {
-      console.log("checkMobile");
-      console.log(this.isMobile);
       if (this.isMobile === false) {
         return true;
       }
       const myUserId = this.$store.getters["userStore/getUserId"];
-      console.log(userId, myUserId);
-      console.log(userId == myUserId);
 
       if (userId == myUserId) {
         return false;
@@ -142,28 +166,37 @@ export default {
       this.$store
         .dispatch("roomStore/reqeustRoomInfo", { uuid: this.UUID })
         .then((res) => {
-          console.log(res);
           this.hostId = res.data.hostId;
           this.roomId = res.data.roomId;
         });
     },
-    handleResize() {
-      this.innerHeight = window.innerHeight;
-    },
     onResize(width, height) {
+      console.log(width, height);
+      if (this.isMobile) {
+        this.videoHeight = height * 0.95;
+        this.videoWidth = width;
+        return;
+      }
       if (width * 3 >= height * 4) {
         this.isRow = true;
-        this.videoWidth = width / 2.5;
-        this.videoHeight = height * 0.9;
+        this.videoWidth = width / 2.2;
+        this.videoHeight = height;
       } else {
         this.isRow = false;
-        this.videoWidth = width * 0.9;
-        this.videoHeight = height / 2.5;
+        this.videoWidth = width;
+        this.videoHeight = height / 2.2;
       }
+    },
+    handleResize() {
+      this.innerHeight = window.innerHeight;
+      console.log(this.innerHeight);
     },
   },
   mounted() {
     window.addEventListener("resize", this.handleResize);
+  },
+  unmounted() {
+    window.removeEventListener("resize", this.handleResize);
   },
   created() {
     this.requestRoomInfo();
@@ -184,3 +217,11 @@ export default {
   },
 };
 </script> 
+<style scoped>
+.maxHeight {
+  height: 100%;
+}
+.maxWidth {
+  width: 100%;
+}
+</style>

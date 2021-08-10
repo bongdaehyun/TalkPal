@@ -11,14 +11,15 @@
       v-model="password"
       type="password"
     ></v-text-field>
-    <v-btn class="ma-2" color="primary" dark @click="requestLogin">
+    <v-btn class="ma-2" outlined color="primary" dark @click="requestLogin">
       {{ $t("main_login") }}
-      <v-icon dark right> mdi-login </v-icon>
+      <v-icon right> mdi-login </v-icon>
     </v-btn>
   </v-container>
 </template>
 
 <script>
+import i18n from "@/i18n.js";
 export default {
   name: "Login",
   data() {
@@ -40,8 +41,8 @@ export default {
         .then((res) => {
           // NOTE: Toast Message 출력
           this.$store.dispatch("onSnackbar", {
-            text: "로그인 성공",
-            color: "success",
+            text: i18n.t('main_login_success'),
+            color: "primary",
           });
 
           // 인증 Token
@@ -55,8 +56,8 @@ export default {
         })
         .catch((err) => {
           this.$store.dispatch("onSnackbar", {
-            text: "로그인 실패 ! , 아이디 및 비밀번호를 다시 확인해주세요",
-            color: "success",
+            text: i18n.t('main_login_error'),
+            color: "error",
           });
         });
     },

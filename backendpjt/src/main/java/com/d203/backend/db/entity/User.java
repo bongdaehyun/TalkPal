@@ -22,13 +22,13 @@ import javax.persistence.Table;
 @Setter
 @ToString
 @Table(name = "USER")
-public class User extends BaseEntity{
+public class User extends BaseEntity {
     String email;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name  = "lang")
+    @JoinColumn(name = "lang")
     Lang lang;
-    
+
     String nickname;
 
     //sns
@@ -43,9 +43,14 @@ public class User extends BaseEntity{
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String password;
 
-    public boolean getValid(){
+    public boolean getValid() {
         return valid;
     }
 
     String imgpath;
+
+    Long cntFollower;
+    Long cntFollowing;
+    Long cntHistories;
+
 }

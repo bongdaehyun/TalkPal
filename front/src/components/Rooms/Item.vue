@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card elevation="1" outlined>
     <v-img
       class="white--text align-end"
       height="200px"
@@ -46,7 +46,6 @@ export default {
     const topic = this.item.topic;
     if (topic == "create_food") {
       this.name = "/src/assets/image/food.jpg";
-      console.log(this.name);
     }
   },
 };

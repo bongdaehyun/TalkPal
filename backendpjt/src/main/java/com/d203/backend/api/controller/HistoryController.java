@@ -1,7 +1,7 @@
 package com.d203.backend.api.controller;
 
 import com.d203.backend.api.request.History.HistoryReq;
-import com.d203.backend.api.response.History.HistoryRes;
+import com.d203.backend.api.response.History.HistoryListRes;
 import com.d203.backend.api.service.history.HistoryService;
 import com.d203.backend.common.model.response.BaseResponseBody;
 import com.d203.backend.db.entity.UserHistory;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Api(value = "사용자가 만났던 사람들 API", tags = {"History"})
@@ -30,11 +29,11 @@ public class HistoryController {
             @ApiResponse(code = 200, message = "성공"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<HistoryRes> getMeetPeople(@PathVariable Long userId) {
+    public ResponseEntity<HistoryListRes> getMeetPeople(@PathVariable Long userId) {
 
         List<UserHistory> result = historyService.getMeetPeople(userId);
 
-        return ResponseEntity.status(200).body(HistoryRes.getList(result));
+        return ResponseEntity.status(200).body(HistoryListRes.getList(result));
 
     }
 

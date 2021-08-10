@@ -1,38 +1,51 @@
 <template>
-  <v-container>
-    <v-row class="mt-6">
-      <!-- 방 생성 -->
-      <v-col cols="6" align-self="center">
-        <Create @onCreateRoom="onCreateRoom" :ws="ws" />
-      </v-col>
-      <!-- 방 조건 검색 -->
-      <v-col cols="6">
-        <Search @setSearchData="changeSearchData" />
-      </v-col>
-    </v-row>
-    <!-- 방 목록 -->
-    <v-row>
-      <v-col v-for="item in rooms" :key="item.id" xl="2" lg="3" md="4" sm="6">
-        <Item :item="item" @onEnterRoom="onEnterRoom" />
-      </v-col>
-    </v-row>
-    <infinite-loading :identifier="searchData" @infinite="requestRooms">
-      <!-- NOTE: 방조건 검색시 이벤트 처리 나누기 -->
-      <div slot="no-more"></div>
-      <div slot="no-results">
-        <v-col>
-          <v-row justify="center">
-            <v-icon x-large color="secondary">mdi-close-box</v-icon>
-          </v-row>
-          <v-row justify="center">
-            <h1>{{ $t("alert_nolist_01") }}</h1>
-          </v-row>
-          <v-row justify="center">
-            <h3>{{ $t("alert_nolist_02") }}</h3>
-          </v-row>
+  <v-container class="pa-0" :class="[isMobile ? '' : 'mt-12']">
+    <div :class="[isMobile ? 'd-flex flex-column' : 'row no-gutters']">
+      <v-sheet
+        elevation="2"
+        :class="[isMobile ? 'sticky-mobile' : 'col-2']"
+        class="sticky"
+      >
+        <!-- NOTE: 방 조건 검색 -->
+        <Search
+          @setSearchData="changeSearchData"
+          @openCreateDialog="$refs.createDialog.dialog = true"
+        />
+        <!-- NOTE: 방 생성 -->
+        <Create ref="createDialog" @onCreateRoom="onCreateRoom" :ws="ws" />
+      </v-sheet>
+      <!-- NOTE: 방 목록 -->
+      <div :class="[isMobile ? 'd-flex flex-column' : 'offset-1 col-9 row']">
+        <v-col
+          v-for="item in rooms"
+          :key="item.id"
+          xl="2"
+          lg="3"
+          md="4"
+          cols="12"
+        >
+          <Item :item="item" @onEnterRoom="onEnterRoom" />
         </v-col>
+        <infinite-loading :identifier="searchData" @infinite="requestRooms">
+          <!-- NOTE: 방조건 검색시 이벤트 처리 나누기 -->
+          <div slot="no-more"></div>
+          <div slot="no-results">
+            <v-col>
+              <v-row justify="center">
+                <v-icon x-large color="secondary">mdi-close-box</v-icon>
+              </v-row>
+              <v-row justify="center">
+                <h1>{{ $t("alert_nolist_01") }}</h1>
+              </v-row>
+              <v-row justify="center">
+                <h3>{{ $t("alert_nolist_02") }}</h3>
+              </v-row>
+            </v-col>
+          </div>
+        </infinite-loading>
       </div>
-    </infinite-loading>
+    </div>
+    <!-- NOTE: 스크롤 올리는 버튼 -->
     <v-fab-transition>
       <v-btn
         bottom
@@ -40,7 +53,7 @@
         fixed
         fab
         small
-        color="secondary"
+        color="primary"
         v-show="btnShow"
         @click.prevent="$vuetify.goTo('.header')"
       >
@@ -60,9 +73,11 @@ import Item from "@/components/Rooms/Item";
 import Create from "@/components/Rooms/Create";
 import Search from "@/components/Rooms/Search";
 import InfiniteLoading from "vue-infinite-loading";
+import isMobile from "@/mixin/isMobile.js";
 
 export default {
   name: "Room",
+  mixins: [isMobile],
   data() {
     return {
       socketUrl: process.env.VUE_APP_SOCKET_URL,
@@ -128,7 +143,9 @@ export default {
       this.btnShow = window.scrollY > 400;
     },
     connect() {
+      // this.ws = this.$store.getters["userStore/getWS"];
       this.ws = new WebSocket(this.socketUrl);
+      console.log(this.ws);
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
         this.$info(`[parsedMessage] : ${parsedMessage}`);
@@ -157,9 +174,6 @@ export default {
       this.sendMessage(message);
     },
     onJoinAnswer(msg) {
-      this.$log("getJoinAnswer");
-      this.$log(msg);
-
       // NOTE: 입장 응답 대기 종료
       this.loadingAnswer = false;
       const answer = msg.answer;
@@ -167,24 +181,21 @@ export default {
         // NOTE: 입장 거절 시 거절되었다는 안내문 메세지만 출력
         this.$store.dispatch("onSnackbar", {
           text: "입장 요청이 거부 됐습니다.",
-          color: "red darken-1",
+          color: "error",
         });
       } else if (answer === "true") {
         // NOTE: 입장 수락 시 방 인원 초과 여부 확인 후 입장
         this.$store
           .dispatch("roomStore/requestCheckJoin", msg.uuid)
           .then((res) => {
-            this.$log(res);
             const flag = res.data;
             // NOTE: join ok인거 굳이 체크 안해도 됨
             if (flag === "join ok") {
               // NOTE: 입장 가능
               this.$store.dispatch("onSnackbar", {
                 text: "입장 요청이 수락 됐습니다.",
-                color: "success",
+                color: "primary",
               });
-              // this.ws.close();
-              // console.log("%%%%% WS CLOSE %%%%%%%%%%");
               this.$router.push({ name: "Room", params: { UUID: msg.uuid } });
             }
           })
@@ -192,16 +203,13 @@ export default {
             // NOTE: 인원 초과 메세지 출력
             this.$store.dispatch("onSnackbar", {
               text: "입장하려는 방의 인원이 가득 찼습니다.",
-              color: "red darken-1",
+              color: "error",
             });
           });
       }
     },
   },
   created() {
-    // this.$log(this.$store.getters["userStore/getLocale"]);
-    // TODO: 언어 설정 다른 방식이 필요해보임
-    this.$root.$i18n.locale = this.$store.getters["userStore/getLocale"];
     this.$store.dispatch("roomStore/exitRoom");
     this.connect();
   },
@@ -221,5 +229,17 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.sticky {
+  background-color: white;
+  position: sticky;
+  align-self: flex-start;
+  padding: 2rem !important;
+  top: 10%;
+}
+.sticky-mobile {
+  width: 100%;
+  top: 56px;
+  z-index: 2;
+}
 </style>

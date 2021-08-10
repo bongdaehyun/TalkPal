@@ -8,6 +8,7 @@ const WebRTCMixin = {
       hostId: null,
       roomId: null,
       userId: this.$store.getters["userStore/getUserId"],
+      userNickName: this.$store.getters["userStore/getNickName"],
       socketUrl: process.env.VUE_APP_SOCKET_URL,
       UUID: this.$route.params.UUID,
       participants: [],
@@ -189,7 +190,6 @@ const WebRTCMixin = {
         audio: true,
         video: {
           mandatory: {
-            maxWidth: 320,
             maxFrameRate: 15,
             minFrameRate: 15,
           },
@@ -300,6 +300,7 @@ const WebRTCMixin = {
       this.sendMessage({
         id: "sendChat",
         senderId: this.userId,
+        senderNickName: this.userNickName,
         sendMsg: inputMessage,
       });
     },
@@ -307,12 +308,15 @@ const WebRTCMixin = {
       this.$log(msgInfo);
       let msg = {
         sender: msgInfo.senderId,
+        nick : msgInfo.senderNickName,
         time: msgInfo.sendTime,
         content: msgInfo.sendMsg,
       };
       this.msgList.push(msg);
     },
     connect() {
+      // TODO: ws
+      // this.ws = this.$store.getters["userStore/getWS"];
       this.ws = new WebSocket(this.socketUrl);
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);

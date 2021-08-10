@@ -13,14 +13,13 @@ import com.d203.backend.db.entity.Review;
 import com.d203.backend.db.entity.User;
 
 @Repository
-public interface ReviewRepository extends JpaRepository<Review, Long>{
+public interface ReviewRepository extends JpaRepository<Review, Long> {
 
+    Page<Review> findAllByTouserid(User touserid, Pageable pageable);
 
-	 Page<Review> findAllByTouserid(User touserid, Pageable pageable);
+    Page<Review> findAllByFromuserid(User fromuserid, Pageable pageable);
 
-	 Page<Review> findAllByFromuserid(User fromuserid , Pageable pageable);
-	 
-	 @Query(value= "select round(avg(score),1)  from review where review.touserid = ?1" ,nativeQuery = true)
-	 double getReviewAvgByTouserid(Long touserid);
+    @Query(value = "select round(avg(score),1)  from review where review.touserid = ?1", nativeQuery = true)
+    double getReviewAvgByTouserid(Long touserid);
 }
 

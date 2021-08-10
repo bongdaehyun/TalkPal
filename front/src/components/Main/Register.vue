@@ -46,7 +46,7 @@
       @input="$v.lang.$touch()"
       @blur="$v.lang.$touch()"
     ></v-select>
-    <v-btn class="ma-2" color="primary" @click="requestRegister">
+    <v-btn class="ma-2" outlined color="primary" @click="requestRegister">
       {{ $t("main_register") }}
       <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
     </v-btn>
@@ -64,7 +64,7 @@ import {
   sameAs,
   alphaNum,
 } from "vuelidate/lib/validators";
-
+import i18n from "@/i18n.js";
 import http from "@/util/http-common";
 
 export default {
@@ -111,7 +111,7 @@ export default {
           .then(() => {
             // NOTE: Toast Message 출력
             this.$store.dispatch("onSnackbar", {
-              text: "인증메일을 발송했습니다.",
+              text: i18n.t('register_mail'),
               color: "success",
             });
 
@@ -130,7 +130,7 @@ export default {
             this.$emit("onRegister");
           })
           .catch((err) => {
-            alert("회원가입 실패");
+            //alert("회원가입 실패");
           });
       }
     },
@@ -199,46 +199,46 @@ export default {
     emailErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.required && errors.push("필수 항목입니다.");
-      !this.$v.email.email && errors.push("이메일을 입력하세요.");
+      !this.$v.email.required && errors.push(i18n.t('register_required'));
+      !this.$v.email.email && errors.push(i18n.t('register_error_email'));
       !this.$v.email.maxLength &&
-        errors.push("최대 30 글자까지 입력 가능합니다.");
-      !this.$v.email.isUnique && errors.push("이미 존재하는 이메일입니다.");
+        errors.push(i18n.t('register_error_email_len'));
+      !this.$v.email.isUnique && errors.push(i18n.t('register_error_email_valid'));
       return errors;
     },
     passwordErrors() {
       const errors = [];
       if (!this.$v.password.$dirty) return errors;
-      !this.$v.password.required && errors.push("필수 항목입니다.");
+      !this.$v.password.required && errors.push(i18n.t('register_required'));
       (!this.$v.password.minLength || !this.$v.password.maxLength) &&
-        errors.push("최소 9 글자 최대 16 글자를 입력해야 합니다.");
+        errors.push(i18n.t('register_error_pwd_len'));
       !this.$v.password.valid &&
-        errors.push("영문 소문자, 숫자, 특수문자를 조합해서 사용해야 합니다.");
+        errors.push(i18n.t('register_error_pwd_valid'));
       return errors;
     },
     repeatPasswordErrors() {
       const errors = [];
       if (!this.$v.repeatPassword.$dirty) return errors;
-      !this.$v.repeatPassword.required && errors.push("필수 항목입니다.");
+      !this.$v.repeatPassword.required && errors.push(i18n.t('register_required'));
       !this.$v.repeatPassword.sameAsPassword &&
-        errors.push("비밀번호가 다릅니다.");
+        errors.push(i18n.t('register_error_pwd_same'));
       return errors;
     },
     nicknameErrors() {
       const errors = [];
       if (!this.$v.nickname.$dirty) return errors;
-      !this.$v.nickname.required && errors.push("필수 항목입니다.");
-      (!this.$v.nickname.minLength || !this.$v.password.maxLength) &&
-        errors.push("최소 2 글자 최대 16 글자를 입력해야 합니다.");
+      !this.$v.nickname.required && errors.push(i18n.t('register_required'));
+      (!this.$v.nickname.minLength || !this.$v.nickname.maxLength) &&
+        errors.push(i18n.t('register_error_nick_len'));
       !this.$v.nickname.alphaNum &&
-        errors.push("영문 소문자 및 숫자만 입력해야 합니다.");
-      !this.$v.nickname.isUnique && errors.push("이미 존재하는 별명입니다.");
+        errors.push(i18n.t('register_error_nick_alpha'));
+      !this.$v.nickname.isUnique && errors.push(i18n.t('register_error_nick_same'));
       return errors;
     },
     langErrors() {
       const errors = [];
       if (!this.$v.lang.$dirty) return errors;
-      !this.$v.lang.required && errors.push("필수 항목입니다.");
+      !this.$v.lang.required && errors.push(i18n.t('register_required'));
       return errors;
     },
   },

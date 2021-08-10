@@ -1,8 +1,7 @@
 <template>
-  <v-app>
-    <v-app-bar app color="white" v-if="loginStatus && !isRoom">
+  <v-app style="background-color: #f8f9fa">
+    <v-app-bar app elevation="1" color="#FFFFFF" v-if="loginStatus && !isRoom">
       <div class="d-flex align-center">
-        <!-- NOTE: 네비게이션바 왼쪽 -->
         <v-img src="@/assets/image/logo.png" max-width="224px" contain></v-img>
       </div>
       <v-spacer></v-spacer>
@@ -29,7 +28,7 @@
       <div v-else>
         <v-menu bottom left>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn dark icon v-bind="attrs" v-on="on" style="color: #a200e0">
+            <v-btn dark icon v-bind="attrs" v-on="on" color="primary">
               <i class="fas fa-bars"></i>
             </v-btn>
           </template>
@@ -78,8 +77,12 @@
 </template>
 
 <script>
+import isMobile from "@/mixin/isMobile.js";
+import i18n from "@/i18n.js";
+
 export default {
   name: "App",
+  mixins: [isMobile],
   data() {
     return {
       timeout: 2000,
@@ -89,8 +92,11 @@ export default {
     snackbarText() {
       return this.$store.getters["getSnackbarText"];
     },
-    snackbarStatus() {
-      return this.$store.getters["getSnackbarStatus"];
+    snackbarStatus: {
+      get() {
+        return this.$store.getters["getSnackbarStatus"];
+      },
+      set() {},
     },
     snackbarColor() {
       return this.$store.getters["getSnackbarColor"];
@@ -100,17 +106,6 @@ export default {
     },
     isRoom() {
       return this.$store.getters["roomStore/getIsRoom"];
-    },
-    isMobile() {
-      switch (this.$vuetify.breakpoint.name) {
-        // NOTE: 모바일에서 여백 조절
-        case "xs":
-          return true;
-        case "sm":
-          return true;
-        default:
-          return false;
-      }
     },
   },
   methods: {
@@ -130,8 +125,8 @@ export default {
       this.$store.dispatch("userStore/logout");
       this.$router.push({ name: "Main" });
       this.$store.dispatch("onSnackbar", {
-        text: "로그아웃 성공",
-        color: "success",
+        text: i18n.t("App_logout"),
+        color: "primary",
       });
     },
   },

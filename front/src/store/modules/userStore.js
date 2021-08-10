@@ -7,10 +7,13 @@ const getDefaultState = () => {
   return {
     accessToken: null,
     loginStatus: false,
-    lang: null,
+    lang: "ko",
     langId: null,
     userId: null,
     nickname: null,
+    // TODO: ws
+    // ws: null,
+    // socketUrl: process.env.VUE_APP_SOCKET_URL,
   }
 }
 
@@ -25,6 +28,8 @@ const userStore = {
       state.langId = payload.langId;
       state.userId = payload.userId;
       state.nickname = payload.nickname;
+      // TODO: ws
+      // state.ws = new WebSocket(state.socketUrl);
     },
     LOGOUT(state) {
       Object.assign(state, getDefaultState());
@@ -53,6 +58,7 @@ const userStore = {
         langId: userInfo.langId,
         accessToken
       }
+      // root.$i18n.locale = userInfo.lang
       context.commit('LOGIN', payload)
     },
     // NOTE: 로그아웃
@@ -80,8 +86,8 @@ const userStore = {
       return http.post('/history/add/', payload)
     },
     // NOTE: 만난 사람들 목록 요청
-    requestUserHistories(context, userId) {
-      return http.get(`/history/${userId}`)
+    requestHistories(context, payload) {
+      return http.get(`/history/${payload.userId}`)
     },
     // NOTE: 팔로우 신청
     addFollow(context, payload) {
@@ -96,13 +102,14 @@ const userStore = {
       return http.get(`/follow/checkFollowing/${payload.fromuserid}/${payload.touserid}`)
     },
     // NOTE: 팔로워 목록 가져오기
-    listFollower(context, payload) {
+    requestFollowers(context, payload) {
       return http.get(`/follow/er/${payload.userId}/${payload.page}`)
     },
     // NOTE: 팔로잉 목록 가져오기
-    listFollowing(context, payload) {
+    requestFollowings(context, payload) {
       return http.get(`/follow/ing/${payload.userId}/${payload.page}`)
-    }
+    },
+
   },
   getters: {
     getAccessToken(state) {
@@ -126,6 +133,10 @@ const userStore = {
     getHeader(state) {
       return { Authorization: `Bearer ${state.accessToken}` }
     },
+    // TODO: ws
+    // getWS(state) {
+    //   return state.ws;
+    // }
   },
 }
 export default userStore

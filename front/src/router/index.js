@@ -6,6 +6,7 @@ import Room from "@/views/Room.vue";
 import Profile from "@/views/Profile.vue";
 import ERROR404 from '@/views/ERROR404.vue';
 import store from '@/store/index';
+import i18n from '@/i18n'
 
 
 Vue.use(VueRouter);
@@ -49,6 +50,8 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const loginStatus = store.getters["userStore/getLoginStatus"]
+  i18n.locale = store.getters["userStore/getLocale"];
+
   if (to.meta.auth && !loginStatus) {
     // TODO: Toast 처리
     console.log('로그인이 필요합니다');

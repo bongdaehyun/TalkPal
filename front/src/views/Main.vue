@@ -3,19 +3,18 @@
     <v-row class="tab-wrap" justify="center" align="center">
       <!-- NOTE: col 클래스로 width 조절 -->
       <!-- NOTE: 로그인 & 회원가입 TAB -->
-      <v-col class="col-sm-12 col-md-3" :style="{ padding: padding }">
+      <v-sheet
+        color="white"
+        class="col-10 col-md-3 pa-6"
+        elevation="10"
+        rounded="xl"
+      >
         <v-row>
           <v-col>
-            <v-img src="@/assets/image/main_cover.png"></v-img>
+            <v-img src="@/assets/image/logo.png"></v-img>
           </v-col>
           <v-col>
-            <v-tabs
-              centered
-              fixed-tabs
-              background-color="primary"
-              dark
-              v-model="tab"
-            >
+            <v-tabs centered fixed-tabs color="primary" v-model="tab">
               <v-tab>
                 {{ $t("main_login") }}
               </v-tab>
@@ -33,10 +32,10 @@
             </v-tabs-items>
           </v-col>
         </v-row>
-      </v-col>
+      </v-sheet>
       <!-- NOTE: 사진 -->
       <v-col class="col-sm-12 col-md-4 d-none d-lg-block d-print-block">
-        <v-img class="" src="@/assets/image/talking.jpg"> </v-img>
+        <v-img class="" src="@/assets/image/talking.png"> </v-img>
       </v-col>
     </v-row>
   </v-container>
