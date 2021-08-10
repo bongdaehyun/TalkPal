@@ -46,6 +46,16 @@
       @input="$v.lang.$touch()"
       @blur="$v.lang.$touch()"
     ></v-select>
+    <v-btn
+      class="ma-2"
+      outlined
+      color="primary"
+      dark
+      @click="$emit(`onBackStep`)"
+    >
+      <v-icon left> mdi-arrow-left </v-icon>
+      {{ $t("main_back") }}
+    </v-btn>
     <v-btn class="ma-2" outlined color="primary" @click="requestRegister">
       {{ $t("main_register") }}
       <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
@@ -111,7 +121,7 @@ export default {
           .then(() => {
             // NOTE: Toast Message 출력
             this.$store.dispatch("onSnackbar", {
-              text: i18n.t('register_mail'),
+              text: i18n.t("register_mail"),
               color: "success",
             });
 
@@ -199,46 +209,49 @@ export default {
     emailErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.required && errors.push(i18n.t('register_required'));
-      !this.$v.email.email && errors.push(i18n.t('register_error_email'));
+      !this.$v.email.required && errors.push(i18n.t("register_required"));
+      !this.$v.email.email && errors.push(i18n.t("register_error_email"));
       !this.$v.email.maxLength &&
-        errors.push(i18n.t('register_error_email_len'));
-      !this.$v.email.isUnique && errors.push(i18n.t('register_error_email_valid'));
+        errors.push(i18n.t("register_error_email_len"));
+      !this.$v.email.isUnique &&
+        errors.push(i18n.t("register_error_email_valid"));
       return errors;
     },
     passwordErrors() {
       const errors = [];
       if (!this.$v.password.$dirty) return errors;
-      !this.$v.password.required && errors.push(i18n.t('register_required'));
+      !this.$v.password.required && errors.push(i18n.t("register_required"));
       (!this.$v.password.minLength || !this.$v.password.maxLength) &&
-        errors.push(i18n.t('register_error_pwd_len'));
+        errors.push(i18n.t("register_error_pwd_len"));
       !this.$v.password.valid &&
-        errors.push(i18n.t('register_error_pwd_valid'));
+        errors.push(i18n.t("register_error_pwd_valid"));
       return errors;
     },
     repeatPasswordErrors() {
       const errors = [];
       if (!this.$v.repeatPassword.$dirty) return errors;
-      !this.$v.repeatPassword.required && errors.push(i18n.t('register_required'));
+      !this.$v.repeatPassword.required &&
+        errors.push(i18n.t("register_required"));
       !this.$v.repeatPassword.sameAsPassword &&
-        errors.push(i18n.t('register_error_pwd_same'));
+        errors.push(i18n.t("register_error_pwd_same"));
       return errors;
     },
     nicknameErrors() {
       const errors = [];
       if (!this.$v.nickname.$dirty) return errors;
-      !this.$v.nickname.required && errors.push(i18n.t('register_required'));
+      !this.$v.nickname.required && errors.push(i18n.t("register_required"));
       (!this.$v.nickname.minLength || !this.$v.nickname.maxLength) &&
-        errors.push(i18n.t('register_error_nick_len'));
+        errors.push(i18n.t("register_error_nick_len"));
       !this.$v.nickname.alphaNum &&
-        errors.push(i18n.t('register_error_nick_alpha'));
-      !this.$v.nickname.isUnique && errors.push(i18n.t('register_error_nick_same'));
+        errors.push(i18n.t("register_error_nick_alpha"));
+      !this.$v.nickname.isUnique &&
+        errors.push(i18n.t("register_error_nick_same"));
       return errors;
     },
     langErrors() {
       const errors = [];
       if (!this.$v.lang.$dirty) return errors;
-      !this.$v.lang.required && errors.push(i18n.t('register_required'));
+      !this.$v.lang.required && errors.push(i18n.t("register_required"));
       return errors;
     },
   },
