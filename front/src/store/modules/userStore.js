@@ -11,9 +11,8 @@ const getDefaultState = () => {
     langId: null,
     userId: null,
     nickname: null,
-    // TODO: ws
-    // ws: null,
-    // socketUrl: process.env.VUE_APP_SOCKET_URL,
+    socket: null,
+    socketUrl: process.env.VUE_APP_SOCKET_URL,
   }
 }
 
@@ -28,14 +27,26 @@ const userStore = {
       state.langId = payload.langId;
       state.userId = payload.userId;
       state.nickname = payload.nickname;
-      // TODO: ws
-      // state.ws = new WebSocket(state.socketUrl);
     },
     LOGOUT(state) {
       Object.assign(state, getDefaultState());
     },
     SET_ACCESS_TOKEN(state) {
       state.accessToken = Cookies.get('accessToken');
+    },
+    SET_WEB_SOCKET(state) {
+      if (state.socket.readyState != 1) {
+        state.socket = new WebSocket(state.socketUrl);
+        state.socket.onopen = () => {
+          let message = {
+            id: "newUser",
+            userId: state.userId,
+          }
+          const jsonMessage = JSON.stringify(message);
+          console.log("[sendMessage] message: " + jsonMessage);
+          state.socket.send(jsonMessage);
+        }
+      }
     },
   },
   actions: {
@@ -46,6 +57,9 @@ const userStore = {
     requestLogin(context, payload) {
       let body = payload
       return http.post('/auth/login', body)
+    },
+    setWebSocket(context) {
+      context.commit('SET_WEB_SOCKET');
     },
     // NOTE: 로그인 상태 설정
     login(context, accessToken) {
@@ -136,10 +150,9 @@ const userStore = {
     getHeader(state) {
       return { Authorization: `Bearer ${state.accessToken}` }
     },
-    // TODO: ws
-    // getWS(state) {
-    //   return state.ws;
-    // }
+    getWebSocket(state) {
+      return state.socket;
+    }
   },
 }
 export default userStore

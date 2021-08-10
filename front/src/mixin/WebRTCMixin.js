@@ -315,9 +315,10 @@ const WebRTCMixin = {
       this.msgList.push(msg);
     },
     connect() {
-      // TODO: ws
-      // this.ws = this.$store.getters["userStore/getWS"];
-      this.ws = new WebSocket(this.socketUrl);
+      // this.ws = new WebSocket(this.socketUrl);
+      this.$store.dispatch("userStore/setWebSocket");
+      this.ws = this.$store.getters["userStore/getWebSocket"];
+
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
         console.log("[parsedMessage]");
