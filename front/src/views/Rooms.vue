@@ -146,7 +146,6 @@ export default {
     connect() {
       this.ws = new WebSocket(this.socketUrl);
 
-      console.log(this.ws);
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
         this.$info(`[parsedMessage] : ${parsedMessage}`);
