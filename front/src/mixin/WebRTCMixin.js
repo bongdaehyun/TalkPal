@@ -224,7 +224,8 @@ const WebRTCMixin = {
           options,
           function (error) {
             if (error) {
-              return this.$error(error);
+              // return this.$error(error);
+              console.log("hihi : " + error);
             }
             this.generateOffer(
               participant.offerToReceiveVideo.bind(participant)
@@ -316,10 +317,10 @@ const WebRTCMixin = {
     },
     connect() {
       this.ws = new WebSocket(this.socketUrl);
-      // this.$store.dispatch("userStore/setWebSocket");
-      // this.ws = this.$store.getters["userStore/getWebSocket"];
+      
       this.ws.onopen = () => {
         this.join();
+        console.log(this.ws);
       };
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
@@ -371,8 +372,10 @@ const WebRTCMixin = {
             this.$error(parsedMessage);
         }
       };
-
     },
+  },
+  beforeDestroy() {
+    this.ws.close();
   },
 }
 export default WebRTCMixin

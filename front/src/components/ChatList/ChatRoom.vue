@@ -8,7 +8,11 @@ export default {
         return {
             chatRoomId: null,
             msgList: [],
-            ws: this.$store.getters["userStore/getWebSocket"],
+        }
+    },
+    props: {
+        ws: {
+            type: WebSocket,
         }
     },
     methods: {
@@ -24,10 +28,6 @@ export default {
 
         },
         connect() {
-            this.$store.dispatch("userStore/setWebSocket");
-            this.ws = this.$store.getters["userStore/getWebSocket"];
-            
-            console.log(this.ws);
             this.ws.onmessage = (message) => {
                 let parsedMessage = JSON.parse(message.data);
                 this.$info(`[parsedMessage] : ${parsedMessage}`);
