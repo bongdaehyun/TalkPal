@@ -76,7 +76,8 @@
     <QuestionDialog
       :timer="timer"
       :joinQuestionDialog="joinQuestionDialog"
-      :requestUserId="requestUserId"
+      :profilePath ="profilePath"
+      :requestUserInfo="requestUserInfo"
       @onQuestionResponse="questionResponse"
     />
   </div>
