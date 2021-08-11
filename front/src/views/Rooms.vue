@@ -68,6 +68,11 @@
         대기중...
       </v-progress-circular>
     </v-overlay>
+    <ReviewDialog
+      :reviewDialog="reviewDialog"
+      :reviewUserId="reviewUserId"
+      @onReviewSubmit="reviewSubmit"
+    />
   </v-container>
 </template>
 
@@ -77,6 +82,7 @@ import Create from "@/components/Rooms/Create";
 import Search from "@/components/Rooms/Search";
 import InfiniteLoading from "vue-infinite-loading";
 import isMobile from "@/mixin/isMobile.js";
+import ReviewDialog from "@/components/Review/ReviewDialog.vue"
 
 export default {
   name: "Room",
@@ -93,9 +99,20 @@ export default {
       },
       btnShow: false,
       loadingAnswer: false,
+      reviewDialog: false,
+      reviewUserId: null,
     };
   },
   methods: {
+    reviewSubmit(review) {
+      if (review.isReview) {
+        // TODO: 평가한 score 적용
+        console.log(review.reviewUserId + " : " + review.score);
+      }
+      this.$store.dispatch("roomStore/setReviewFalse");
+      this.reviewDialog = false;
+      this.reviewUserId = null;
+    },
     // NOTE: 방 생성 및 방 이동
     onCreateRoom(uuid) {
       let message = {
@@ -213,6 +230,10 @@ export default {
   },
   created() {
     this.$store.dispatch("roomStore/exitRoom");
+    let reviewInfo = this.$store.getters["roomStore/getIsReview"];
+    this.reviewDialog = reviewInfo.reviewDialog;
+    this.reviewUserId = reviewInfo.reviewUserId;
+    // alert(this.reviewDialog + " " + this.reviewUserId);
     this.connect();
   },
   mounted() {
@@ -228,6 +249,7 @@ export default {
     Create,
     Search,
     InfiniteLoading,
+    ReviewDialog,
   },
 };
 </script>

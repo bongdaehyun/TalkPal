@@ -22,6 +22,9 @@ const WebRTCMixin = {
       requestUserId: null,
       requestUserInfo: null,
       profilePath: null,
+      reviewDialog: false,
+      reviewUserId: null,
+      opponentId: null,
     }
   },
   methods: {
@@ -119,6 +122,7 @@ const WebRTCMixin = {
         .then((res) => {
           this.$log(res);
         });
+      this.opponentId = request.userId;
       this.receiveVideo(request.userId);
     },
     onParticipantLeft(request) {
@@ -134,7 +138,26 @@ const WebRTCMixin = {
       participantComponent.dispose();
 
       delete this.participantComponents[request.userId];
+
+      this.openReviewDialog(request.userId);
     },
+
+    // NOTE: 상대방 리뷰창 띄우기 (리뷰창 띄운 상대는 없애줌)
+    openReviewDialog(reviewUserId) {
+      this.reviewUserId = reviewUserId;
+      this.reviewDialog = true;
+      this.opponentId = null;
+    },
+
+    reviewSubmit(review) {
+      if (review.isReview) {
+        // TODO: 평가한 score 적용
+        console.log(review.reviewUserId + " : " + review.score);
+      }
+      this.reviewDialog = false;
+      this.reviewUserId = null;
+    },
+
     receiveVideoResponse(result) {
       this.$log("receiveVideoResponse");
       this.$log(this.participantComponents[result.userId]);
@@ -199,6 +222,7 @@ const WebRTCMixin = {
           })
           .then((res) => {
             this.$log(res);
+            this.opponentId = toId;
           });
       }
 
@@ -266,7 +290,6 @@ const WebRTCMixin = {
       };
       this.sendMessage(message);
     },
-    // TODO: 퇴장 시 퇴장 확인 다이얼로그 출력
     leaveRoom() {
       this.$log("leaveRoom");
       // 1. Host가 나갈 떄 Host => leaveHost 메세지 수신, Guest => leaveGeust 메세지 수신
@@ -310,6 +333,10 @@ const WebRTCMixin = {
 
       this.$store.dispatch("roomStore/exitRoom");
       this.ws.close();
+      // NOTE: 평가할 상대가 있으면 방 목록에서 평가
+      if (this.opponentId){
+        this.$store.dispatch("roomStore/setReviewTrue", this.opponentId);
+      }
       this.$router.push({ name: "Rooms" });
     },
     submitMessage(inputMessage) {
