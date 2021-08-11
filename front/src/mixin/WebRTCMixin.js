@@ -1,7 +1,10 @@
 import kurentoUtils from "kurento-utils";
+import http from "@/util/http-common";
 import _ from "lodash";
+import getProfilePath from "@/mixin/getProfilePath.js";
 
 const WebRTCMixin = {
+  mixins :[getProfilePath],
   data() {
     return {
       ws: null,
@@ -17,6 +20,8 @@ const WebRTCMixin = {
       joinAnswer: null,
       timer: null,
       requestUserId: null,
+      requestUserInfo: null,
+      profilePath: null,
     }
   },
   methods: {
@@ -48,8 +53,8 @@ const WebRTCMixin = {
       this.joinQuestionDialog = false;
     },
 
-    openQuestionDialog(requestUserId) {
-      this.requestUserId = requestUserId;
+    openQuestionDialog() {
+
       this.joinQuestionDialog = true;
       this.joinAnswer = null;
     },
@@ -58,7 +63,14 @@ const WebRTCMixin = {
       // NOTE: 다른 유저의 입장 요청 (uuid, requestUserId, hostId)
 
       // NOTE: 요청 수락/거부 Dialog OPEN
-      this.openQuestionDialog(request.requestUserId);
+      http.get("/users/" + request.requestUserId).then((res) => {
+        this.requestUserInfo = res.data;
+        this.profilePath = this.getProfilePath(this.requestUserInfo.ImgPath)
+        console.log("requsetUser: ", this.requestUserInfo);
+        this.openQuestionDialog();
+      })
+
+
 
       // NOTE: 요청 결과 0.1초 마다 확인
       const responseInterval = setInterval(() => {
