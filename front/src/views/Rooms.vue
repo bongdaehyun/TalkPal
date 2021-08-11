@@ -81,7 +81,7 @@ export default {
   mixins: [isMobile],
   data() {
     return {
-      // socketUrl: process.env.VUE_APP_SOCKET_URL,
+      socketUrl: process.env.VUE_APP_SOCKET_URL,
       page: 1,
       rooms: [],
       ws: null,
@@ -144,8 +144,7 @@ export default {
       this.btnShow = window.scrollY > 400;
     },
     connect() {
-      this.$store.dispatch("userStore/setWebSocket");
-      this.ws = this.$store.getters["userStore/getWebSocket"];
+      this.ws = new WebSocket(this.socketUrl);
 
       console.log(this.ws);
       this.ws.onmessage = (message) => {
@@ -221,6 +220,7 @@ export default {
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
     clearInterval(this.progressInterval);
+    this.ws.close();
   },
   components: {
     Item,

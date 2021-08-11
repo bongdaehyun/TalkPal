@@ -11,10 +11,6 @@ const getDefaultState = () => {
     langId: null,
     userId: null,
     nickname: null,
-    socket: {
-      readyState: null,
-    },
-    socketUrl: process.env.VUE_APP_SOCKET_URL,
   }
 }
 
@@ -36,20 +32,6 @@ const userStore = {
     SET_ACCESS_TOKEN(state) {
       state.accessToken = Cookies.get('accessToken');
     },
-    SET_WEB_SOCKET(state) {
-      if (state.socket.readyState !== state.socket.OPEN) {
-        state.socket = new WebSocket(state.socketUrl);
-        state.socket.onopen = () => {
-          let message = {
-            id: "newUser",
-            userId: state.userId,
-          }
-          const jsonMessage = JSON.stringify(message);
-          console.log("[sendMessage] message: " + jsonMessage);
-          state.socket.send(jsonMessage);
-        }
-      }
-    },
   },
   actions: {
     requestRegister(context, payload) {
@@ -59,9 +41,6 @@ const userStore = {
     requestLogin(context, payload) {
       let body = payload
       return http.post('/auth/login', body)
-    },
-    setWebSocket(context) {
-      context.commit('SET_WEB_SOCKET');
     },
     // NOTE: 로그인 상태 설정
     login(context, accessToken) {
