@@ -16,7 +16,7 @@
         <v-icon color="white">mdi-microphone-off </v-icon>
       </v-btn>
       <!-- NOTE: 나가기 버튼  -->
-      <v-btn small @click="leaveRoom" fab color="#EA5044">
+      <v-btn small @click="leaveRoom" fab color="#EA5044" :disabled="activeLeave">
         <v-icon color="white">mdi-location-exit</v-icon>
       </v-btn>
       <!-- TODO: 카메라 ON/OFF 함수 구현 -->
@@ -53,6 +53,7 @@ export default {
     return {
       activeChat: false,
       activeGuide: false,
+      activeLeave: true,
     };
   },
   methods: {
@@ -70,6 +71,12 @@ export default {
       this.$emit("onToggleGuide");
     },
   },
+  mounted() {
+    setTimeout(() => {
+      this.activeLeave = false;
+    }, 4000)
+  },
+  
 };
 </script>
 
