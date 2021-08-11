@@ -15,7 +15,7 @@ const getProfilePath = {
       }
       catch {
         if (isProd === 'true') {
-          const profilePath = `/file/default_profileImg`;
+          const profilePath = `/file/default_profileImg.png`;
 
           return profilePath
         }
