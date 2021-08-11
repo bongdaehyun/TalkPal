@@ -1,27 +1,46 @@
 <template>
-  <v-bottom-navigation app dark>
-    <!-- TODO: 마이크 ON/OFF 함수 구현 -->
-    <v-btn>
-      <v-icon>mdi-microphone-off </v-icon>
-    </v-btn>
-    <!-- TODO: 카메라 ON/OFF 함수 구현 -->
-    <v-btn>
-      <v-icon>mdi-camera-off</v-icon>
-    </v-btn>
-    <!-- NOTE: 나가기 버튼  -->
-    <v-btn @click="leaveRoom">
-      <v-icon>mdi-location-exit</v-icon>
-    </v-btn>
-    <!-- TODO: 채팅창 구현 -->
-    <v-btn @click="toggleChat()">
-      <v-icon v-if="activeChat" color="primary">mdi-message-text</v-icon>
-      <v-icon v-else>mdi-message-text</v-icon>
-    </v-btn>
-    <v-btn @click="toggleGuide()">
-      <v-icon v-if="activeGuide" color="primary">mdi-notebook</v-icon>
-      <v-icon v-else>mdi-notebook</v-icon>
-    </v-btn>
-  </v-bottom-navigation>
+  <div
+    style="
+      position: fixed;
+      bottom: 0px;
+      background-color: #202124;
+      height: 56px;
+      width: 100vw;
+    "
+    class="d-flex justify-space-between"
+  >
+    <div class="d-flex" style="flex: 1"></div>
+    <div class="d-flex align-center justify-center" style="flex: 3">
+      <!-- TODO: 마이크 ON/OFF 함수 구현 -->
+      <v-btn small fab color="#434649" class="me-3">
+        <v-icon color="white">mdi-microphone-off </v-icon>
+      </v-btn>
+      <!-- NOTE: 나가기 버튼  -->
+      <v-btn small @click="leaveRoom" fab color="#EA5044">
+        <v-icon color="white">mdi-location-exit</v-icon>
+      </v-btn>
+      <!-- TODO: 카메라 ON/OFF 함수 구현 -->
+      <v-btn small fab color="#434649" class="ms-3">
+        <v-icon color="white">mdi-camera-off</v-icon>
+      </v-btn>
+    </div>
+    <div class="d-flex align-center justify-end" style="flex: 1">
+      <v-btn v-if="activeChat" @click="toggleChat()" fab icon color="primary">
+        <v-icon>mdi-message-text</v-icon>
+      </v-btn>
+      <v-btn v-else @click="toggleChat()" fab icon color="white">
+        <v-icon>mdi-message-text</v-icon>
+      </v-btn>
+      <v-btn v-if="activeGuide" fab icon @click="toggleGuide()" color="primary">
+        <v-icon>mdi-notebook</v-icon>
+      </v-btn>
+      <v-btn v-else fab icon @click="toggleGuide()" color="white">
+        <v-icon>mdi-notebook</v-icon>
+      </v-btn>
+    </div>
+  </div>
+  <!-- <v-bottom-navigation elevation="0" app background-color="#202124">
+  </v-bottom-navigation> -->
 </template>
 
 <script>
@@ -42,12 +61,12 @@ export default {
     },
     toggleChat() {
       this.activeChat = !this.activeChat;
-      this.activeGuide = this.isMobile ? false : this.activeGuide;
+      this.activeGuide = false;
       this.$emit("onToggleChat");
     },
     toggleGuide() {
       this.activeGuide = !this.activeGuide;
-      this.activeChat = this.isMobile ? false : this.activeChat;
+      this.activeChat = false;
       this.$emit("onToggleGuide");
     },
   },

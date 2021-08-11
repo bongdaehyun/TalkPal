@@ -8,7 +8,7 @@ const vuetify = new Vuetify({
     themes: {
       light: {
         primary: '#0288d1',
-        secondary: '#553C80',
+        secondary: '#09DEB5',
         accent: '#60CC75',
         error: '#FF0000',
       },

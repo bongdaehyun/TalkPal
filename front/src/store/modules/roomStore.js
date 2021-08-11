@@ -72,9 +72,6 @@ const roomStore = {
       return http.get(`/rooms/check/${uuid}`);
     },
     requestAddPerson(context, payload) {
-      // return http.put(`/roos/cal/${payload.uuid}`, {
-      //   num: payload.num
-      // })
       return http({
         method: "PUT",
         url: `/rooms/cal/${payload.uuid}?num=${payload.num}`

@@ -13,7 +13,7 @@
                   class="d-flex justify-center align-center"
                   style="height: 100%; width: 100%"
                 >
-                  <!-- NOTE: [Hover] 프로필 이미지 수정 버튼 -->
+                  <!-- NOTE: 프로필 이미지 수정 버튼 -->
                   <div v-show="false">
                     <input
                       ref="fileInput"
@@ -21,11 +21,7 @@
                       @change="changeProfileImage"
                     />
                   </div>
-                  <v-btn
-                    class="white--text"
-                    color="primary"
-                    @click="clickChangeImage"
-                  >
+                  <v-btn color="primary" @click="clickChangeImage" tile>
                     <v-icon dark> fas fa-cog </v-icon>
                   </v-btn>
                 </div>
@@ -40,6 +36,7 @@
               v-model="histories.dialog"
               :max-width="dialogMaxWidth"
               scrollable
+              eager
             >
               <UserListDialog
                 :head="$t('profile_history')"
@@ -115,7 +112,7 @@
               <v-text-field
                 v-model="nickname"
                 label="Nickname"
-                solo
+                outlined
                 required
                 full-width
                 :counter="16"
@@ -156,10 +153,11 @@
           <!-- NOTE: 자기소개 수정 -->
           <div v-else>
             <v-textarea
-              rows="2"
+              v-model="profileInfo.introduction"
+              rows="1"
+              auto-grow
               outlined
               hide-details
-              v-model="profileInfo.introduction"
             ></v-textarea>
           </div>
           <div v-if="update" class="align-self-end">
@@ -261,13 +259,13 @@ export default {
     nicknameErrors() {
       const errors = [];
       if (!this.$v.nickname.$dirty) return errors;
-      !this.$v.nickname.required && errors.push(i18n.t("register_required"));
+      !this.$v.nickname.required && errors.push(this.$t("register_required"));
       (!this.$v.nickname.minLength || !this.$v.nickname.maxLength) &&
-        errors.push(i18n.t("register_error_nick_len"));
+        errors.push(this.$t("register_error_nick_len"));
       !this.$v.nickname.alphaNum &&
-        errors.push(i18n.t("register_error_nick_alpha"));
+        errors.push(this.$t("register_error_nick_alpha"));
       !this.$v.nickname.isUnique &&
-        errors.push(i18n.t("register_error_nick_same"));
+        errors.push(this.$t("register_error_nick_same"));
       return errors;
     },
   },
@@ -325,7 +323,7 @@ export default {
           if (res.data == "SUCCESS") {
             this.profileInfo.nickname = this.nickname;
             this.$store.dispatch("onSnackbar", {
-              text: `{{$t('profile_submit')}}`,
+              text: i18n.t("profile_submit"),
               color: "success",
             });
             this.update = false;

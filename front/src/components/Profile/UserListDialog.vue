@@ -3,7 +3,7 @@
     <v-card-title>{{ head }}</v-card-title>
     <v-divider></v-divider>
     <v-card-text style="height: 50vh; overflow-y: scroll">
-      <div v-for="item in Item.list" :key="item.id">
+      <div v-for="(item, index) in Item.list" :key="index">
         <Item :item="item" />
       </div>
       <infinite-loading
@@ -16,7 +16,7 @@
       </infinite-loading>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="blue darken-1" text @click="closeDialog"> Close </v-btn>
+      <v-btn color="primary" text @click="closeDialog"> Close </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -26,7 +26,7 @@ import InfiniteLoading from "vue-infinite-loading";
 import Item from "@/components/Profile/UserListDialog/Item.vue";
 
 export default {
-  name: "FollowDialog",
+  name: "UserListDialog",
   props: {
     head: {
       type: String,
