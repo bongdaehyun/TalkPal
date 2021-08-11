@@ -220,7 +220,7 @@ export default {
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
     clearInterval(this.progressInterval);
-    this.ws.close();
+    // this.ws.close();
   },
   components: {
     Item,
