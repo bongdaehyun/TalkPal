@@ -76,6 +76,7 @@
     <QuestionDialog
       :timer="timer"
       :joinQuestionDialog="joinQuestionDialog"
+      :requestUserId="requestUserId"
       @onQuestionResponse="questionResponse"
     />
   </div>
