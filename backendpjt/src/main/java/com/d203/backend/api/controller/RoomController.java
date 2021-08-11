@@ -8,6 +8,7 @@ import com.d203.backend.common.auth.SsafyUserDetails;
 import com.d203.backend.db.entity.Room;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class RoomController {
 
     @Autowired
     RoomService roomService;
+
 
     //CRUD
     @PostMapping("/create")

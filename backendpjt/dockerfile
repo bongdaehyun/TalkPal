@@ -11,4 +11,6 @@ FROM adoptopenjdk:8-jdk-hotspot
 COPY --from=builder build/libs/*.jar app.jar
 
 EXPOSE 8080
-ENTRYPOINT ["java","-Dkms.url=ws://54.180.128.85:8888/kurento","-jar","/app.jar"]
+ENTRYPOINT ["java","-Dkms.url=ws://54.180.128.85:8888/kurento","-Dspring
+.profiles.active=prod","-jar","/app
+.jar"]

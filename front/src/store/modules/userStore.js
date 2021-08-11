@@ -105,7 +105,7 @@ const userStore = {
       return http.get(`/follow/ing/${payload.userId}/${payload.page}`)
     },
     // NOTE: 리뷰 평점 가져오기
-    requestAvgScore(context,payload){
+    requestAvgScore(context, payload) {
       return http.get(`review/avg/${payload}`)
     }
   },
