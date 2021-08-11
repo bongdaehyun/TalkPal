@@ -13,7 +13,7 @@
       </v-card>
     </v-col>
     <v-col class="col-sm-12 col-md-4 d-none d-lg-block d-print-block">
-      <v-img class="" src="@/assets/image/talking.jpg"> </v-img>
+      <v-img class="" src="@/assets/image/talking.png"> </v-img>
     </v-col>
   </v-row>
 </template>

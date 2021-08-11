@@ -56,9 +56,10 @@
 </template>
 
 <script>
+import getProfilePath from "@/mixin/getProfilePath";
 export default {
   name: "item",
-
+  mixins: [getProfilePath],
   data() {
     return {
       name: "",
@@ -90,14 +91,10 @@ export default {
           this.userInfo = res.data;
           //console.log(this.userInfo)
           const imgPath = this.userInfo.imgPath;
-          if (imgPath) {
-            this.profilePath = require(`@/assets/image/profile/${imgPath}`);
-          } else {
-            this.profilePath = require(`@/assets/image/profile/default_profileImg.png`);
-          }
+          this.profilePath = this.getProfilePath(imgPath);
         })
         .catch((err) => {
-          this.$log(err);
+          console.log(err);
         });
     },
     requestAvgScore() {
