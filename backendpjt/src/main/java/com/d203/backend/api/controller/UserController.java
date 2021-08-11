@@ -38,6 +38,9 @@ public class UserController {
     @Value("${isProd}")
     boolean isProd;
 
+    @Value("${isActive}")
+    String isActive;
+
     @Autowired
     UserService userService;
 
@@ -50,10 +53,10 @@ public class UserController {
                                              @RequestPart("imgFile") MultipartFile imgFile) throws IOException {
 
         System.out.println("[isProd]" + isProd);
-
+        System.out.println("[isActive] : " + isActive);
         System.out.println("이미지 수정");
+        
         String basePath, frontPath, fileName, filePath;
-
         if (isProd) {
             // 배포 서버단 저장될 위치
             basePath = "/volumes/profile/";
@@ -73,14 +76,14 @@ public class UserController {
         }
 
         fileName = userId.toString() + "_profileImg.jpg";
-        System.out.println(fileName);
+//        System.out.println(fileName);
 
         //경로설정
         filePath = basePath + frontPath + fileName;
-        System.out.println(filePath);
+//        System.out.println(filePath);
 
         File dest = new File(filePath);
-        System.out.println(dest);
+//        System.out.println(dest);
         //파일 생성
         imgFile.transferTo(dest);
 
