@@ -1,49 +1,37 @@
 <template>
   <div>
     <v-card class="mx-auto" outlined>
-      <v-list-item three-line>
-        <v-list-item-avatar tile size="64">
-          <v-img :src="profilePath"></v-img>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title class="text-h5 mb-1">
-            {{ profileNickname }}
-          </v-list-item-title>
-          <div class="text-overline">
+      <v-card-title class="black--text">
+        <v-row>
+          <v-col cols="2">
+             <v-avatar size="56">
+              <v-img :src="profilePath"></v-img>
+            </v-avatar>
+          </v-col>
+          <v-col cols="3">
             <v-rating
-              v-model="rating"
-              background-color="primary"
-              :readonly="true"
-              color="primary"
-              small
+                v-model="rating"
+                background-color="primary"
+                :readonly="true"
+                color="primary"
+                small
             >
             </v-rating>
-          </div>
-          <v-list-item-subtitle class="cursor" @click="dialog = true">
-            {{ item.content }}
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-card-actions>
-        <v-btn outlined rounded text @click="goProfile">
-          {{ $t("profile_go") }}
-        </v-btn>
-      </v-card-actions>
+            <h5>
+               {{ profileNickname }}
+            </h5>
+          </v-col>
+          <v-col cols="6">
+              
+          </v-col>
+        </v-row>
+      </v-card-title>
+      <v-card-text>
+        <div>
+          <h3>{{ item.content }}</h3>
+        </div>
+      </v-card-text>
     </v-card>
-    <!-- NOTE: Desktop/Mobile width control -->
-    <v-dialog v-model="dialog">
-      <v-card>
-        <v-card-title class="subtitle-1 lighten-2">
-          {{ item.content }}
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="dialog = false">
-            {{ $t("profile_close") }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
@@ -94,7 +82,7 @@ export default {
 
   methods: {
     openDialog() {
-      console.log("openDialog");
+      //console.log("openDialog");
     },
     goProfile() {
       //console.log(this.item);
@@ -105,7 +93,9 @@ export default {
       this.$router.go();
     },
   },
-  mounted() {},
+  mounted() {
+    console.log(this.item)
+  },
 };
 </script>
 <style>
@@ -114,5 +104,10 @@ export default {
 }
 .v-rating > .v-icon {
   padding: 0px !important;
+}
+h3{
+  width: 200px;
+  word-break:break-all;
+  white-space:normal;
 }
 </style>
