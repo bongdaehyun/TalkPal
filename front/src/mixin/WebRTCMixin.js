@@ -16,6 +16,7 @@ const WebRTCMixin = {
       joinQuestionDialog: false,
       joinAnswer: null,
       timer: null,
+      requestUserId: null,
     }
   },
   methods: {
@@ -47,7 +48,8 @@ const WebRTCMixin = {
       this.joinQuestionDialog = false;
     },
 
-    openQuestionDialog() {
+    openQuestionDialog(requestUserId) {
+      this.requestUserId = requestUserId;
       this.joinQuestionDialog = true;
       this.joinAnswer = null;
     },
@@ -56,7 +58,7 @@ const WebRTCMixin = {
       // NOTE: 다른 유저의 입장 요청 (uuid, requestUserId, hostId)
 
       // NOTE: 요청 수락/거부 Dialog OPEN
-      this.openQuestionDialog();
+      this.openQuestionDialog(request.requestUserId);
 
       // NOTE: 요청 결과 0.1초 마다 확인
       const responseInterval = setInterval(() => {
@@ -69,6 +71,7 @@ const WebRTCMixin = {
           };
           this.sendMessage(message);
           this.joinAnswer = null;
+          this.requestUserId = null;
           clearInterval(responseInterval);
           clearInterval(timerInterval);
         }
@@ -88,6 +91,7 @@ const WebRTCMixin = {
           this.sendMessage(message);
           this.joinQuestionDialog = false;
           this.joinAnswer = null;
+          this.requestUserId = null;
           clearInterval(timerInterval);
           clearInterval(responseInterval);
         }
