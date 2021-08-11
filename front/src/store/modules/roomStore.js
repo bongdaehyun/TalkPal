@@ -41,7 +41,7 @@ const roomStore = {
       return http.get(`/rooms/${payload.page}`, {
         params: {
           topic: payload.topic,
-          lang: payload.lang
+          lang: payload.lang,
         }
       })
     },

@@ -2,6 +2,8 @@
   "voicelang": "en-US",
   "ko": "korean",
   "en": "english",
+  "item_host": "Host",
+  "item_guest": "Guest",
   "main_back": "back",
   "message": "안녕 i18n !!",
   "App_logout": "Logout Success",

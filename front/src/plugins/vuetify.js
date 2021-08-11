@@ -11,6 +11,7 @@ const vuetify = new Vuetify({
         secondary: '#09DEB5',
         accent: '#60CC75',
         error: '#FF0000',
+        background: '#F8F9FA'
       },
     },
   },

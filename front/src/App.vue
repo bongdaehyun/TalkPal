@@ -7,18 +7,18 @@
       <v-spacer></v-spacer>
       <!-- NOTE: 데스크탑 버전 -->
       <div style="flex: 1" v-if="!isMobile" class="d-flex">
-        <v-btn tile elevation="3" :color="roomsColor">
-          <span class="mr-2" @click="goRooms">
+        <v-btn rounded elevation="3" :color="roomsColor">
+          <span @click="goRooms">
             {{ $t("nav_rooms") }}
           </span>
         </v-btn>
-        <v-btn tile elevation="3" :color="profileColor">
-          <span class="mr-2" @click="goProfile">
+        <v-btn rounded elevation="3" :color="profileColor">
+          <span @click="goProfile">
             {{ $t("nav_profile") }}
           </span>
         </v-btn>
-        <v-btn tile elevation="3">
-          <span class="mr-2" @click="onLogout">
+        <v-btn rounded elevation="3" color="white">
+          <span @click="onLogout">
             {{ $t("nav_logout") }}
           </span>
         </v-btn>

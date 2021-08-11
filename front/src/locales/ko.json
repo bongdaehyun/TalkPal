@@ -2,6 +2,8 @@
   "voicelang": "ko",
   "ko": "한국어",
   "en": "영어",
+  "item_host": "방장",
+  "item_guest": "손님",
   "main_back": "뒤로가기",
   "message": "hello i18n !!",
   "App_logout": "로그아웃 성공",

@@ -84,7 +84,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Page<Room> getRoomList(String topic, String lang, int pageno) {
-        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 5);
         long langId = 0;
         if (!lang.equals("")) {
             Lang findlang = langRepository.findByName(lang);
