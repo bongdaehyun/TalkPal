@@ -19,6 +19,7 @@
       </v-btn>
     </v-card-actions>
   </v-card>
+  
 </template>
 
 <script>
@@ -31,6 +32,7 @@ export default {
       name: "",
       userInfo: null,
       profilePath: null,
+      expend:false,
     };
   },
   props: {

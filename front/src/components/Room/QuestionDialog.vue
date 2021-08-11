@@ -5,7 +5,10 @@
         <v-card-title class="text-h6 success lighten-2">
           {{ timer }} {{$t('questiondialog')}}
         </v-card-title>
-        <!-- <v-card-text>회원 정보</v-card-text> -->
+        <v-card-text>회원 정보
+
+          
+        </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
