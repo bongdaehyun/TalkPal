@@ -317,7 +317,7 @@ const WebRTCMixin = {
     },
     connect() {
       this.ws = new WebSocket(this.socketUrl);
-      
+
       this.ws.onopen = () => {
         this.join();
         console.log(this.ws);
@@ -375,7 +375,7 @@ const WebRTCMixin = {
     },
   },
   beforeDestroy() {
-    this.ws.close();
+    // this.ws.close();
   },
 }
 export default WebRTCMixin
