@@ -112,7 +112,7 @@ public class ReviewController {
             @RequestBody @ApiParam(value = "평가 작성 수정 정보", required = true) ReviewUpdateReq updateReviewInfo,
             @PathVariable Long review_id) {
 
-        System.out.println(updateReviewInfo.toString());
+        //System.out.println(updateReviewInfo.toString());
         if (reviewService.updateReview(review_id, updateReviewInfo)) {
             return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
         }

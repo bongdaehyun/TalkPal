@@ -99,9 +99,9 @@ public class ReviewServiceImpl implements ReviewService {
     public double avgReview(Long touserid) {
 
         double reviewAvg = 0;
-        System.out.println("Review Service : try userid: " + " " + touserid);
+        //System.out.println("Review Service : try userid: " + " " + touserid);
         reviewAvg = reviewRepository.getReviewAvgByTouserid(touserid);
-        System.out.println("Review Done : : " + " " + reviewAvg);
+       // System.out.println("Review Done : : " + " " + reviewAvg);
         return reviewAvg;
     }
 

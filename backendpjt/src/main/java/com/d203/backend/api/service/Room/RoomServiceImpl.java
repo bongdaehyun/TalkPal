@@ -45,8 +45,8 @@ public class RoomServiceImpl implements RoomService {
         room.setHost_lang(langRepository.getOne(roomInfo.getHost_lang()));
 
         room.setUuid(UUID.randomUUID().toString());
-        System.out.println(roomInfo);
-        System.out.println(room);
+        //System.out.println(roomInfo);
+        //System.out.println(room);
 
 
         return roomRepository.save(room);
@@ -90,8 +90,8 @@ public class RoomServiceImpl implements RoomService {
             Lang findlang = langRepository.findByName(lang);
             langId = findlang.getId();
         }
-        System.out.println("topic : " + topic);
-        System.out.println("lang : " + langId);
+        //System.out.println("topic : " + topic);
+        //System.out.println("lang : " + langId);
         Page<Room> rooms = roomRepository.findAllBYLangAndTopic(topic, langId, firstPageWithTwoElements);
         return rooms;
     }
