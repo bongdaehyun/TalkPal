@@ -2,9 +2,9 @@ import http from '@/util/http-common'
 
 const getDefaultState = () => {
   return {
-    webSocket: null,
     isRoom: null,
-    socketUrl: process.env.VUE_APP_SOCKET_URL,
+    reviewDialog: false,
+    reviewUserId: null,
   }
 }
 
@@ -13,26 +13,31 @@ const roomStore = {
   state: getDefaultState(),
 
   getters: {
-    getWebSocket(state) {
-      return state.webSocket
-    },
-    getSocketUrl(state) {
-      return state.socketUrl
-    },
     getIsRoom(state) {
       return state.isRoom
-    }
+    },
+    getIsReview(state) {
+      return {
+        reviewDialog: state.reviewDialog,
+        reviewUserId: state.reviewUserId,
+      }
+    },
   },
 
   mutations: {
-    CONNECT_WEB_SOCKET(state) {
-      state.webSocket = new WebSocket(state.socketUrl)
-    },
     ENTER_ROOM(state) {
       state.isRoom = true
     },
     EXIT_ROOM(state) {
       state.isRoom = false
+    },
+    REVIEW_FALSE(state) {
+      state.reviewUserId = null;
+      state.reviewDialog = false;
+    },
+    REVIEW_TRUE(state, reviewUserId) {
+      state.reviewUserId = reviewUserId;
+      state.reviewDialog = true;
     },
   },
 
@@ -54,6 +59,12 @@ const roomStore = {
         url: `/rooms/${payload.roomId}`,
         headers: payload.header,
       })
+    },
+    setReviewTrue(context, reviewUserId) {
+      context.commit("REVIEW_TRUE", reviewUserId);
+    },
+    setReviewFalse(context) {
+      context.commit("REVIEW_FALSE");
     },
     enterRoom(context) {
       context.commit("ENTER_ROOM");
