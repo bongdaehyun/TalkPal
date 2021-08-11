@@ -51,11 +51,6 @@ public class UserController {
     @PutMapping(value = "/saveimg/{userId}")
     public ResponseEntity<String> profileImg(@PathVariable String userId,
                                              @RequestPart("imgFile") MultipartFile imgFile) throws IOException {
-
-        System.out.println("[isProd]" + isProd);
-        System.out.println("[isActive] : " + isActive);
-        System.out.println("이미지 수정");
-        
         String basePath, frontPath, fileName, filePath;
         if (isProd) {
             // 배포 서버단 저장될 위치
@@ -76,9 +71,9 @@ public class UserController {
         }
 
         fileName = userId.toString() + "_profileImg.jpg";
-        //경로설정
         filePath = basePath + frontPath + fileName;
         File dest = new File(filePath);
+
         imgFile.transferTo(dest);
 
         // DB에 이미지 원본 이름만 저장
