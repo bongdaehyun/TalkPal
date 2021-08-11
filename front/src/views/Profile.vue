@@ -353,6 +353,7 @@ export default {
         );
         console.log(data);
         this.loadingButtonImage = false;
+        this.$router.go()
       } catch (err) {
         console.log(err);
       }
