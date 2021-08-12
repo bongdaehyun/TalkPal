@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       swiperOption: {
-        slidesPerView: this.isMobile ? 1 : 3,
+        slidesPerView: this.isMobile ? 1 : 1,
         spaceBetween: this.isMobile ? 10 : 10,
         centeredSlides: true,
       },
