@@ -21,5 +21,4 @@ public interface ReviewService {
 
 	boolean deleteReview(Long review_id, Long tokenUserId);
 
-	double avgReview(Long touserid);
 }

@@ -1,16 +1,13 @@
 package com.d203.backend.api.service.User;
 
 import com.d203.backend.api.response.User.UserRes;
-import com.d203.backend.db.repository.FollowRepository;
-import com.d203.backend.db.repository.UserHistoryRepository;
+import com.d203.backend.db.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.d203.backend.api.request.User.UserReq;
 import com.d203.backend.db.entity.Lang;
 import com.d203.backend.db.entity.User;
-import com.d203.backend.db.repository.LangRepository;
-import com.d203.backend.db.repository.UserRepository;
 
 import java.util.Optional;
 
@@ -33,7 +30,12 @@ public class UserServiceImpl implements UserService {
     UserHistoryRepository userHistoryRepository;
 
     @Autowired
+    ReviewRepository reviewRepository;
+
+    @Autowired
     PasswordEncoder passwordEncoder;
+
+
 
 
     @Override
@@ -64,6 +66,7 @@ public class UserServiceImpl implements UserService {
         user.setCntFollower(followRepository.countAllByTouserid(user));
         user.setCntFollowing(followRepository.countAllByFromuserid(user));
         user.setCntHistories(userHistoryRepository.countAll(user));
+        user.setAvgScore(reviewRepository.getReviewAvgByTouserid(user_id));
 
         userRepository.save(user);
         return user;
