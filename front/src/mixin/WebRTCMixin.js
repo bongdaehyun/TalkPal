@@ -18,6 +18,7 @@ const WebRTCMixin = {
       timer: null,
     }
   },
+  
   methods: {
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
