@@ -46,7 +46,7 @@ public class ReviewController {
     UserService userService;
 
     @PostMapping()
-    @ApiOperation(value = "리뷰작성 ", notes = "<strong>유저간 리뷰와 점수strong>를 작성한다.")
+    @ApiOperation(value = "리뷰작성 ", notes = "<strong>유저간 리뷰와 점수<strong>를 작성한다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
             @ApiResponse(code = 401, message = "인증 실패"),
@@ -58,7 +58,6 @@ public class ReviewController {
 
         Review review = reviewService.createReview(reviewInfo);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
-
     }
 
     @GetMapping("/from/{from_user_id}/{pageno}")
@@ -112,7 +111,7 @@ public class ReviewController {
             @RequestBody @ApiParam(value = "평가 작성 수정 정보", required = true) ReviewUpdateReq updateReviewInfo,
             @PathVariable Long review_id) {
 
-        System.out.println(updateReviewInfo.toString());
+        //System.out.println(updateReviewInfo.toString());
         if (reviewService.updateReview(review_id, updateReviewInfo)) {
             return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
         }
@@ -134,11 +133,5 @@ public class ReviewController {
 
         return ResponseEntity.status(401).body("User not macthed");
     }
-
-    @GetMapping("/avg/{touserid}")
-    public ResponseEntity<ReviewAvgRes> getReviewAvg(@PathVariable Long touserid) {
-
-        double avg = reviewService.avgReview(touserid);
-        return ResponseEntity.status(200).body(ReviewAvgRes.of(avg));
-    }
+    
 }

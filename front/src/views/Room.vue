@@ -76,7 +76,14 @@
     <QuestionDialog
       :timer="timer"
       :joinQuestionDialog="joinQuestionDialog"
+      :profilePath="profilePath"
+      :requestUserInfo="requestUserInfo"
       @onQuestionResponse="questionResponse"
+    />
+    <ReviewDialog
+      :reviewDialog="reviewDialog"
+      :reviewUserId="reviewUserId"
+      @onReviewSubmit="reviewSubmit"
     />
   </div>
 </template>
@@ -88,6 +95,7 @@ import Chat from "@/components/Room/Chat.vue";
 import Guide from "@/components/Room/Guide.vue";
 import QuestionDialog from "@/components/Room/QuestionDialog.vue";
 import Navigation from "@/components/Room/Navigation.vue";
+import ReviewDialog from "@/components/Review/ReviewDialog.vue";
 
 // NOTE: MIXIN
 import WebRTCMixin from "@/mixin/WebRTCMixin.js";
@@ -218,6 +226,7 @@ export default {
     Guide,
     QuestionDialog,
     Navigation,
+    ReviewDialog,
   },
 };
 </script> 

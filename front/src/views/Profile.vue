@@ -4,30 +4,41 @@
     <div class="d-flex flex-column my-12">
       <v-row justify="center" no-gutters>
         <v-col cols="6" class="d-flex flex-column align-end pe-6">
-          <!-- NOTE: 프로필 이미지 -->
-          <v-avatar size="128">
-            <v-hover v-slot="{ hover }">
-              <v-img :src="profilePath">
-                <div
-                  v-if="hover && profileId == loginId"
-                  class="d-flex justify-center align-center"
-                  style="height: 100%; width: 100%"
-                >
-                  <!-- NOTE: 프로필 이미지 수정 버튼 -->
-                  <div v-show="false">
-                    <input
-                      ref="fileInput"
-                      type="file"
-                      @change="changeProfileImage"
-                    />
+          <div class="d-flex flex-column align-center">
+            <!-- NOTE: 유저 평균 평점 -->
+            <v-rating
+              v-model="rating"
+              background-color="#CFD8DC"
+              color="accent"
+              half-increments
+              readonly
+            >
+            </v-rating>
+            <!-- NOTE: 프로필 이미지 -->
+            <v-avatar size="128">
+              <v-hover v-slot="{ hover }">
+                <v-img :src="profilePath">
+                  <div
+                    v-if="hover && profileId == loginId"
+                    class="d-flex justify-center align-center"
+                    style="height: 100%; width: 100%"
+                  >
+                    <!-- NOTE: 프로필 이미지 수정 버튼 -->
+                    <div v-show="false">
+                      <input
+                        ref="fileInput"
+                        type="file"
+                        @change="changeProfileImage"
+                      />
+                    </div>
+                    <v-btn color="primary" @click="clickChangeImage" tile>
+                      <v-icon dark> fas fa-cog </v-icon>
+                    </v-btn>
                   </div>
-                  <v-btn color="primary" @click="clickChangeImage" tile>
-                    <v-icon dark> fas fa-cog </v-icon>
-                  </v-btn>
-                </div>
-              </v-img>
-            </v-hover>
-          </v-avatar>
+                </v-img>
+              </v-hover>
+            </v-avatar>
+          </div>
         </v-col>
         <v-col cols="6" md="3" class="d-flex flex-column justify-center ps-6">
           <!-- NOTE: 만난 사람들 목록 -->
@@ -195,11 +206,19 @@
         >
           <!-- NOTE: 받은 평가 -->
           <v-tab-item>
-            <ReviewSlide :Item="receivedReviews" @onSlideEnd="requestReviews" />
+            <ReviewSlide
+              :Item="receivedReviews"
+              @onSlideEnd="requestReviews"
+              :isMobile="isMobile"
+            />
           </v-tab-item>
           <!-- NOTE: 작성한 평가 -->
           <v-tab-item>
-            <ReviewSlide :Item="giveReviews" @onSlideEnd="requestReviews" />
+            <ReviewSlide
+              :Item="giveReviews"
+              @onSlideEnd="requestReviews"
+              :isMobile="isMobile"
+            />
           </v-tab-item>
         </v-tabs-items>
       </v-col>
@@ -247,6 +266,7 @@ export default {
         dialog: false,
       },
       update: false,
+      rating: 3.5,
     };
   },
   computed: {
@@ -340,7 +360,6 @@ export default {
       this.image = e.target.files[0];
       const imgFile = new FormData();
       imgFile.append("imgFile", this.image);
-
       try {
         const { data } = await http.put(
           "/users/saveimg/" + this.profileId,
@@ -351,8 +370,8 @@ export default {
             },
           }
         );
-        console.log(data);
         this.loadingButtonImage = false;
+        this.$router.go();
       } catch (err) {
         console.log(err);
       }

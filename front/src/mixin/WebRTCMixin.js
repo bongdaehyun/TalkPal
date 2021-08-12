@@ -1,7 +1,11 @@
 import kurentoUtils from "kurento-utils";
+import http from "@/util/http-common";
 import _ from "lodash";
+import getProfilePath from "@/mixin/getProfilePath.js";
+import ReviewMixin from "@/mixin/ReviewMixin.js";
 
 const WebRTCMixin = {
+  mixins: [getProfilePath, ReviewMixin],
   data() {
     return {
       ws: null,
@@ -16,6 +20,9 @@ const WebRTCMixin = {
       joinQuestionDialog: false,
       joinAnswer: null,
       timer: null,
+      requestUserId: null,
+      requestUserInfo: null,
+      profilePath: null,
     }
   },
   
@@ -49,6 +56,7 @@ const WebRTCMixin = {
     },
 
     openQuestionDialog() {
+
       this.joinQuestionDialog = true;
       this.joinAnswer = null;
     },
@@ -57,7 +65,14 @@ const WebRTCMixin = {
       // NOTE: 다른 유저의 입장 요청 (uuid, requestUserId, hostId)
 
       // NOTE: 요청 수락/거부 Dialog OPEN
-      this.openQuestionDialog();
+      http.get("/users/" + request.requestUserId).then((res) => {
+        this.requestUserInfo = res.data;
+        this.profilePath = this.getProfilePath(this.requestUserInfo.imgPath)
+        //console.log("requsetUser: ", this.requestUserInfo);
+        this.openQuestionDialog();
+      })
+
+
 
       // NOTE: 요청 결과 0.1초 마다 확인
       const responseInterval = setInterval(() => {
@@ -70,6 +85,7 @@ const WebRTCMixin = {
           };
           this.sendMessage(message);
           this.joinAnswer = null;
+          this.requestUserId = null;
           clearInterval(responseInterval);
           clearInterval(timerInterval);
         }
@@ -89,6 +105,7 @@ const WebRTCMixin = {
           this.sendMessage(message);
           this.joinQuestionDialog = false;
           this.joinAnswer = null;
+          this.requestUserId = null;
           clearInterval(timerInterval);
           clearInterval(responseInterval);
         }
@@ -104,6 +121,7 @@ const WebRTCMixin = {
         .then((res) => {
           this.$log(res);
         });
+      this.opponentId = request.userId;
       this.receiveVideo(request.userId);
     },
     onParticipantLeft(request) {
@@ -119,7 +137,10 @@ const WebRTCMixin = {
       participantComponent.dispose();
 
       delete this.participantComponents[request.userId];
+
+      this.openReviewDialog(request.userId);
     },
+
     receiveVideoResponse(result) {
       this.$log("receiveVideoResponse");
       this.$log(this.participantComponents[result.userId]);
@@ -184,6 +205,7 @@ const WebRTCMixin = {
           })
           .then((res) => {
             this.$log(res);
+            this.opponentId = toId;
           });
       }
 
@@ -225,7 +247,8 @@ const WebRTCMixin = {
           options,
           function (error) {
             if (error) {
-              return this.$error(error);
+              // return this.$error(error);
+              //console.log("hihi : " + error);
             }
             this.generateOffer(
               participant.offerToReceiveVideo.bind(participant)
@@ -250,7 +273,6 @@ const WebRTCMixin = {
       };
       this.sendMessage(message);
     },
-    // TODO: 퇴장 시 퇴장 확인 다이얼로그 출력
     leaveRoom() {
       this.$log("leaveRoom");
       // 1. Host가 나갈 떄 Host => leaveHost 메세지 수신, Guest => leaveGeust 메세지 수신
@@ -271,7 +293,7 @@ const WebRTCMixin = {
           header: this.$store.getters["userStore/getHeader"],
         })
         .then((res) => {
-          console.log(res);
+          //console.log(res);
           this.exitRoom();
         });
     },
@@ -294,6 +316,10 @@ const WebRTCMixin = {
 
       this.$store.dispatch("roomStore/exitRoom");
       this.ws.close();
+      // NOTE: 평가할 상대가 있으면 방 목록으로 나가서 평가
+      if (this.opponentId) {
+        this.$store.dispatch("roomStore/setReviewTrue", this.opponentId);
+      }
       this.$router.push({ name: "Rooms" });
     },
     submitMessage(inputMessage) {
@@ -317,15 +343,15 @@ const WebRTCMixin = {
     },
     connect() {
       this.ws = new WebSocket(this.socketUrl);
-      // this.$store.dispatch("userStore/setWebSocket");
-      // this.ws = this.$store.getters["userStore/getWebSocket"];
+
       this.ws.onopen = () => {
         this.join();
+        //console.log(this.ws);
       };
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
-        console.log("[parsedMessage]");
-        console.log(parsedMessage);
+        //console.log("[parsedMessage]");
+        //console.log(parsedMessage);
         switch (parsedMessage.id) {
           case "existingParticipants":
             this.onExistingParticipants(parsedMessage);
@@ -372,8 +398,10 @@ const WebRTCMixin = {
             this.$error(parsedMessage);
         }
       };
-
     },
+  },
+  beforeDestroy() {
+    // this.ws.close();
   },
 }
 export default WebRTCMixin

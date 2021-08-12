@@ -64,7 +64,6 @@ export default new Vuex.Store({
       }, 2000)
     },
     changeActiveMenu(context, payload) {
-      console.log(payload)
       context.commit("CHANGE_ACTIVE_MENU", payload);
     }
   },

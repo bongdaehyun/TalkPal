@@ -52,7 +52,6 @@ router.beforeEach((to, from, next) => {
   const loginStatus = store.getters["userStore/getLoginStatus"]
   i18n.locale = store.getters["userStore/getLocale"];
 
-  console.log(to)
   store.dispatch("changeActiveMenu", to.name)
 
   if (to.meta.auth && !loginStatus) {

@@ -15,9 +15,9 @@ import com.d203.backend.db.entity.User;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    Page<Review> findAllByTouserid(User touserid, Pageable pageable);
+    Page<Review> findAllByTouseridOrderByLastModifiedDateDesc(User touserid, Pageable pageable);
 
-    Page<Review> findAllByFromuserid(User fromuserid, Pageable pageable);
+    Page<Review> findAllByFromuseridOrderByLastModifiedDateDesc(User fromuserid, Pageable pageable);
 
     @Query(value = "select round(avg(r.score),1)  from review as r where r.touserid = ?1", nativeQuery = true)
     double getReviewAvgByTouserid(Long touserid);

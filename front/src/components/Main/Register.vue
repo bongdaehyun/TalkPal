@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-text-field
-      label="Email"
+      :label="label.email"
       prepend-inner-icon="mdi-email"
       v-model="email"
       :error-messages="emailErrors"
@@ -10,7 +10,7 @@
       type="email"
     ></v-text-field>
     <v-text-field
-      label="Password"
+      :label="label.password"
       prepend-inner-icon="mdi-lock"
       v-model="password"
       :error-messages="passwordErrors"
@@ -19,7 +19,7 @@
       type="password"
     ></v-text-field>
     <v-text-field
-      label="Password Confirm"
+      :label="label.password2"
       prepend-inner-icon="mdi-lock"
       v-model="repeatPassword"
       :error-messages="repeatPasswordErrors"
@@ -28,7 +28,7 @@
       type="password"
     ></v-text-field>
     <v-text-field
-      label="NickName"
+      :label="label.nickname"
       prepend-inner-icon="mdi-text"
       v-model="nickname"
       :error-messages="nicknameErrors"
@@ -41,13 +41,13 @@
       :items="items"
       item-text="name"
       item-value="value"
-      label="Language"
+      :label="label.lang"
       :error-messages="langErrors"
       @input="$v.lang.$touch()"
       @blur="$v.lang.$touch()"
     ></v-select>
     <div class="d-flex justify-space-between">
-      <v-btn class="ma-2" outlined color="primary" @click="$emit(`onBackStep`)">
+      <v-btn class="ma-2" outlined color="grey" @click="$emit(`onBackStep`)">
         <v-icon left> mdi-arrow-left </v-icon>
         {{ $t("main_back") }}
       </v-btn>
@@ -86,9 +86,22 @@ export default {
       repeatPassword: "1q2w3e4r!",
       nickname: "test",
       lang: "",
-
+      label: {
+        email: null,
+        password: null,
+        password2: null,
+        nickname: null,
+        lang: null,
+      },
       items: langItems,
     };
+  },
+  mixins: [validationMixin],
+
+  props: {
+    locale: {
+      type: String,
+    },
   },
   methods: {
     // Form 초기화 함수
@@ -140,16 +153,30 @@ export default {
           });
       }
     },
+    setLang() {
+      // this.label = {
+      this.label.email = i18n.t("login_email");
+      this.label.password = i18n.t("login_pwd");
+      this.label.password2 = i18n.t("register_pwd2");
+      this.label.nickname = i18n.t("register_nickname");
+      this.label.lang = i18n.t("register_lang");
+      // };
+    },
   },
-
+  watch: {
+    locale(newValue, oldValue) {
+      this.setLang();
+    },
+  },
+  created() {
+    this.setLang();
+  },
   /* 
     유효성 검사 
     참고 자료
     1. https://vuetifyjs.com/en/components/forms/#vuelidate
     2. https://www.notion.so/720e938f8223446996aba3500b12f953#85f87afad3274019bbaadadd98b14088
   */
-  mixins: [validationMixin],
-
   validations: {
     email: {
       required,

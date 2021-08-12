@@ -1,11 +1,11 @@
 <template>
   <v-container class="pa-0" :class="[isMobile ? '' : 'mt-12']">
-    <div :class="[isMobile ? 'd-flex flex-column' : 'row no-gutters']">
+    <div class="row no-gutters justify-center">
       <v-sheet
         elevation="2"
         class="sticky"
-        :class="[isMobile ? 'sticky-mobile' : 'col-2']"
-        rounded="xl"
+        :class="[isMobile ? 'sticky-mobile' : ' ']"
+        tile
       >
         <!-- NOTE: 방 조건 검색 -->
         <Search
@@ -16,15 +16,8 @@
         <Create ref="createDialog" @onCreateRoom="onCreateRoom" />
       </v-sheet>
       <!-- NOTE: 방 목록 -->
-      <div :class="[isMobile ? 'd-flex flex-column' : 'offset-1 col-9 row']">
-        <v-col
-          v-for="item in rooms"
-          :key="item.id"
-          xl="2"
-          lg="3"
-          md="4"
-          cols="12"
-        >
+      <div class="row justify-center" :class="[isMobile ? 'col-12 ' : 'col-8']">
+        <v-col v-for="item in rooms" :key="item.id" lg="4" md="6" cols="12">
           <Item :item="item" @onEnterRoom="onEnterRoom" />
         </v-col>
         <infinite-loading :identifier="searchData" @infinite="requestRooms">
@@ -33,7 +26,7 @@
           <div slot="no-results">
             <v-col>
               <v-row justify="center">
-                <v-icon x-large color="secondary">mdi-close-box</v-icon>
+                <v-icon x-large color="error">mdi-close-box</v-icon>
               </v-row>
               <v-row justify="center">
                 <h1>{{ $t("alert_nolist_01") }}</h1>
@@ -49,14 +42,13 @@
     <!-- NOTE: 스크롤 올리는 버튼 -->
     <v-fab-transition>
       <v-btn
-        bottom
+        v-show="btnShow"
+        class="fab-position"
+        @click.prevent="$vuetify.goTo('.header')"
+        color="primary"
         right
         fixed
         fab
-        small
-        color="primary"
-        v-show="btnShow"
-        @click.prevent="$vuetify.goTo('.header')"
       >
         <v-icon>mdi-chevron-double-up</v-icon>
       </v-btn>
@@ -66,6 +58,11 @@
         대기중...
       </v-progress-circular>
     </v-overlay>
+    <ReviewDialog
+      :reviewDialog="reviewDialog"
+      :reviewUserId="reviewUserId"
+      @onReviewSubmit="reviewSubmit"
+    />
   </v-container>
 </template>
 
@@ -75,13 +72,15 @@ import Create from "@/components/Rooms/Create";
 import Search from "@/components/Rooms/Search";
 import InfiniteLoading from "vue-infinite-loading";
 import isMobile from "@/mixin/isMobile.js";
+import ReviewDialog from "@/components/Review/ReviewDialog.vue";
+import ReviewMixin from "@/mixin/ReviewMixin.js";
 
 export default {
   name: "Room",
-  mixins: [isMobile],
+  mixins: [isMobile, ReviewMixin],
   data() {
     return {
-      // socketUrl: process.env.VUE_APP_SOCKET_URL,
+      socketUrl: process.env.VUE_APP_SOCKET_URL,
       page: 1,
       rooms: [],
       ws: null,
@@ -91,9 +90,30 @@ export default {
       },
       btnShow: false,
       loadingAnswer: false,
+      // reviewDialog: false,
+      // reviewUserId: null,
     };
   },
   methods: {
+    // reviewSubmit(reviewInfo) {
+    //   if (reviewInfo.isReview) {
+    //     reviewInfo.from_user_id = this.$store.getters["userStore/getUserId"];
+    //     this.$store
+    //       .dispatch("userStore/submitReview", reviewInfo)
+    //       .then(() => {
+    //         this.$store.dispatch("onSnackbar", {
+    //           text: "리뷰 작성 완료",
+    //           color: "success",
+    //         })
+    //       })
+    //       .catch((err) => {
+    //         console.error(err);
+    //       });
+    //   }
+    //   this.$store.dispatch("roomStore/setReviewFalse");
+    //   this.reviewDialog = false;
+    //   this.reviewUserId = null;
+    // },
     // NOTE: 방 생성 및 방 이동
     onCreateRoom(uuid) {
       let message = {
@@ -116,6 +136,7 @@ export default {
     /*
     NOTE: 방 목록 요청
     NOTE: https://www.npmjs.com/package/vue-infinite-loading
+    NOTE: 페이지네이션 정보 - 5개씩
      */
     changeSearchData(changeData) {
       this.searchData = changeData;
@@ -144,10 +165,7 @@ export default {
       this.btnShow = window.scrollY > 400;
     },
     connect() {
-      this.$store.dispatch("userStore/setWebSocket");
-      this.ws = this.$store.getters["userStore/getWebSocket"];
-
-      console.log(this.ws);
+      this.ws = new WebSocket(this.socketUrl);
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
         this.$info(`[parsedMessage] : ${parsedMessage}`);
@@ -213,6 +231,10 @@ export default {
   },
   created() {
     this.$store.dispatch("roomStore/exitRoom");
+    this.checkReview();
+    // let reviewInfo = this.$store.getters["roomStore/getIsReview"];
+    // this.reviewDialog = reviewInfo.reviewDialog;
+    // this.reviewUserId = reviewInfo.reviewUserId;
     this.connect();
   },
   mounted() {
@@ -221,12 +243,14 @@ export default {
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
     clearInterval(this.progressInterval);
+    // this.ws.close();
   },
   components: {
     Item,
     Create,
     Search,
     InfiniteLoading,
+    ReviewDialog,
   },
 };
 </script>
@@ -234,14 +258,17 @@ export default {
 <style scoped>
 .sticky {
   background-color: white;
-  position: sticky;
-  align-self: flex-start;
+  position: fixed;
   padding: 2rem !important;
-  top: 10%;
+  z-index: 2;
+  left: 1vw;
+  width: 15vw;
 }
 .sticky-mobile {
+  left: 0 !important;
   width: 100%;
-  top: 56px;
-  z-index: 2;
+}
+.fab-position {
+  bottom: 56px;
 }
 </style>

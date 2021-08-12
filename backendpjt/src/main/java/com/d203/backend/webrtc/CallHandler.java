@@ -203,8 +203,8 @@ public class CallHandler extends TextWebSocketHandler {
 
         log.info("joinRequest = uuid : {}, requestUserId : {}, hostId : {}", uuid, requestUserId, hostId);
 
-//        ParticipantSession requestUser = new ParticipantSession(requestUserId, "tmp", session, kurento.createMediaPipeline());
-//        participantManager.register(requestUser);
+        ParticipantSession requestUser = new ParticipantSession(requestUserId, "tmp", session, kurento.createMediaPipeline());
+        participantManager.register(requestUser);
 
         synchronized (hostSession) {
             hostSession.sendMessage(requestMsg);
@@ -225,7 +225,8 @@ public class CallHandler extends TextWebSocketHandler {
         responseMsg.addProperty("uuid", uuid);
         responseMsg.addProperty("answer", answer);
 
-        UserSession requestUser = userManager.getByUserId(requestUserId);
+        ParticipantSession requestUser = participantManager.getByUserId(requestUserId);
+        participantManager.removeBySession(requestUser.getSession());
 
         synchronized (requestUser) {
             requestUser.sendMessage(responseMsg);

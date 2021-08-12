@@ -53,4 +53,6 @@ public class User extends BaseEntity {
     Long cntFollowing;
     Long cntHistories;
 
+    Double avgScore;
+
 }

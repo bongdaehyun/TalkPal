@@ -1,49 +1,31 @@
 <template>
-  <div>
-    <v-card class="mx-auto" outlined>
+  <div class="pa-3">
+    <v-sheet color="white" elevation="5">
       <v-list-item three-line>
         <v-list-item-avatar tile size="64">
           <v-img :src="profilePath"></v-img>
         </v-list-item-avatar>
         <v-list-item-content>
-          <v-list-item-title class="text-h5 mb-1">
+          <v-rating
+            v-model="rating"
+            background-color="#CFD8DC"
+            :readonly="true"
+            color="accent"
+          >
+          </v-rating>
+          <v-list-item-title class="text-h5 mb-1 font-weight-black">
             {{ profileNickname }}
           </v-list-item-title>
-          <div class="text-overline">
-            <v-rating
-              v-model="rating"
-              background-color="primary"
-              :readonly="true"
-              color="primary"
-              small
-            >
-            </v-rating>
-          </div>
-          <v-list-item-subtitle class="cursor" @click="dialog = true">
-            {{ item.content }}
-          </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
-      <v-card-actions>
-        <v-btn outlined rounded text @click="goProfile">
-          {{ $t("profile_go") }}
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-    <!-- NOTE: Desktop/Mobile width control -->
-    <v-dialog v-model="dialog">
-      <v-card>
-        <v-card-title class="subtitle-1 lighten-2">
-          {{ item.content }}
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="dialog = false">
-            {{ $t("profile_close") }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <v-card-text>
+        <v-row>
+          <v-col class="text-body-1" cols="11">
+            <p>{{ item.content }}</p>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-sheet>
   </div>
 </template>
 
@@ -93,17 +75,7 @@ export default {
   },
 
   methods: {
-    openDialog() {
-      console.log("openDialog");
-    },
-    goProfile() {
-      //console.log(this.item);
-      this.$router.push({
-        name: "Profile",
-        params: { userId: this.item.from_user_id },
-      });
-      this.$router.go();
-    },
+    openDialog() {},
   },
   mounted() {},
 };

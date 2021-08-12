@@ -45,8 +45,8 @@ public class RoomServiceImpl implements RoomService {
         room.setHost_lang(langRepository.getOne(roomInfo.getHost_lang()));
 
         room.setUuid(UUID.randomUUID().toString());
-        System.out.println(roomInfo);
-        System.out.println(room);
+        //System.out.println(roomInfo);
+        //System.out.println(room);
 
 
         return roomRepository.save(room);
@@ -84,14 +84,16 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Page<Room> getRoomList(String topic, String lang, int pageno) {
-        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 20);
+        Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 5);
         long langId = 0;
+//        System.out.println("topic : " + topic);
+//        System.out.println("lang : " + langId);
         if (!lang.equals("")) {
             Lang findlang = langRepository.findByName(lang);
             langId = findlang.getId();
         }
-        System.out.println("topic : " + topic);
-        System.out.println("lang : " + langId);
+        //System.out.println("topic : " + topic);
+        //System.out.println("lang : " + langId);
         Page<Room> rooms = roomRepository.findAllBYLangAndTopic(topic, langId, firstPageWithTwoElements);
         return rooms;
     }

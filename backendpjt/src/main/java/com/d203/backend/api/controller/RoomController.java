@@ -4,8 +4,10 @@ import com.d203.backend.api.request.Room.RoomReq;
 import com.d203.backend.api.request.Room.RoomUpadateReq;
 import com.d203.backend.api.response.Room.RoomListRes;
 import com.d203.backend.api.response.Room.RoomRes;
+import com.d203.backend.api.service.User.UserService;
 import com.d203.backend.common.auth.SsafyUserDetails;
 import com.d203.backend.db.entity.Room;
+import com.d203.backend.db.entity.User;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +29,6 @@ public class RoomController {
 
     @Autowired
     RoomService roomService;
-
 
     //CRUD
     @PostMapping("/create")
@@ -75,8 +76,8 @@ public class RoomController {
             @PathVariable Long room_id,
             @ApiIgnore Authentication authentication
     ) {
-        System.out.println("[room_id] : " + room_id);
-        System.out.println("[authentication] : " + authentication);
+        //System.out.println("[room_id] : " + room_id);
+        //System.out.println("[authentication] : " + authentication);
         SsafyUserDetails userDetails = (SsafyUserDetails) authentication.getDetails();
         Long tokenUserId = userDetails.getUser().getId();
 

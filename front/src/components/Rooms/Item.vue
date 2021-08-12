@@ -1,58 +1,50 @@
 <template>
-  <v-hover v-slot="{ hover }">
-    <v-card elevation="1" outlined>
-      <v-img
-        :aspect-ratio="16 / 9"
-        class="white--text align-end"
-        height="200px"
-        src="@/assets/image/food.png"
+  <v-sheet elevation="5" shaped class="d-flex flex-column pa-3">
+    <v-img
+      :src="getTopicPath"
+      class="d-flex"
+      min-height="150px"
+      max-height="150px"
+      contain
+    ></v-img>
+    <div class="px-3">
+      <span class="font-weight-black">{{ item.name }}</span>
+    </div>
+    <div class="d-flex justify-end px-3">
+      <span
+        :class="[isHover ? 'primary--text font-weight-black' : 'grey--text']"
       >
-        <!-- <v-card-title v-show="!hover">
-        <span class="white black--text bold">{{ item.name }}</span>
-      </v-card-title> -->
-        <!-- NOTE : 이미지 클릭시 생성 -->
-        <v-expand-transition v-if="userInfo">
-          <v-card
-            v-if="hover"
-            elevation="1"
-            outlined
-            class="transition-fast-in-fast-out"
-          >
-            <v-img
-              class="white--text align-end"
-              height="110px"
-              :src="profilePath"
-            >
-            </v-img>
-            <v-card-subtitle class="pb-0 mt-5"
-              ><h2 style="text-align: center; color: black">
-                {{ userInfo.nickname }}
-              </h2>
-            </v-card-subtitle>
-            <v-card-text class="mt-3">
-              <div style="color: black" class="d-flex justify-center">
-                <span v-for="item in avgScore" :key="item.id">
-                  <i style="color: #0288d1" class="fas fa-star"></i
-                ></span>
-                {{ avgScore }}
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-expand-transition>
-      </v-img>
-      <v-card-subtitle class="pb-0"> {{ $t(item.topic) }} </v-card-subtitle>
-      <v-card-text class="text--primary">
-        <div>{{ item.host_lang }}</div>
-        <div>{{ item.guest_lang }}</div>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" @click="goRoom" text>
-          {{ $t("room_enter") }}
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-hover>
+        {{ $t(item.topic) }}
+      </span>
+    </div>
+    <div class="px-3">
+      <v-avatar size="32">
+        <v-img :src="getHostPlagPath"> </v-img>
+      </v-avatar>
+      <span class="font-weight-black ms-2">{{ $t("item_host") }}</span>
+    </div>
+    <div class="px-3 mt-3">
+      <v-avatar size="32">
+        <v-img :src="getGuestPlagPath"> </v-img>
+      </v-avatar>
+      <span class="font-weight-black ms-2">{{ $t("item_guest") }}</span>
+    </div>
+    <div class="ml-auto px-3">
+      <v-btn
+        :class="[isHover ? 'hover-btn-size' : '']"
+        @mouseover="overBtn"
+        @mouseleave="leaveBtn"
+        @click="goRoom"
+        :color="btnColor"
+        x-large
+        icon
+      >
+        <v-icon x-large :class="[isHover ? 'hover-btn-size' : '']">
+          {{ btnIcon }}
+        </v-icon>
+      </v-btn>
+    </div>
+  </v-sheet>
 </template>
 
 <script>
@@ -64,13 +56,26 @@ export default {
     return {
       name: "",
       userInfo: null,
-      avgScore: 0,
       profilePath: null,
+      isHover: false,
+      btnIcon: "mdi-door-closed",
+      btnColor: "grey",
     };
   },
   props: {
     item: {
       type: Object,
+    },
+  },
+  computed: {
+    getTopicPath() {
+      return require(`@/assets/image/topic/${this.item.topic}.jpg`);
+    },
+    getHostPlagPath() {
+      return require(`@/assets/image/flag/${this.item.host_lang}.png`);
+    },
+    getGuestPlagPath() {
+      return require(`@/assets/image/flag/${this.item.guest_lang}.png`);
     },
   },
   methods: {
@@ -84,33 +89,25 @@ export default {
         params: { userId: this.item.hostId },
       });
     },
-    requestUserInfo() {
-      this.$store
-        .dispatch("userStore/requestUserInfo", this.item.hostId)
-        .then((res) => {
-          this.userInfo = res.data;
-          //console.log(this.userInfo)
-          const imgPath = this.userInfo.imgPath;
-          this.profilePath = this.getProfilePath(imgPath);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    overBtn() {
+      this.isHover = true;
+      this.btnIcon = "mdi-door-open";
+      this.btnColor = "primary";
     },
-    requestAvgScore() {
-      this.$store
-        .dispatch("userStore/requestAvgScore", this.item.hostId)
-        .then((res) => {
-          //console.log(res.data)
-          this.avgScore = res.data.score;
-        });
+    leaveBtn() {
+      this.isHover = false;
+      this.btnIcon = "mdi-door-closed";
+      this.btnColor = "grey";
     },
   },
-  mounted() {
-    this.requestUserInfo();
-    this.requestAvgScore();
-  },
+
   components: {},
 };
 </script>
 
+
+<style lang="scss" scoped>
+.hover-btn-size {
+  font-size: 80px !important;
+}
+</style>

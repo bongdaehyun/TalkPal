@@ -1,18 +1,18 @@
 <template>
   <v-container>
     <v-text-field
-      label="Email"
+      :label="label.email"
       prepend-inner-icon="mdi-email"
       v-model="email"
     ></v-text-field>
     <v-text-field
-      label="Password"
+      :label="label.pwd"
       prepend-inner-icon="mdi-lock"
       v-model="password"
       type="password"
     ></v-text-field>
     <div class="d-flex justify-space-between">
-      <v-btn class="ma-2" color="primary" outlined @click="$emit(`onBackStep`)">
+      <v-btn class="ma-2" color="grey" outlined @click="$emit(`onBackStep`)">
         <v-icon left> mdi-arrow-left </v-icon>
         {{ $t("main_back") }}
       </v-btn>
@@ -34,7 +34,16 @@ export default {
       // password: "",
       email: "test@gmail.com",
       password: "1q2w3e4r!",
+      label: {
+        email: null,
+        pwd: null,
+      },
     };
+  },
+  props: {
+    locale: {
+      type: String,
+    },
   },
   methods: {
     // 로그인 요청
@@ -67,6 +76,18 @@ export default {
           });
         });
     },
+    setLang() {
+      this.label.email = i18n.t("login_email");
+      this.label.pwd = i18n.t("login_pwd");
+    },
+  },
+  watch: {
+    locale(newValue, oldValue) {
+      this.setLang();
+    },
+  },
+  created() {
+    this.setLang();
   },
 };
 </script>

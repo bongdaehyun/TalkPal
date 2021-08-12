@@ -24,7 +24,6 @@ import com.d203.backend.db.entity.User;
 import com.d203.backend.util.JwtTokenUtil;
 
 
-
 /**
  * 요청 헤더에 jwt 토큰이 있는 경우, 토큰 검증 및 인증 처리 로직 정의.
  */
@@ -83,13 +82,13 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
                 User user = userService.getUserByEamil(email);
 
-                if(user != null) {
+                if (user != null) {
                     // 식별된 정상 유저인 경우, 요청 context 내에서 참조 가능한 인증 정보(jwtAuthentication) 생성.
                     SsafyUserDetails userDetails = new SsafyUserDetails(user);
                     UsernamePasswordAuthenticationToken jwtAuthentication = new UsernamePasswordAuthenticationToken(email,
                             null, userDetails.getAuthorities());
                     jwtAuthentication.setDetails(userDetails);
-                    System.out.println("userDetails.getUsername() = " + userDetails.getUsername());
+//                    System.out.println("userDetails.getUsername() = " + userDetails.getUsername());
                     return jwtAuthentication;
                 }
             }

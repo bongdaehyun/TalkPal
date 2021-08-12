@@ -6,22 +6,28 @@
 export default {
     data() {
         return {
+            ws: null,
+            socketUrl: process.env.VUE_APP_SOCKET_URL,
+            userId: this.$store.getters["userStore/getUserId"],
             chatRooms: [],
         }
     },
 
     methods: {
         connect() {
-            this.$store.dispatch("userStore/setWebSocket");
-            this.ws = this.$store.getters["userStore/getWebSocket"];
+            this.ws = new WebSocket(this.socketUrl);
             
-            console.log(this.ws);
+            this.ws.onopen = () => {
+
+            }
+
             this.ws.onmessage = (message) => {
                 let parsedMessage = JSON.parse(message.data);
-                this.$info(`[parsedMessage] : ${parsedMessage}`);
+                console.log("[parsedMessage]");
+                console.log(parsedMessage);
                 switch (parsedMessage.id) {
-                default:
-                    this.$error("Unrecognized message", parsedMessage);
+
+                    default:
                 }
             }
         }
@@ -30,9 +36,8 @@ export default {
     created() {
         this.connect();
         // TODO: 채팅방 목록 불러오기
-        // TODO: 무한 스크롤?
-        // TODO: 최근 메세지 순으로 정렬.. ChatRoom에 속성 추가 必
-        // TODO: 읽지 않은 채팅방 표시.. ............
+        // TODO: 최근 메세지 순으로 정렬.. ChatRoom에 마지막 메세지 시간 속성 추가 必
+        // TODO: 읽지 않은 채팅방 표시.. ............ 이것도 ChatRoom 속성..?
     }
 }
 </script>

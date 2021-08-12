@@ -1,24 +1,24 @@
 <template>
   <v-app style="background-color: #f8f9fa">
-    <v-app-bar v-if="loginStatus && !isRoom" elevation="1" color="#FFFFFF" app>
-      <div class="d-flex justify-end" style="flex: 1">
+    <v-app-bar v-if="loginStatus && !isRoom" elevation="1" color="white" app>
+      <div :class="[isMobile ? '' : 'd-flex justify-end']" style="flex: 1">
         <v-img src="@/assets/image/logo.png" max-width="224px" contain></v-img>
       </div>
       <v-spacer></v-spacer>
       <!-- NOTE: 데스크탑 버전 -->
       <div style="flex: 1" v-if="!isMobile" class="d-flex">
-        <v-btn tile elevation="3" :color="roomsColor">
-          <span class="mr-2" @click="goRooms">
+        <v-btn rounded elevation="3" :color="roomsColor">
+          <span @click="goRooms">
             {{ $t("nav_rooms") }}
           </span>
         </v-btn>
-        <v-btn tile elevation="3" :color="profileColor">
-          <span class="mr-2" @click="goProfile">
+        <v-btn rounded elevation="3" :color="profileColor">
+          <span @click="goProfile">
             {{ $t("nav_profile") }}
           </span>
         </v-btn>
-        <v-btn tile elevation="3">
-          <span class="mr-2" @click="onLogout">
+        <v-btn rounded elevation="3" color="white">
+          <span @click="onLogout">
             {{ $t("nav_logout") }}
           </span>
         </v-btn>
@@ -73,10 +73,26 @@
         {{ snackbarText }}
       </v-snackbar>
     </v-main>
+    <v-footer v-if="!isRoom" fixed padless color="white" elevation="1">
+      <div
+        class="d-flex justify-center align-center my-3"
+        style="width: 100vw"
+        no-gutters
+      >
+        <v-btn text rounded @click="onAboutDialog">ABOUT US</v-btn>
+        <v-btn class="primary--text" @click="goSsafy" text rounded>
+          <strong>SSAFY D203</strong>
+        </v-btn>
+        <v-btn text rounded @click="onLicenseDialog">LICENSE</v-btn>
+      </div>
+    </v-footer>
+    <AboutUsDialog ref="aboutUsDialog" />
   </v-app>
 </template>
 
 <script>
+import AboutUsDialog from "@/components/App/AboutUsDialog.vue";
+
 import isMobile from "@/mixin/isMobile.js";
 import i18n from "@/i18n.js";
 
@@ -86,6 +102,8 @@ export default {
   data() {
     return {
       timeout: 2000,
+      links: ["ABOUT US", "LICENSE"],
+      aboutDialog: false,
     };
   },
   computed: {
@@ -121,6 +139,16 @@ export default {
     },
   },
   methods: {
+    onAboutDialog() {
+      // TODO: ABOUT US 다이얼로그
+      this.$refs.aboutUsDialog.dialog = true;
+    },
+    onLicenseDialog() {
+      // TODO: LICENSE 다이얼로그
+    },
+    goSsafy() {
+      window.open("https://www.ssafy.com/", "_blank");
+    },
     goRooms() {
       this.$router.push({ name: "Rooms" });
     },
@@ -141,6 +169,9 @@ export default {
         color: "primary",
       });
     },
+  },
+  components: {
+    AboutUsDialog,
   },
 };
 </script>

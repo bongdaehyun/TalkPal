@@ -1,9 +1,7 @@
 package com.d203.backend.api.service.Review;
 
-import java.util.List;
 import java.util.Optional;
 
-import com.d203.backend.db.entity.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,15 +32,19 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = new Review();
         review.setContent(reviewInfo.getContent());
 
-        Optional<User> fromUser = userRepository.findById(reviewInfo.getFrom_user_id());
-        System.out.println("fromUser : " + fromUser.get().getEmail() + " " + fromUser.get().getId());
-        review.setFromuserid(fromUser.get());
 
-        Optional<User> toUser = userRepository.findById(reviewInfo.getTo_user_id());
-        review.setTouserid(toUser.get());
-        System.out.println("toUser : " + toUser.get().getEmail() + " " + toUser.get().getId());
+        User fromUser = userRepository.findById(reviewInfo.getFrom_user_id()).get();
+//        System.out.println("fromUser : " + fromUser.getEmail() + " " + fromUser.getId());
+        review.setFromuserid(fromUser);
+        User toUser = userRepository.findById(reviewInfo.getTo_user_id()).get();
+        review.setTouserid(toUser);
+//        System.out.println("toUser : " + toUser.getEmail() + " " + toUser.getId());
+
 
         review.setScore(reviewInfo.getScore());
+
+        toUser.setAvgScore(reviewRepository.getReviewAvgByTouserid(toUser.getId()));
+        userRepository.save(toUser);
 
         return reviewRepository.save(review);
     }
@@ -52,7 +54,7 @@ public class ReviewServiceImpl implements ReviewService {
     public Page<Review> getReviewById(User touserid, int pageno) {
 //        System.out.println("Review Service : try userid: " + " " + touserid);
         Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 5);
-        return reviewRepository.findAllByTouserid(touserid, firstPageWithTwoElements);
+        return reviewRepository.findAllByTouseridOrderByLastModifiedDateDesc(touserid, firstPageWithTwoElements);
     }
 
     // 작성한 리뷰
@@ -61,7 +63,7 @@ public class ReviewServiceImpl implements ReviewService {
 //        System.out.println("Review Service : try userid: " + " " + fromuserid);
         Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 5);
 //        System.out.println("Review Service" + " " + firstPageWithTwoElements.getPageSize());
-        return reviewRepository.findAllByFromuserid(fromuserid, firstPageWithTwoElements);
+        return reviewRepository.findAllByFromuseridOrderByLastModifiedDateDesc(fromuserid, firstPageWithTwoElements);
     }
 
     //
@@ -93,16 +95,6 @@ public class ReviewServiceImpl implements ReviewService {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public double avgReview(Long touserid) {
-
-        double reviewAvg = 0;
-        System.out.println("Review Service : try userid: " + " " + touserid);
-        reviewAvg = reviewRepository.getReviewAvgByTouserid(touserid);
-        System.out.println("Review Done : : " + " " + reviewAvg);
-        return reviewAvg;
     }
 
 

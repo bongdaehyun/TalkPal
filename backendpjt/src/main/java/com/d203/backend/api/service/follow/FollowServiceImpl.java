@@ -34,7 +34,7 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public void followDelete(User fromUserId, User toUserId) {
         Follow follow = followRepository.isExist(fromUserId, toUserId);
-        System.out.println("Follow Del" + follow.toString());
+       // System.out.println("Follow Del" + follow.toString());
         followRepository.delete(follow);
     }
 
