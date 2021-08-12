@@ -2,9 +2,10 @@ import kurentoUtils from "kurento-utils";
 import http from "@/util/http-common";
 import _ from "lodash";
 import getProfilePath from "@/mixin/getProfilePath.js";
+import ReviewMixin from "@/mixin/ReviewMixin.js";
 
 const WebRTCMixin = {
-  mixins :[getProfilePath],
+  mixins :[getProfilePath, ReviewMixin],
   data() {
     return {
       ws: null,
@@ -22,9 +23,6 @@ const WebRTCMixin = {
       requestUserId: null,
       requestUserInfo: null,
       profilePath: null,
-      reviewDialog: false,
-      reviewUserId: null,
-      opponentId: null,
     }
   },
   methods: {
@@ -140,22 +138,6 @@ const WebRTCMixin = {
       delete this.participantComponents[request.userId];
 
       this.openReviewDialog(request.userId);
-    },
-
-    // NOTE: 상대방 리뷰창 띄우기 (리뷰창 띄운 상대는 없애줌)
-    openReviewDialog(reviewUserId) {
-      this.reviewUserId = reviewUserId;
-      this.reviewDialog = true;
-      this.opponentId = null;
-    },
-
-    reviewSubmit(review) {
-      if (review.isReview) {
-        // TODO: 평가한 score 적용
-        console.log(review.reviewUserId + " : " + review.score);
-      }
-      this.reviewDialog = false;
-      this.reviewUserId = null;
     },
 
     receiveVideoResponse(result) {
@@ -333,7 +315,7 @@ const WebRTCMixin = {
 
       this.$store.dispatch("roomStore/exitRoom");
       this.ws.close();
-      // NOTE: 평가할 상대가 있으면 방 목록에서 평가
+      // NOTE: 평가할 상대가 있으면 방 목록으로 나가서 평가
       if (this.opponentId){
         this.$store.dispatch("roomStore/setReviewTrue", this.opponentId);
       }

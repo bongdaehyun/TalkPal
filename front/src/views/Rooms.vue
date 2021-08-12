@@ -83,10 +83,11 @@ import Search from "@/components/Rooms/Search";
 import InfiniteLoading from "vue-infinite-loading";
 import isMobile from "@/mixin/isMobile.js";
 import ReviewDialog from "@/components/Review/ReviewDialog.vue"
+import ReviewMixin from "@/mixin/ReviewMixin.js";
 
 export default {
   name: "Room",
-  mixins: [isMobile],
+  mixins: [isMobile, ReviewMixin],
   data() {
     return {
       socketUrl: process.env.VUE_APP_SOCKET_URL,
@@ -99,20 +100,30 @@ export default {
       },
       btnShow: false,
       loadingAnswer: false,
-      reviewDialog: false,
-      reviewUserId: null,
+      // reviewDialog: false,
+      // reviewUserId: null,
     };
   },
   methods: {
-    reviewSubmit(review) {
-      if (review.isReview) {
-        // TODO: 평가한 score 적용
-        console.log(review.reviewUserId + " : " + review.score);
-      }
-      this.$store.dispatch("roomStore/setReviewFalse");
-      this.reviewDialog = false;
-      this.reviewUserId = null;
-    },
+    // reviewSubmit(reviewInfo) {
+    //   if (reviewInfo.isReview) {
+    //     reviewInfo.from_user_id = this.$store.getters["userStore/getUserId"];
+    //     this.$store
+    //       .dispatch("userStore/submitReview", reviewInfo)
+    //       .then(() => {
+    //         this.$store.dispatch("onSnackbar", {
+    //           text: "리뷰 작성 완료",
+    //           color: "success",
+    //         })
+    //       })
+    //       .catch((err) => {
+    //         console.error(err);
+    //       });
+    //   }
+    //   this.$store.dispatch("roomStore/setReviewFalse");
+    //   this.reviewDialog = false;
+    //   this.reviewUserId = null;
+    // },
     // NOTE: 방 생성 및 방 이동
     onCreateRoom(uuid) {
       let message = {
@@ -230,10 +241,10 @@ export default {
   },
   created() {
     this.$store.dispatch("roomStore/exitRoom");
-    let reviewInfo = this.$store.getters["roomStore/getIsReview"];
-    this.reviewDialog = reviewInfo.reviewDialog;
-    this.reviewUserId = reviewInfo.reviewUserId;
-    // alert(this.reviewDialog + " " + this.reviewUserId);
+    this.checkReview();
+    // let reviewInfo = this.$store.getters["roomStore/getIsReview"];
+    // this.reviewDialog = reviewInfo.reviewDialog;
+    // this.reviewUserId = reviewInfo.reviewUserId;
     this.connect();
   },
   mounted() {
