@@ -2,24 +2,25 @@ const getProfilePath = {
   methods: {
     getProfilePath(imgPath) {
       const isProd = process.env.VUE_APP_PROD
-      try {
-        if (isProd === 'true') {
-          const profilePath = `/file/${imgPath}`;
+      if (isProd === 'true') {
+        try {
+          const profilePath = require(`/file/${imgPath}`);
+
           return profilePath
         }
-        else {
-          const profilePath = require(`@/assets/image/profile/${imgPath}`);
+        catch {
+          const profilePath = require(`/file/default_profileImg.png`);
 
           return profilePath
         }
       }
-      catch {
-        if (isProd === 'true') {
-          const profilePath = `/file/default_profileImg.png`;
+      else {
+        try {
+          const profilePath = require(`@/assets/image/profile/${imgPath}`);
 
           return profilePath
         }
-        else {
+        catch {
           const profilePath = require(`@/assets/image/default_profileImg.png`);
 
           return profilePath
