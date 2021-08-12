@@ -1,22 +1,19 @@
 const getProfilePath = {
   methods: {
     getProfilePath(imgPath) {
-      console.log("현재 경로 : " + window.location.pathname)
       const isProd = process.env.VUE_APP_PROD
 
       if (isProd === 'true') {
         let files = new Image;
         files.src = `/file/${imgPath}`;
 
-        // NOTE: 파일 존재함
-        if (files.complete) {
-          const profilePath = `/file/${imgPath}`
-          return profilePath
-        }
         // NOTE: 파일 없음
+        if (!files.complete) {
+          return `/file/default_profileImg.png`
+        }
+        // NOTE: 파일 존재
         else {
-          const profilePath = `/file/default_profileImg.png`
-          return profilePath
+          return `/file/${imgPath}`
         }
       }
       else {
