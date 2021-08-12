@@ -3,7 +3,19 @@ const getProfilePath = {
     getProfilePath(imgPath) {
       console.log("현재 경로 : " + window.location.pathname)
       const isProd = process.env.VUE_APP_PROD
+
       if (isProd === 'true') {
+        let files = new Image;
+        files.src = `/file/${imgPath}`;
+        if (!files.complete) { //파일 체크 
+          console.log("파일 체크 !files.complete == true")
+          console.log(`/file/${imgPath}`)
+        }
+        else {
+          console.log("파일 체크 !files.complete == false")
+          console.log(`/file/${imgPath}`)
+        }
+
         try {
           const profilePath = `/file/${imgPath}`
           console.log("try : " + profilePath)
