@@ -3,13 +3,12 @@
     <v-stepper-items>
       <v-stepper-content step="1" class="pa-0">
         <v-container>
-          <v-row class="tab-wrap" justify="center" align="center" >
+          <v-row class="tab-wrap" justify="center" align="center">
             <v-sheet
               color="white"
-              class="col-12 col-md-6 pa-6 "
+              class="col-10 col-md-6 pa-6"
               elevation="10"
               rounded="xl"
-              
             >
               <Country @onSettingLang="settingLang" />
               <!-- <v-btn class="ma-2" outlined color="primary" @click="e1 = 2">
@@ -45,10 +44,14 @@
                   </v-tabs>
                   <v-tabs-items v-model="tab">
                     <v-tab-item>
-                      <Login @onBackStep="e1 = 1" />
+                      <Login @onBackStep="e1 = 1" :locale="locale" />
                     </v-tab-item>
                     <v-tab-item>
-                      <Register @onRegister="onRegister" @onBackStep="e1 = 1" />
+                      <Register
+                        @onRegister="onRegister"
+                        @onBackStep="e1 = 1"
+                        :locale="locale"
+                      />
                     </v-tab-item>
                   </v-tabs-items>
                 </v-col>
@@ -74,6 +77,7 @@ export default {
     return {
       tab: null,
       e1: 1,
+      locale: null,
     };
   },
   computed: {
@@ -99,6 +103,7 @@ export default {
       this.tab = null;
     },
     settingLang(val) {
+      this.locale = val;
       this.$i18n.locale = val;
       //console.log("Main", val);
       this.e1 = 2;

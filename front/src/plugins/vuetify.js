@@ -9,7 +9,7 @@ const vuetify = new Vuetify({
       light: {
         primary: '#0288d1',
         secondary: '#09DEB5',
-        accent: '#60CC75',
+        accent: '#FFD600',
         error: '#FF0000',
         background: '#F8F9FA'
       },

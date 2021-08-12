@@ -19,7 +19,7 @@
       type="password"
     ></v-text-field>
     <v-text-field
-     :label="label.password2"
+      :label="label.password2"
       prepend-inner-icon="mdi-lock"
       v-model="repeatPassword"
       :error-messages="repeatPasswordErrors"
@@ -47,7 +47,7 @@
       @blur="$v.lang.$touch()"
     ></v-select>
     <div class="d-flex justify-space-between">
-      <v-btn class="ma-2" outlined color="primary" @click="$emit(`onBackStep`)">
+      <v-btn class="ma-2" outlined color="grey" @click="$emit(`onBackStep`)">
         <v-icon left> mdi-arrow-left </v-icon>
         {{ $t("main_back") }}
       </v-btn>
@@ -87,14 +87,21 @@ export default {
       nickname: "test",
       lang: "",
       label: {
-        email : null,
-        password : null,
-        password2 : null,
-        nickname : null,
-        lang : null,
+        email: null,
+        password: null,
+        password2: null,
+        nickname: null,
+        lang: null,
       },
       items: langItems,
     };
+  },
+  mixins: [validationMixin],
+
+  props: {
+    locale: {
+      type: String,
+    },
   },
   methods: {
     // Form 초기화 함수
@@ -146,26 +153,30 @@ export default {
           });
       }
     },
-    setRegisterInfo(){
-      this.label= {
-        email : i18n.t('login_email'),
-        password : i18n.t('login_pwd'),
-        password2 : i18n.t('register_pwd2'),
-        nickname : i18n.t('register_nickname'),
-        lang : i18n.t('register_lang'),
-      }
-      
-    }
+    setLang() {
+      // this.label = {
+      this.label.email = i18n.t("login_email");
+      this.label.password = i18n.t("login_pwd");
+      this.label.password2 = i18n.t("register_pwd2");
+      this.label.nickname = i18n.t("register_nickname");
+      this.label.lang = i18n.t("register_lang");
+      // };
+    },
   },
-
+  watch: {
+    locale(newValue, oldValue) {
+      this.setLang();
+    },
+  },
+  created() {
+    this.setLang();
+  },
   /* 
     유효성 검사 
     참고 자료
     1. https://vuetifyjs.com/en/components/forms/#vuelidate
     2. https://www.notion.so/720e938f8223446996aba3500b12f953#85f87afad3274019bbaadadd98b14088
   */
-  mixins: [validationMixin],
-
   validations: {
     email: {
       required,
@@ -267,10 +278,6 @@ export default {
       return errors;
     },
   },
-  //NOTE : update를 하게 되면 뷰가 이상해짐 다른 대책이 필요 할 듯싶은데..
-  created(){
-    this.setRegisterInfo()
-  }
 };
 </script>
 
