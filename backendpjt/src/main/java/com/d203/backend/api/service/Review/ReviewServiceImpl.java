@@ -34,15 +34,19 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = new Review();
         review.setContent(reviewInfo.getContent());
 
-        Optional<User> fromUser = userRepository.findById(reviewInfo.getFrom_user_id());
-        //System.out.println("fromUser : " + fromUser.get().getEmail() + " " + fromUser.get().getId());
-        review.setFromuserid(fromUser.get());
 
-        Optional<User> toUser = userRepository.findById(reviewInfo.getTo_user_id());
-        review.setTouserid(toUser.get());
-        //System.out.println("toUser : " + toUser.get().getEmail() + " " + toUser.get().getId());
+        User fromUser = userRepository.findById(reviewInfo.getFrom_user_id()).get();
+        System.out.println("fromUser : " + fromUser.getEmail() + " " + fromUser.getId());
+        review.setFromuserid(fromUser);
+        User toUser = userRepository.findById(reviewInfo.getTo_user_id()).get();
+        review.setTouserid(toUser);
+        System.out.println("toUser : " + toUser.getEmail() + " " + toUser.getId());
+
 
         review.setScore(reviewInfo.getScore());
+
+        toUser.setAvgScore(reviewRepository.getReviewAvgByTouserid(toUser.getId()));
+        userRepository.save(toUser);
 
         return reviewRepository.save(review);
     }
@@ -93,16 +97,6 @@ public class ReviewServiceImpl implements ReviewService {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public double avgReview(Long touserid) {
-
-        double reviewAvg = 0;
-        //System.out.println("Review Service : try userid: " + " " + touserid);
-        reviewAvg = reviewRepository.getReviewAvgByTouserid(touserid);
-       // System.out.println("Review Done : : " + " " + reviewAvg);
-        return reviewAvg;
     }
 
 

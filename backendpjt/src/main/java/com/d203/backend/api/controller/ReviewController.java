@@ -133,11 +133,5 @@ public class ReviewController {
 
         return ResponseEntity.status(401).body("User not macthed");
     }
-
-    @GetMapping("/avg/{touserid}")
-    public ResponseEntity<ReviewAvgRes> getReviewAvg(@PathVariable Long touserid) {
-
-        double avg = reviewService.avgReview(touserid);
-        return ResponseEntity.status(200).body(ReviewAvgRes.of(avg));
-    }
+    
 }
