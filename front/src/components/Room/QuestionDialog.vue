@@ -7,19 +7,21 @@
         </v-card-title>
         <v-card>
           <v-list-item three-line>
-            <v-avatar size="128">
-              <v-img :src="profilePath"> </v-img>
-            </v-avatar>
+            <div>
+              <v-avatar size="128">
+                <v-img :src="profilePath"> </v-img>
+              </v-avatar>
+            </div>
             <v-list-item-content>
-              <div class="text-overline">
-                {{ requestUserInfo.lang }}
-              </div>
 
-              <v-list-item-title class="text-h5 mb-1">
+              <v-list-item-title class="text-h5 mb-1 ml-5">
                 {{ requestUserInfo.nickname }}
+                <v-avatar size="32">
+                <img :src="langImage" />
+                </v-avatar>
               </v-list-item-title>
-
-              <v-list-item-subtitle>
+              
+              <v-list-item-subtitle class="text-h6 ml-5">
                 {{ requestUserInfo.introduction }}</v-list-item-subtitle
               >
             </v-list-item-content>
@@ -66,6 +68,14 @@ export default {
     questionResponse(response) {
       this.$emit("onQuestionResponse", response);
     },
+  },
+  computed: {
+    langImage:{
+      get(){
+        //console.log(this.profilePath)
+        return require(`@/assets/image/flag/${this.requestUserInfo.lang}.png`)
+      }
+    }
   },
 };
 </script>

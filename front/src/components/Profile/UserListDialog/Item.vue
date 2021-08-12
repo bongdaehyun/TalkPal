@@ -10,7 +10,7 @@
     <!-- <span class="ml-auto">
       {{ this.item.lang }}
     </span> -->
-    <v-avatar size="32" @click="goProfile" class="ml-auto" style="cursor: pointer">
+    <v-avatar size="32" class="ml-auto" style="cursor: pointer">
       <img :src="langImage" />
     </v-avatar>
   </div>
