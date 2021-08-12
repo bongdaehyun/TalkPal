@@ -7,25 +7,15 @@ const getProfilePath = {
       if (isProd === 'true') {
         let files = new Image;
         files.src = `/file/${imgPath}`;
-        if (!files.complete) { //파일 체크 
-          console.log("파일 체크 !files.complete == true")
-          console.log(`/file/${imgPath}`)
-        }
-        else {
-          console.log("파일 체크 !files.complete == false")
-          console.log(`/file/${imgPath}`)
-        }
 
-        try {
+        // NOTE: 파일 존재함
+        if (files.complete) {
           const profilePath = `/file/${imgPath}`
-          console.log("try : " + profilePath)
-
           return profilePath
         }
-        catch {
+        // NOTE: 파일 없음
+        else {
           const profilePath = `/file/default_profileImg.png`
-          console.log("catch : " + profilePath)
-
           return profilePath
         }
       }
