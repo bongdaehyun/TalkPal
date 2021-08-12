@@ -6,14 +6,11 @@
           <v-row class="tab-wrap" justify="center" align="center">
             <v-sheet
               color="white"
-              class="col-10 col-md-6 pa-6"
+              class="col-10 col-md-4 pa-6"
               elevation="10"
               rounded="xl"
             >
               <Country @onSettingLang="settingLang" />
-              <!-- <v-btn class="ma-2" outlined color="primary" @click="e1 = 2">
-                Countinue
-              </v-btn> -->
             </v-sheet>
           </v-row>
         </v-container>
@@ -105,7 +102,6 @@ export default {
     settingLang(val) {
       this.locale = val;
       this.$i18n.locale = val;
-      //console.log("Main", val);
       this.e1 = 2;
     },
   },

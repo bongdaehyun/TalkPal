@@ -76,7 +76,7 @@
     <QuestionDialog
       :timer="timer"
       :joinQuestionDialog="joinQuestionDialog"
-      :profilePath ="profilePath"
+      :profilePath="profilePath"
       :requestUserInfo="requestUserInfo"
       @onQuestionResponse="questionResponse"
     />
@@ -95,7 +95,7 @@ import Chat from "@/components/Room/Chat.vue";
 import Guide from "@/components/Room/Guide.vue";
 import QuestionDialog from "@/components/Room/QuestionDialog.vue";
 import Navigation from "@/components/Room/Navigation.vue";
-import ReviewDialog from "@/components/Review/ReviewDialog.vue"
+import ReviewDialog from "@/components/Review/ReviewDialog.vue";
 
 // NOTE: MIXIN
 import WebRTCMixin from "@/mixin/WebRTCMixin.js";

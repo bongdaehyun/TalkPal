@@ -43,7 +43,7 @@
     <v-fab-transition>
       <v-btn
         v-show="btnShow"
-        :class="[isMobile ? 'fab-position-mobile' : 'fab-position']"
+        class="fab-position"
         @click.prevent="$vuetify.goTo('.header')"
         color="primary"
         right
@@ -72,7 +72,7 @@ import Create from "@/components/Rooms/Create";
 import Search from "@/components/Rooms/Search";
 import InfiniteLoading from "vue-infinite-loading";
 import isMobile from "@/mixin/isMobile.js";
-import ReviewDialog from "@/components/Review/ReviewDialog.vue"
+import ReviewDialog from "@/components/Review/ReviewDialog.vue";
 import ReviewMixin from "@/mixin/ReviewMixin.js";
 
 export default {
@@ -152,7 +152,6 @@ export default {
         })
         .then((res) => {
           const data = res.data.roomResList;
-          console.log(data);
           if (data.length) {
             this.page += 1;
             this.rooms.push(...data);
@@ -263,17 +262,13 @@ export default {
   padding: 2rem !important;
   z-index: 2;
   left: 1vw;
-  width: 20vw;
+  width: 15vw;
 }
 .sticky-mobile {
   left: 0 !important;
-  bottom: 0px;
   width: 100%;
 }
 .fab-position {
-  bottom: 16px;
-}
-.fab-position-mobile {
-  bottom: 20%;
+  bottom: 56px;
 }
 </style>

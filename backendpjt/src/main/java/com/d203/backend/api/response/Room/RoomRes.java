@@ -49,8 +49,6 @@ public class RoomRes {
     String name;
 
     public static RoomRes of(Room room) {
-
-
         User hostUser = room.getHostId();
 
         RoomRes roomRes = new RoomRes();

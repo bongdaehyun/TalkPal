@@ -86,8 +86,8 @@ public class RoomServiceImpl implements RoomService {
     public Page<Room> getRoomList(String topic, String lang, int pageno) {
         Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 5);
         long langId = 0;
-        System.out.println("topic : " + topic);
-        System.out.println("lang : " + langId);
+//        System.out.println("topic : " + topic);
+//        System.out.println("lang : " + langId);
         if (!lang.equals("")) {
             Lang findlang = langRepository.findByName(lang);
             langId = findlang.getId();

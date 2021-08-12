@@ -5,7 +5,7 @@ import getProfilePath from "@/mixin/getProfilePath.js";
 import ReviewMixin from "@/mixin/ReviewMixin.js";
 
 const WebRTCMixin = {
-  mixins :[getProfilePath, ReviewMixin],
+  mixins: [getProfilePath, ReviewMixin],
   data() {
     return {
       ws: null,
@@ -316,7 +316,7 @@ const WebRTCMixin = {
       this.$store.dispatch("roomStore/exitRoom");
       this.ws.close();
       // NOTE: 평가할 상대가 있으면 방 목록으로 나가서 평가
-      if (this.opponentId){
+      if (this.opponentId) {
         this.$store.dispatch("roomStore/setReviewTrue", this.opponentId);
       }
       this.$router.push({ name: "Rooms" });
