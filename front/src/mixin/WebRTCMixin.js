@@ -66,8 +66,8 @@ const WebRTCMixin = {
       // NOTE: 요청 수락/거부 Dialog OPEN
       http.get("/users/" + request.requestUserId).then((res) => {
         this.requestUserInfo = res.data;
-        this.profilePath = this.getProfilePath(this.requestUserInfo.ImgPath)
-        console.log("requsetUser: ", this.requestUserInfo);
+        this.profilePath = this.getProfilePath(this.requestUserInfo.imgPath)
+        //console.log("requsetUser: ", this.requestUserInfo);
         this.openQuestionDialog();
       })
 
@@ -247,7 +247,7 @@ const WebRTCMixin = {
           function (error) {
             if (error) {
               // return this.$error(error);
-              console.log("hihi : " + error);
+              //console.log("hihi : " + error);
             }
             this.generateOffer(
               participant.offerToReceiveVideo.bind(participant)
@@ -292,7 +292,7 @@ const WebRTCMixin = {
           header: this.$store.getters["userStore/getHeader"],
         })
         .then((res) => {
-          console.log(res);
+          //console.log(res);
           this.exitRoom();
         });
     },
@@ -345,12 +345,12 @@ const WebRTCMixin = {
 
       this.ws.onopen = () => {
         this.join();
-        console.log(this.ws);
+        //console.log(this.ws);
       };
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
-        console.log("[parsedMessage]");
-        console.log(parsedMessage);
+        //console.log("[parsedMessage]");
+        //console.log(parsedMessage);
         switch (parsedMessage.id) {
           case "existingParticipants":
             this.onExistingParticipants(parsedMessage);
