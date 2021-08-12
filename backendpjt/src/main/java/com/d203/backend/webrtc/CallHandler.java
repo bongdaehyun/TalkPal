@@ -17,6 +17,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class CallHandler extends TextWebSocketHandler {
 
@@ -140,7 +141,9 @@ public class CallHandler extends TextWebSocketHandler {
         final String senderNickName = params.get("senderNickName").getAsString();
         final String sendMsg = params.get("sendMsg").getAsString();
 
+        TimeZone timeZone = TimeZone.getTimeZone("Asia/Seoul");
         SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        format.setTimeZone(timeZone);
         Date time = new Date();
         String sendTime = format.format(time);
 
