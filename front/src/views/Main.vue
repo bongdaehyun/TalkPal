@@ -3,13 +3,12 @@
     <v-stepper-items>
       <v-stepper-content step="1" class="pa-0">
         <v-container>
-          <v-row class="tab-wrap" justify="center" align="center">
+          <v-row class="tab-wrap" justify="center" align="center" >
             <v-sheet
               color="white"
-              class="col-10 col-md-3 pa-6"
+              class="col-12 col-md-6 pa-6 "
               elevation="10"
               rounded="xl"
-              tile
               
             >
               <Country @onSettingLang="settingLang" />

@@ -2,7 +2,7 @@
   <v-container>
     <v-img src="@/assets/image/logo.png"></v-img>
     <div class="d-flex justify-space-around">
-      <v-sheet class="col-5 click mr-3" elevation="3" rounded="xl">
+      <v-sheet class="col-4 click ml-auto mr-3" elevation="3" rounded="xl">
         <v-img
           @click="SelectLang(`ko`)"
           width="100%"
@@ -10,7 +10,7 @@
           value="ko"
         ></v-img>
       </v-sheet>
-      <v-sheet class="col-5 click mr-3" elevation="3" rounded="xl">
+      <v-sheet class="col-4 click ml-auto mr-3" elevation="3" rounded="xl">
         <v-img
           @click="SelectLang(`en`)"
           width="100%"
@@ -18,7 +18,7 @@
           value="en"
         ></v-img>
       </v-sheet>
-      <v-sheet class="col-5 click mr-3" elevation="3" rounded="xl">
+      <v-sheet class="col-4 click ml-auto" elevation="3" rounded="xl">
         <v-img
           @click="SelectLang(`jp`)"
           width="100%"
