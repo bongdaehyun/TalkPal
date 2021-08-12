@@ -42,7 +42,6 @@ const ReviewMixin = {
           page: Item.page,
         })
         .then((res) => {
-          console.log(res.data)
           this.pushReviews(Item, res.data.reviewList);
         })
         .catch((err) => {

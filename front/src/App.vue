@@ -1,23 +1,23 @@
 <template>
   <v-app style="background-color: #f8f9fa">
-    <v-app-bar app elevation="1" color="#FFFFFF" v-if="loginStatus && !isRoom">
-      <div class="d-flex align-center">
+    <v-app-bar v-if="loginStatus && !isRoom" elevation="1" color="#FFFFFF" app>
+      <div class="d-flex justify-end" style="flex: 1">
         <v-img src="@/assets/image/logo.png" max-width="224px" contain></v-img>
       </div>
       <v-spacer></v-spacer>
       <!-- NOTE: 데스크탑 버전 -->
-      <div v-if="!isMobile">
-        <v-btn text>
+      <div style="flex: 1" v-if="!isMobile" class="d-flex">
+        <v-btn tile elevation="3" :color="roomsColor">
           <span class="mr-2" @click="goRooms">
             {{ $t("nav_rooms") }}
           </span>
         </v-btn>
-        <v-btn text>
+        <v-btn tile elevation="3" :color="profileColor">
           <span class="mr-2" @click="goProfile">
             {{ $t("nav_profile") }}
           </span>
         </v-btn>
-        <v-btn text>
+        <v-btn tile elevation="3">
           <span class="mr-2" @click="onLogout">
             {{ $t("nav_logout") }}
           </span>
@@ -89,6 +89,18 @@ export default {
     };
   },
   computed: {
+    roomsColor() {
+      if (this.$store.getters["getActiveMenu"] == "Rooms") {
+        return "primary";
+      }
+      return "white";
+    },
+    profileColor() {
+      if (this.$store.getters["getActiveMenu"] == "Profile") {
+        return "primary";
+      }
+      return "white";
+    },
     snackbarText() {
       return this.$store.getters["getSnackbarText"];
     },

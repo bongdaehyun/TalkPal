@@ -309,21 +309,23 @@ const WebRTCMixin = {
       this.$log(msgInfo);
       let msg = {
         sender: msgInfo.senderId,
-        nick : msgInfo.senderNickName,
+        nick: msgInfo.senderNickName,
         time: msgInfo.sendTime,
         content: msgInfo.sendMsg,
       };
       this.msgList.push(msg);
     },
     connect() {
-      // TODO: ws
-      // this.ws = this.$store.getters["userStore/getWS"];
       this.ws = new WebSocket(this.socketUrl);
+      // this.$store.dispatch("userStore/setWebSocket");
+      // this.ws = this.$store.getters["userStore/getWebSocket"];
+      this.ws.onopen = () => {
+        this.join();
+      };
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
         console.log("[parsedMessage]");
         console.log(parsedMessage);
-        // this.$info(`[parsedMessage] : ${parsedMessage}`);
         switch (parsedMessage.id) {
           case "existingParticipants":
             this.onExistingParticipants(parsedMessage);
@@ -370,13 +372,7 @@ const WebRTCMixin = {
             this.$error(parsedMessage);
         }
       };
-      this.ws.onopen = () => {
-        this.$log(this.ws);
 
-        setTimeout(() => {
-          this.join();
-        }, 500);
-      };
     },
   },
 }

@@ -3,8 +3,9 @@
     <div :class="[isMobile ? 'd-flex flex-column' : 'row no-gutters']">
       <v-sheet
         elevation="2"
-        :class="[isMobile ? 'sticky-mobile' : 'col-2']"
         class="sticky"
+        :class="[isMobile ? 'sticky-mobile' : 'col-2']"
+        rounded="xl"
       >
         <!-- NOTE: 방 조건 검색 -->
         <Search
@@ -12,7 +13,7 @@
           @openCreateDialog="$refs.createDialog.dialog = true"
         />
         <!-- NOTE: 방 생성 -->
-        <Create ref="createDialog" @onCreateRoom="onCreateRoom" :ws="ws" />
+        <Create ref="createDialog" @onCreateRoom="onCreateRoom" />
       </v-sheet>
       <!-- NOTE: 방 목록 -->
       <div :class="[isMobile ? 'd-flex flex-column' : 'offset-1 col-9 row']">
@@ -80,7 +81,7 @@ export default {
   mixins: [isMobile],
   data() {
     return {
-      socketUrl: process.env.VUE_APP_SOCKET_URL,
+      // socketUrl: process.env.VUE_APP_SOCKET_URL,
       page: 1,
       rooms: [],
       ws: null,
@@ -143,8 +144,9 @@ export default {
       this.btnShow = window.scrollY > 400;
     },
     connect() {
-      // this.ws = this.$store.getters["userStore/getWS"];
-      this.ws = new WebSocket(this.socketUrl);
+      this.$store.dispatch("userStore/setWebSocket");
+      this.ws = this.$store.getters["userStore/getWebSocket"];
+
       console.log(this.ws);
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);

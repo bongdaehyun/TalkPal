@@ -3,22 +3,22 @@
     <v-select
       v-model="input.topic"
       :class="[isMobile ? 'me-3' : '']"
-      @change="search"
       :items="topicItems | searchi18n"
       :label="$t('create_topic')"
-      hide-details
       item-text="name"
       item-value="value"
+      @change="search"
+      hide-details
     ></v-select>
     <v-select
       v-model="input.lang"
       :class="[isMobile ? 'ms-3' : '']"
-      @change="search"
       :items="LangItems | searchi18n"
       :label="$t('search_lang')"
-      hide-details
       item-text="name"
       item-value="value"
+      @change="search"
+      hide-details
     ></v-select>
     <v-btn v-if="isMobile" @click="openCreateDialog" icon>
       <v-icon color="primary" x-large>mdi-plus</v-icon>

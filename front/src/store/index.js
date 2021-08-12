@@ -15,6 +15,7 @@ const getDefaultState = () => {
     snackbarText: null,
     snackbarStatus: false,
     snackbarColor: "primary",
+    activeMenu: null,
   }
 }
 
@@ -34,6 +35,9 @@ export default new Vuex.Store({
     },
     getSnackbarColor(state) {
       return state.snackbarColor
+    },
+    getActiveMenu(state) {
+      return state.activeMenu
     }
   },
   mutations: {
@@ -42,8 +46,14 @@ export default new Vuex.Store({
       state.snackbarText = payload.text
       state.snackbarColor = payload.color
     },
+
     OFF_SNACKBAR(state) {
-      Object.assign(state, getDefaultState())
+      state.snackbarText = null
+      state.snackbarStatus = false
+      state.snackbarColor = "primary"
+    },
+    CHANGE_ACTIVE_MENU(state, payload) {
+      state.activeMenu = payload
     },
   },
   actions: {
@@ -52,6 +62,10 @@ export default new Vuex.Store({
       setTimeout(() => {
         context.commit("OFF_SNACKBAR", payload);
       }, 2000)
+    },
+    changeActiveMenu(context, payload) {
+      console.log(payload)
+      context.commit("CHANGE_ACTIVE_MENU", payload);
     }
   },
 
