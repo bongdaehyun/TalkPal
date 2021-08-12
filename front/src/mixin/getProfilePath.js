@@ -4,6 +4,10 @@ const getProfilePath = {
       const isProd = process.env.VUE_APP_PROD
 
       if (isProd === 'true') {
+        // NOTE: 프로필 이미지 없음
+        if (imgPath === null) {
+          return `/file/default_profileImg.png`
+        }
         let files = new Image;
         files.src = `/file/${imgPath}`;
 
