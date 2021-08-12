@@ -1,21 +1,18 @@
-import fs from 'fs';
-
 const getProfilePath = {
   methods: {
     getProfilePath(imgPath) {
+      console.log("현재 경로 : " + window.location.pathname)
       const isProd = process.env.VUE_APP_PROD
       if (isProd === 'true') {
         try {
           const profilePath = `/file/${imgPath}`
-          console.log(profilePath)
-          console.log(fs.existsSync(profilePath))
+          console.log("try : " + profilePath)
 
           return profilePath
         }
         catch {
           const profilePath = `/file/default_profileImg.png`
-          console.log(profilePath)
-          console.log(fs.existsSync(profilePath))
+          console.log("catch : " + profilePath)
 
           return profilePath
         }
