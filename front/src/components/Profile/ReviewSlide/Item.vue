@@ -1,36 +1,39 @@
 <template>
   <div>
-    <v-card class="mx-auto" outlined>
-      <v-card-title class="black--text">
-        <v-row>
-          <v-col cols="2">
-             <v-avatar size="56">
-              <v-img :src="profilePath"></v-img>
-            </v-avatar>
-          </v-col>
-          <v-col cols="3">
+    <v-card class="mx-auto" >
+      <v-list-item three-line>
+        <v-list-item-avatar tile size="64">
+          <v-img :src="profilePath"></v-img>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <div class="text-overline">
             <v-rating
-                v-model="rating"
-                background-color="primary"
-                :readonly="true"
-                color="primary"
-                small
+              v-model="rating"
+              background-color="primary"
+              :readonly="true"
+              color="primary"
+              small
             >
             </v-rating>
-            <h5>
-               {{ profileNickname }}
-            </h5>
+          </div>
+          <v-list-item-title class="text-h5 mb-1">
+            {{ profileNickname }}
+          </v-list-item-title>
+          
+        </v-list-item-content>
+        
+      </v-list-item>
+       <v-card-text>
+        <v-row >
+          <v-col
+            class="text-h5"
+            cols="11"
+          >
+            <p>{{item.content}}</p>
           </v-col>
-          <v-col cols="6">
-              
-          </v-col>
+          
         </v-row>
-      </v-card-title>
-      <v-card-text>
-        <div>
-          <h3>{{ item.content }}</h3>
-        </div>
-      </v-card-text>
+    </v-card-text>
     </v-card>
   </div>
 </template>
@@ -84,17 +87,9 @@ export default {
     openDialog() {
       //console.log("openDialog");
     },
-    goProfile() {
-      //console.log(this.item);
-      this.$router.push({
-        name: "Profile",
-        params: { userId: this.item.from_user_id },
-      });
-      this.$router.go();
-    },
   },
   mounted() {
-    console.log(this.item)
+   // console.log(this.item)
   },
 };
 </script>
@@ -105,9 +100,5 @@ export default {
 .v-rating > .v-icon {
   padding: 0px !important;
 }
-h3{
-  width: 200px;
-  word-break:break-all;
-  white-space:normal;
-}
+
 </style>
