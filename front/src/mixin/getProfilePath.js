@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 const getProfilePath = {
   methods: {
     getProfilePath(imgPath) {
@@ -6,13 +8,14 @@ const getProfilePath = {
         try {
           const profilePath = `/file/${imgPath}`
           console.log(profilePath)
+          console.log(fs.existsSync(profilePath))
 
           return profilePath
         }
         catch {
           const profilePath = `/file/default_profileImg.png`
           console.log(profilePath)
-
+          console.log(fs.existsSync(profilePath))
 
           return profilePath
         }
