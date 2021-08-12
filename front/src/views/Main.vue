@@ -9,6 +9,8 @@
               class="col-10 col-md-3 pa-6"
               elevation="10"
               rounded="xl"
+              tile
+              
             >
               <Country @onSettingLang="settingLang" />
               <!-- <v-btn class="ma-2" outlined color="primary" @click="e1 = 2">
@@ -99,7 +101,7 @@ export default {
     },
     settingLang(val) {
       this.$i18n.locale = val;
-      console.log("Main", val);
+      //console.log("Main", val);
       this.e1 = 2;
     },
   },

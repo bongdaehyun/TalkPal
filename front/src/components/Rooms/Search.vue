@@ -39,7 +39,7 @@ export default {
         topic: "search_total",
         lang: "search_total",
       },
-      LangItems: ["search_total", "ko", "en"],
+      LangItems: ["search_total", "ko", "en","jp"],
       topicItems: [
         "search_total",
         "create_music",

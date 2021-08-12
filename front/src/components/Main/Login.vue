@@ -1,12 +1,12 @@
 <template>
   <v-container>
     <v-text-field
-      label="Email"
+      :label="labelemail"
       prepend-inner-icon="mdi-email"
       v-model="email"
     ></v-text-field>
     <v-text-field
-      label="Password"
+      :label="labelpwd"
       prepend-inner-icon="mdi-lock"
       v-model="password"
       type="password"
@@ -34,6 +34,8 @@ export default {
       // password: "",
       email: "test@gmail.com",
       password: "1q2w3e4r!",
+      labelemail :null,
+      labelpwd : null,
     };
   },
   methods: {
@@ -67,7 +69,15 @@ export default {
           });
         });
     },
+    setLang() {
+      this.labelemail = i18n.t('login_email')
+      this.labelpwd = i18n.t('login_pwd')
+    },
+    
   },
+  updated(){
+    this.setLang()
+  }
 };
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-text-field
-      label="Email"
+      :label="label.email"
       prepend-inner-icon="mdi-email"
       v-model="email"
       :error-messages="emailErrors"
@@ -10,7 +10,7 @@
       type="email"
     ></v-text-field>
     <v-text-field
-      label="Password"
+      :label="label.password"
       prepend-inner-icon="mdi-lock"
       v-model="password"
       :error-messages="passwordErrors"
@@ -19,7 +19,7 @@
       type="password"
     ></v-text-field>
     <v-text-field
-      label="Password Confirm"
+     :label="label.password2"
       prepend-inner-icon="mdi-lock"
       v-model="repeatPassword"
       :error-messages="repeatPasswordErrors"
@@ -28,7 +28,7 @@
       type="password"
     ></v-text-field>
     <v-text-field
-      label="NickName"
+      :label="label.nickname"
       prepend-inner-icon="mdi-text"
       v-model="nickname"
       :error-messages="nicknameErrors"
@@ -41,7 +41,7 @@
       :items="items"
       item-text="name"
       item-value="value"
-      label="Language"
+      :label="label.lang"
       :error-messages="langErrors"
       @input="$v.lang.$touch()"
       @blur="$v.lang.$touch()"
@@ -86,7 +86,13 @@ export default {
       repeatPassword: "1q2w3e4r!",
       nickname: "test",
       lang: "",
-
+      label: {
+        email : null,
+        password : null,
+        password2 : null,
+        nickname : null,
+        lang : null,
+      },
       items: langItems,
     };
   },
@@ -140,6 +146,16 @@ export default {
           });
       }
     },
+    setRegisterInfo(){
+      this.label= {
+        email : i18n.t('login_email'),
+        password : i18n.t('login_pwd'),
+        password2 : i18n.t('register_pwd2'),
+        nickname : i18n.t('register_nickname'),
+        lang : i18n.t('register_lang'),
+      }
+      
+    }
   },
 
   /* 
@@ -251,6 +267,10 @@ export default {
       return errors;
     },
   },
+  //NOTE : update를 하게 되면 뷰가 이상해짐 다른 대책이 필요 할 듯싶은데..
+  created(){
+    this.setRegisterInfo()
+  }
 };
 </script>
 
