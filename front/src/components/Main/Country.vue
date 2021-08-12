@@ -47,16 +47,8 @@ export default {
     SelectLang(val) {
       this.lang = val;
       this.$emit("onSettingLang", val);
-      console.log(val);
     },
   },
-  // watch: {
-  //   lang(val) {
-  //     this.lang = val;
-  //     this.$emit("onSettingLang", val);
-  //     console.log(val);
-  //   },
-  // },
 };
 </script>
 <style scoped>

@@ -1,40 +1,31 @@
 <template>
-  <div>
-    <v-card class="mx-auto" >
+  <div class="pa-3">
+    <v-sheet color="white" elevation="5">
       <v-list-item three-line>
         <v-list-item-avatar tile size="64">
           <v-img :src="profilePath"></v-img>
         </v-list-item-avatar>
         <v-list-item-content>
-          <div class="text-overline">
-            <v-rating
-              v-model="rating"
-              background-color="primary"
-              :readonly="true"
-              color="primary"
-              small
-            >
-            </v-rating>
-          </div>
-          <v-list-item-title class="text-h5 mb-1">
+          <v-rating
+            v-model="rating"
+            background-color="#CFD8DC"
+            :readonly="true"
+            color="accent"
+          >
+          </v-rating>
+          <v-list-item-title class="text-h5 mb-1 font-weight-black">
             {{ profileNickname }}
           </v-list-item-title>
-          
         </v-list-item-content>
-        
       </v-list-item>
-       <v-card-text>
-        <v-row >
-          <v-col
-            class="text-h5"
-            cols="11"
-          >
-            <p>{{item.content}}</p>
+      <v-card-text>
+        <v-row>
+          <v-col class="text-body-1" cols="11">
+            <p>{{ item.content }}</p>
           </v-col>
-          
         </v-row>
-    </v-card-text>
-    </v-card>
+      </v-card-text>
+    </v-sheet>
   </div>
 </template>
 
@@ -84,13 +75,9 @@ export default {
   },
 
   methods: {
-    openDialog() {
-      //console.log("openDialog");
-    },
+    openDialog() {},
   },
-  mounted() {
-   // console.log(this.item)
-  },
+  mounted() {},
 };
 </script>
 <style>
@@ -100,5 +87,4 @@ export default {
 .v-rating > .v-icon {
   padding: 0px !important;
 }
-
 </style>

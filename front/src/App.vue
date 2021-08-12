@@ -1,7 +1,7 @@
 <template>
   <v-app style="background-color: #f8f9fa">
     <v-app-bar v-if="loginStatus && !isRoom" elevation="1" color="#FFFFFF" app>
-      <div class="d-flex justify-end" style="flex: 1">
+      <div :class="[isMobile ? '' : 'd-flex justify-end']" style="flex: 1">
         <v-img src="@/assets/image/logo.png" max-width="224px" contain></v-img>
       </div>
       <v-spacer></v-spacer>

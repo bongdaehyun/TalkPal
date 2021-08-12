@@ -1,32 +1,23 @@
 <template>
   <v-container class="pa-0" :class="[isMobile ? '' : 'mt-12']">
-    <!-- <div :class="[isMobile ? 'd-flex flex-column' : 'row no-gutters']"> -->
-    <div
-      :class="[
-        isMobile ? 'd-flex flex-column' : 'row no-gutters justify-center',
-      ]"
-    >
-      <div class="col-12">
-        <v-sheet
-          elevation="2"
-          class="sticky"
-          :class="[isMobile ? 'sticky-mobile' : 'pa-6 ']"
-          tile
-        >
-          <!-- NOTE: 방 조건 검색 -->
-          <Search
-            @setSearchData="changeSearchData"
-            @openCreateDialog="$refs.createDialog.dialog = true"
-          />
-          <!-- NOTE: 방 생성 -->
-          <Create ref="createDialog" @onCreateRoom="onCreateRoom" />
-        </v-sheet>
-      </div>
-      <!-- NOTE: 방 목록 -->
-      <div
-        :class="[isMobile ? 'd-flex flex-column' : 'col-8 row justify-center']"
+    <div class="row no-gutters justify-center">
+      <v-sheet
+        elevation="2"
+        class="sticky"
+        :class="[isMobile ? 'sticky-mobile' : ' ']"
+        tile
       >
-        <v-col v-for="item in rooms" :key="item.id" lg="3" md="4" cols="12">
+        <!-- NOTE: 방 조건 검색 -->
+        <Search
+          @setSearchData="changeSearchData"
+          @openCreateDialog="$refs.createDialog.dialog = true"
+        />
+        <!-- NOTE: 방 생성 -->
+        <Create ref="createDialog" @onCreateRoom="onCreateRoom" />
+      </v-sheet>
+      <!-- NOTE: 방 목록 -->
+      <div class="row justify-center" :class="[isMobile ? 'col-12 ' : 'col-8']">
+        <v-col v-for="item in rooms" :key="item.id" lg="4" md="6" cols="12">
           <Item :item="item" @onEnterRoom="onEnterRoom" />
         </v-col>
         <infinite-loading :identifier="searchData" @infinite="requestRooms">
@@ -51,14 +42,13 @@
     <!-- NOTE: 스크롤 올리는 버튼 -->
     <v-fab-transition>
       <v-btn
-        bottom
+        v-show="btnShow"
+        :class="[isMobile ? 'fab-position-mobile' : 'fab-position']"
+        @click.prevent="$vuetify.goTo('.header')"
+        color="primary"
         right
         fixed
         fab
-        small
-        color="primary"
-        v-show="btnShow"
-        @click.prevent="$vuetify.goTo('.header')"
       >
         <v-icon>mdi-chevron-double-up</v-icon>
       </v-btn>
@@ -162,6 +152,7 @@ export default {
         })
         .then((res) => {
           const data = res.data.roomResList;
+          console.log(data);
           if (data.length) {
             this.page += 1;
             this.rooms.push(...data);
@@ -269,12 +260,20 @@ export default {
 .sticky {
   background-color: white;
   position: fixed;
-  align-self: flex-start;
   padding: 2rem !important;
   z-index: 2;
-  top: 104px;
+  left: 1vw;
+  width: 20vw;
 }
 .sticky-mobile {
+  left: 0 !important;
+  bottom: 0px;
   width: 100%;
+}
+.fab-position {
+  bottom: 16px;
+}
+.fab-position-mobile {
+  bottom: 20%;
 }
 </style>

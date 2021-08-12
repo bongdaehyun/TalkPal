@@ -18,11 +18,9 @@
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
 import Item from "./ReviewSlide/Item.vue";
-import isMobile from "@/mixin/isMobile.js";
 
 export default {
   name: "ReviewSlide",
-  mixins: [isMobile],
   data() {
     return {
       swiperOption: {
@@ -36,14 +34,17 @@ export default {
     Item: {
       type: Object,
     },
+    isMobile: {
+      type: Boolean,
+    },
   },
+  computed: {},
   methods: {
     // NOTE: 마지막 리뷰일 때 다음 리뷰 페이지 불러오기
     slideEnd() {
       this.$emit("onSlideEnd", this.Item);
     },
   },
-  created() {},
   components: {
     Swiper,
     SwiperSlide,

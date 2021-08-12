@@ -3,29 +3,33 @@
     <v-img
       :src="getTopicPath"
       class="d-flex"
-      max-height="200px"
+      min-height="150px"
+      max-height="150px"
       contain
     ></v-img>
-    <div class="d-flex justify-space-between px-6 mb-3">
+    <div class="px-3">
       <span class="font-weight-black">{{ item.name }}</span>
+    </div>
+    <div class="d-flex justify-end px-3">
       <span
         :class="[isHover ? 'primary--text font-weight-black' : 'grey--text']"
-        >{{ $t(item.topic) }}</span
       >
+        {{ $t(item.topic) }}
+      </span>
     </div>
-    <div class="px-6">
+    <div class="px-3">
       <v-avatar size="32">
         <v-img :src="getHostPlagPath"> </v-img>
       </v-avatar>
       <span class="font-weight-black ms-2">{{ $t("item_host") }}</span>
     </div>
-    <div class="px-6 mt-3">
+    <div class="px-3 mt-3">
       <v-avatar size="32">
         <v-img :src="getGuestPlagPath"> </v-img>
       </v-avatar>
       <span class="font-weight-black ms-2">{{ $t("item_guest") }}</span>
     </div>
-    <div class="ml-auto px-6">
+    <div class="ml-auto px-3">
       <v-btn
         :class="[isHover ? 'hover-btn-size' : '']"
         @mouseover="overBtn"
