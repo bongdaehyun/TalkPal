@@ -68,24 +68,28 @@ const ReviewMixin = {
 
     // NOTE: 리뷰 작성
     reviewSubmit(reviewInfo) {
-      if (reviewInfo.isReview) {
-        reviewInfo.from_user_id = this.$store.getters["userStore/getUserId"];
-        this.$store
-          .dispatch("userStore/submitReview", reviewInfo)
-          .then(() => {
-            this.$store.dispatch("onSnackbar", {
-              text: "리뷰 작성 완료",
-              color: "success",
-            })
+      reviewInfo.from_user_id = this.$store.getters["userStore/getUserId"];
+      console.log(reviewInfo, reviewInfo.from_user_id)
+      this.$store
+        .dispatch("userStore/submitReview", reviewInfo)
+        .then(() => {
+          this.$store.dispatch("onSnackbar", {
+            text: "리뷰 작성 완료",
+            color: "success",
           })
-          .catch((err) => {
-            console.error(err);
-          });
-      }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      this.closeReviewDialog()
+    },
+    // NOTE: 리뷰 다이얼로그 닫기
+    closeReviewDialog() {
       this.$store.dispatch("roomStore/setReviewFalse");
+
       this.reviewDialog = false;
       this.reviewUserId = null;
-    },
+    }
   },
 }
 export default ReviewMixin

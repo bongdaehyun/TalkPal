@@ -2,21 +2,14 @@
   <v-dialog v-model="dialog" persistent :max-width="maxWidth">
     <template v-slot:activator="{ on, attrs }">
       <div class="mt-6" v-if="!isMobile">
-        <v-btn
-          width="100%"
-          color="primary"
-          v-bind="attrs"
-          v-on="on"
-          rounded
-          outlined
-        >
+        <v-btn width="100%" color="primary" v-bind="attrs" v-on="on" tile>
           <span>
             {{ $t("room_create") }}
           </span>
         </v-btn>
       </div>
     </template>
-    <v-sheet rounded="xl" class="d-flex flex-column pa-6">
+    <v-sheet tile class="d-flex flex-column pa-6">
       <v-text-field
         :label="$t('create_name')"
         v-model="inputs.name"
@@ -36,14 +29,15 @@
         v-model="inputs.topic"
       ></v-select>
       <v-spacer></v-spacer>
-      <div class="d-flex justify-end">
-        <v-btn color="error" class="ms-3" outlined @click="dialog = false">
-          {{ $t("create_close") }}
-        </v-btn>
-        <v-btn color="primary" class="ms-3" outlined @click="reqeustCreateRoom">
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="primary" tile @click="reqeustCreateRoom">
           {{ $t("create_save") }}
         </v-btn>
-      </div>
+        <v-btn tile @click="dialog = false">
+          {{ $t("create_close") }}
+        </v-btn>
+      </v-card-actions>
     </v-sheet>
   </v-dialog>
 </template>

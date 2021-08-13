@@ -69,11 +69,13 @@
       </v-sheet>
     </v-container>
     <Navigation
+      @toggleCamera="toggleCamera"
       @onLeaveRoom="leaveRoom"
       @onToggleChat="toggleChat"
       @onToggleGuide="toggleGuide"
     />
     <QuestionDialog
+      v-if="requestUserInfo"
       :timer="timer"
       :joinQuestionDialog="joinQuestionDialog"
       :profilePath="profilePath"
@@ -84,6 +86,7 @@
       :reviewDialog="reviewDialog"
       :reviewUserId="reviewUserId"
       @onReviewSubmit="reviewSubmit"
+      @closeReviewDialog="closeReviewDialog"
     />
   </div>
 </template>
@@ -95,7 +98,7 @@ import Chat from "@/components/Room/Chat.vue";
 import Guide from "@/components/Room/Guide.vue";
 import QuestionDialog from "@/components/Room/QuestionDialog.vue";
 import Navigation from "@/components/Room/Navigation.vue";
-import ReviewDialog from "@/components/Review/ReviewDialog.vue";
+import ReviewDialog from "@/components/Room/ReviewDialog.vue";
 
 // NOTE: MIXIN
 import WebRTCMixin from "@/mixin/WebRTCMixin.js";
@@ -108,6 +111,7 @@ import _ from "lodash";
 
 export default {
   name: "Room",
+  // NOTE: Web RTC 관련 함수 분리
   mixins: [WebRTCMixin, isMobile],
   data() {
     return {

@@ -20,22 +20,22 @@
           </v-avatar>
           <div class="d-flex flex-column justify-center ml-5">
             <div class="text-h5 mb-1">
-              <v-avatar size="24" class="mb-1 ">
+              <v-avatar size="24" class="mb-1">
                 <v-img :src="getPlagPath"></v-img>
               </v-avatar>
               {{ requestUserInfo.nickname }}
             </div>
-            <div class="text-body-2 mb-1 ">
+            <div class="text-body-2 mb-1">
               {{ requestUserInfo.introduction }}
             </div>
           </div>
         </div>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn large color="primary" text @click="questionResponse(true)">
+          <v-btn color="primary" tile @click="questionResponse(true)">
             {{ $t("questiondialog_yes") }}
           </v-btn>
-          <v-btn large color="grey" text @click="questionResponse(false)">
+          <v-btn tile @click="questionResponse(false)">
             {{ $t("questiondialog_no") }}
           </v-btn>
         </v-card-actions>
@@ -71,9 +71,9 @@ export default {
   },
   computed: {
     getPlagPath() {
+      console.log("[this.requestUserInfo] :" + this.requestUserInfo);
       return require(`@/assets/image/flag/${this.requestUserInfo.lang}.png`);
     },
-
   },
 };
 </script>

@@ -7,7 +7,7 @@
           <div class="d-flex flex-column align-center">
             <!-- NOTE: 유저 평균 평점 -->
             <v-rating
-              v-model="rating"
+              v-model="profileInfo.avgScore"
               background-color="#CFD8DC"
               color="accent"
               half-increments

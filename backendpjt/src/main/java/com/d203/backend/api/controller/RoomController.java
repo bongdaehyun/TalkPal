@@ -4,13 +4,10 @@ import com.d203.backend.api.request.Room.RoomReq;
 import com.d203.backend.api.request.Room.RoomUpadateReq;
 import com.d203.backend.api.response.Room.RoomListRes;
 import com.d203.backend.api.response.Room.RoomRes;
-import com.d203.backend.api.service.User.UserService;
 import com.d203.backend.common.auth.SsafyUserDetails;
 import com.d203.backend.db.entity.Room;
-import com.d203.backend.db.entity.User;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +27,23 @@ public class RoomController {
     @Autowired
     RoomService roomService;
 
+    //방 조건 검색
+    @ApiOperation(value = "방 정보 검색", notes = "방 조건에 따라 검색.")
+    @GetMapping("{pageno}")
+    public ResponseEntity<?> ConditionSearch(String topic, String lang, @PathVariable int pageno) {
+        List<Room> rooms = null;
+        Page<Room> pagerooms = null;
+        pagerooms = roomService.getRoomList(topic, lang, pageno);
 
+        if (pagerooms != null) {
+            rooms = pagerooms.getContent();
+        }
+        if (rooms == null) {
+            return ResponseEntity.status(404).body("No Room");
+        } else {
+            return ResponseEntity.status(200).body(RoomListRes.getList(rooms));
+        }
+    }
 
     //CRUD
     @PostMapping("/create")
@@ -90,23 +103,6 @@ public class RoomController {
         return ResponseEntity.status(401).body("User not macthed");
     }
 
-    //방 조건 검색
-    @ApiOperation(value = "방 정보 검색", notes = "방 조건에 따라 검색.")
-    @GetMapping("{pageno}")
-    public ResponseEntity<?> ConditionSearch(String topic, String lang, @PathVariable int pageno) {
-        List<Room> rooms = null;
-        Page<Room> pagerooms = null;
-        pagerooms = roomService.getRoomList(topic, lang, pageno);
-
-        if (pagerooms != null) {
-            rooms = pagerooms.getContent();
-        }
-        if (rooms == null) {
-            return ResponseEntity.status(404).body("No Room");
-        } else {
-            return ResponseEntity.status(200).body(RoomListRes.getList(rooms));
-        }
-    }
 
     //현재인원 체크
     @ApiOperation(value = "방 현재인원 체크", notes = "uuid를 받아와 현재인원 체크")
