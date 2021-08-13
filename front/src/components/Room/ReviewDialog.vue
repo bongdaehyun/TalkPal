@@ -9,13 +9,11 @@
         <div class="mx-auto pt-6">
           <span class="black--text title-text">
             {{ $t("review_create_title_1") }}
-            
           </span>
         </div>
         <div class="mx-auto pa-3">
           <span class="grey--text">
             {{ $t("review_create_title_2") }}
-            
           </span>
         </div>
         <div class="mx-auto">

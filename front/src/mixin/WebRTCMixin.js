@@ -37,15 +37,15 @@ const WebRTCMixin = {
     },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
-        this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
+        // this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
         return;
       }
       const jsonMessage = JSON.stringify(message);
-      this.$log("[sendMessage] message: " + jsonMessage);
+      // this.$log("[sendMessage] message: " + jsonMessage);
       this.ws.send(jsonMessage);
     },
     sendError(message) {
-      this.$log("[errMessage] " + message);
+      // this.$log("[errMessage] " + message);
       this.sendMessage({
         id: "ERROR",
         message: message,
@@ -122,13 +122,13 @@ const WebRTCMixin = {
           toid: request.userId,
         })
         .then((res) => {
-          this.$log(res);
+          // this.$log(res);
         });
       this.opponentId = request.userId;
       this.receiveVideo(request.userId);
     },
     onParticipantLeft(request) {
-      this.$log("Participant " + request.userId + " left");
+      // this.$log("Participant " + request.userId + " left");
 
       const index = _.findIndex(this.participants, (participant) => {
         return participant.userId == request.userId;
@@ -145,8 +145,8 @@ const WebRTCMixin = {
     },
 
     receiveVideoResponse(result) {
-      this.$log("receiveVideoResponse");
-      this.$log(this.participantComponents[result.userId]);
+      // this.$log("receiveVideoResponse");
+      // this.$log(this.participantComponents[result.userId]);
 
       this.participantComponents[result.userId].rtcPeer.processAnswer(
         result.sdpAnswer,
@@ -157,7 +157,7 @@ const WebRTCMixin = {
     },
     callResponse(message) {
       if (message.response != "accepted") {
-        this.$log("Call not accepted by peer. Closing call");
+        // this.$log("Call not accepted by peer. Closing call");
         stop();
       } else {
         this.webRtcPeer.processAnswer(message.sdpAnswer, (error) => {
@@ -166,7 +166,7 @@ const WebRTCMixin = {
       }
     },
     async receiveVideo(senderId) {
-      this.$log(senderId);
+      // this.$log(senderId);
       let res = await this.$store.dispatch(
         "userStore/requestUserInfo",
         senderId
@@ -207,7 +207,7 @@ const WebRTCMixin = {
             toid: toId,
           })
           .then((res) => {
-            this.$log(res);
+            // this.$log(res);
             this.opponentId = toId;
           });
       }
@@ -221,7 +221,7 @@ const WebRTCMixin = {
           },
         },
       };
-      this.$log(this.userId + " registered in room " + this.UUID);
+      // this.$log(this.userId + " registered in room " + this.UUID);
       let res = await this.$store.dispatch(
         "userStore/requestUserInfo",
         this.userId
@@ -277,7 +277,7 @@ const WebRTCMixin = {
       this.sendMessage(message);
     },
     leaveRoom() {
-      this.$log("leaveRoom");
+      // this.$log("leaveRoom");
       // 1. Host가 나갈 떄 Host => leaveHost 메세지 수신, Guest => leaveGeust 메세지 수신
       // 2. Guest가 혼자 나갈 때 => 메세지 수신 X
       let message = {
@@ -288,7 +288,7 @@ const WebRTCMixin = {
       // this.exitRoom();
     },
     leaveHost() {
-      this.$log("leaveHost");
+      // this.$log("leaveHost");
       // 방 삭제 API 호출
       this.$store
         .dispatch("roomStore/requestDelete", {
@@ -306,7 +306,7 @@ const WebRTCMixin = {
         num: -1,
       };
       this.$store.dispatch("roomStore/requestAddPerson", payload);
-      this.$log("leaveGuest");
+      // this.$log("leaveGuest");
       // 방 나가기
       this.exitRoom();
     },
@@ -336,7 +336,7 @@ const WebRTCMixin = {
       });
     },
     onRecieveChat(msgInfo) {
-      this.$log(msgInfo);
+      // this.$log(msgInfo);
       let msg = {
         sender: msgInfo.senderId,
         nick: msgInfo.senderNickName,

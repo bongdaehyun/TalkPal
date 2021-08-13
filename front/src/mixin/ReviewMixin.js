@@ -47,7 +47,7 @@ const ReviewMixin = {
           this.pushReviews(Item, res.data.reviewList);
         })
         .catch((err) => {
-          this.$log(err);
+          console.error(err)
         });
     },
     // NOTE: 유저 정보 요청
@@ -69,7 +69,7 @@ const ReviewMixin = {
     // NOTE: 리뷰 작성
     reviewSubmit(reviewInfo) {
       reviewInfo.from_user_id = this.$store.getters["userStore/getUserId"];
-      console.log(reviewInfo, reviewInfo.from_user_id)
+      // console.log(reviewInfo, reviewInfo.from_user_id)
       this.$store
         .dispatch("userStore/submitReview", reviewInfo)
         .then(() => {
