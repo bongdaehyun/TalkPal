@@ -18,6 +18,11 @@
           </span>
         </v-btn>
         <v-btn tile elevation="3" color="white">
+          <span @click="goChatList">
+            {{$t('nav_chat')}}
+          </span>
+        </v-btn>
+        <v-btn tile elevation="3" color="white">
           <span @click="onLogout">
             {{ $t("nav_logout") }}
           </span>
@@ -119,6 +124,12 @@ export default {
       }
       return "white";
     },
+    ChatColor() {
+      if (this.$store.getters["getActiveMenu"] == "Chat") {
+        return "primary";
+      }
+      return "white";
+    },
     snackbarText() {
       return this.$store.getters["getSnackbarText"];
     },
@@ -160,6 +171,9 @@ export default {
     },
     goMain() {
       this.$router.push({ name: "Main" });
+    },
+    goChatList() {
+      this.$router.push({ name: "ChatList" });
     },
     onLogout() {
       this.$store.dispatch("userStore/logout");

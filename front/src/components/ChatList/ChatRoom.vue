@@ -1,5 +1,7 @@
 <template>
-    <div></div>
+   <div style="background-color : red">
+ddd
+   </div>
 </template>
 
 <script>
