@@ -28,9 +28,13 @@ const WebRTCMixin = {
   },
   
   methods: {
+    // NOTE: 카메라 ON/OFF
     toggleCamera() {
-      console.log("toggleCamera")
       this.participantComponents[this.userId].rtcPeer.videoEnabled = !this.participantComponents[this.userId].rtcPeer.videoEnabled;
+    },
+    // NOTE: 마이크 ON/OFF
+    toggleMic() {
+      this.participantComponents[this.userId].rtcPeer.audioEnabled = !this.participantComponents[this.userId].rtcPeer.audioEnabled;
     },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {

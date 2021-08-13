@@ -69,6 +69,7 @@
       </v-sheet>
     </v-container>
     <Navigation
+      @toggleMic="toggleMic"
       @toggleCamera="toggleCamera"
       @onLeaveRoom="leaveRoom"
       @onToggleChat="toggleChat"

@@ -8,11 +8,15 @@
       >
         <div class="mx-auto pt-6">
           <span class="black--text title-text">
-            방금 만난 상대는 어땠나요?
+            {{ $t("review_create_title_1") }}
+            
           </span>
         </div>
         <div class="mx-auto pa-3">
-          <span class="grey--text"> 상대방에 대한 평가를 남겨주세요. </span>
+          <span class="grey--text">
+            {{ $t("review_create_title_2") }}
+            
+          </span>
         </div>
         <div class="mx-auto">
           <v-rating
