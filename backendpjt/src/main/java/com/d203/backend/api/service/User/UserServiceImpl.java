@@ -36,8 +36,6 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder passwordEncoder;
 
 
-
-
     @Override
     public boolean saveImgFile(Long userId, String imgFilePath) {
         User user = userRepository.findById(userId).get();
@@ -66,7 +64,11 @@ public class UserServiceImpl implements UserService {
         user.setCntFollower(followRepository.countAllByTouserid(user));
         user.setCntFollowing(followRepository.countAllByFromuserid(user));
         user.setCntHistories(userHistoryRepository.countAll(user));
-        user.setAvgScore(reviewRepository.getReviewAvgByTouserid(user_id));
+        try {
+            user.setAvgScore(reviewRepository.getReviewAvgByTouserid(user_id));
+        } catch (Exception e) {
+            user.setAvgScore((double) 0);
+        }
 
         userRepository.save(user);
         return user;

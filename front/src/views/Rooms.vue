@@ -62,17 +62,20 @@
       :reviewDialog="reviewDialog"
       :reviewUserId="reviewUserId"
       @onReviewSubmit="reviewSubmit"
+      @closeReviewDialog="closeReviewDialog"
     />
   </v-container>
 </template>
 
 <script>
+import InfiniteLoading from "vue-infinite-loading";
+
 import Item from "@/components/Rooms/Item";
 import Create from "@/components/Rooms/Create";
 import Search from "@/components/Rooms/Search";
-import InfiniteLoading from "vue-infinite-loading";
 import isMobile from "@/mixin/isMobile.js";
-import ReviewDialog from "@/components/Review/ReviewDialog.vue";
+import ReviewDialog from "@/components/Room/ReviewDialog.vue";
+
 import ReviewMixin from "@/mixin/ReviewMixin.js";
 
 export default {
@@ -90,30 +93,9 @@ export default {
       },
       btnShow: false,
       loadingAnswer: false,
-      // reviewDialog: false,
-      // reviewUserId: null,
     };
   },
   methods: {
-    // reviewSubmit(reviewInfo) {
-    //   if (reviewInfo.isReview) {
-    //     reviewInfo.from_user_id = this.$store.getters["userStore/getUserId"];
-    //     this.$store
-    //       .dispatch("userStore/submitReview", reviewInfo)
-    //       .then(() => {
-    //         this.$store.dispatch("onSnackbar", {
-    //           text: "리뷰 작성 완료",
-    //           color: "success",
-    //         })
-    //       })
-    //       .catch((err) => {
-    //         console.error(err);
-    //       });
-    //   }
-    //   this.$store.dispatch("roomStore/setReviewFalse");
-    //   this.reviewDialog = false;
-    //   this.reviewUserId = null;
-    // },
     // NOTE: 방 생성 및 방 이동
     onCreateRoom(uuid) {
       let message = {
@@ -232,9 +214,6 @@ export default {
   created() {
     this.$store.dispatch("roomStore/exitRoom");
     this.checkReview();
-    // let reviewInfo = this.$store.getters["roomStore/getIsReview"];
-    // this.reviewDialog = reviewInfo.reviewDialog;
-    // this.reviewUserId = reviewInfo.reviewUserId;
     this.connect();
   },
   mounted() {
@@ -243,7 +222,6 @@ export default {
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
     clearInterval(this.progressInterval);
-    // this.ws.close();
   },
   components: {
     Item,

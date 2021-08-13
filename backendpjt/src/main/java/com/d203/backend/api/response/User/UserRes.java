@@ -35,6 +35,9 @@ public class UserRes {
     Long cntFollowing;
     Long cntHistories;
 
+    Double avgScore;
+
+
     public static UserRes of(User user) {
 
         UserRes res = new UserRes();
@@ -48,6 +51,8 @@ public class UserRes {
         res.setCntFollower(user.getCntFollower());
         res.setCntFollowing(user.getCntFollowing());
         res.setCntHistories(user.getCntHistories());
+
+        res.setAvgScore(user.getAvgScore());
 
         return res;
 

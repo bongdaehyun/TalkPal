@@ -16,11 +16,17 @@
         <v-icon color="white">mdi-microphone-off </v-icon>
       </v-btn>
       <!-- NOTE: 나가기 버튼  -->
-      <v-btn small @click="leaveRoom" fab color="#EA5044" :disabled="activeLeave">
+      <v-btn
+        small
+        @click="leaveRoom"
+        fab
+        color="#EA5044"
+        :disabled="activeLeave"
+      >
         <v-icon color="white">mdi-location-exit</v-icon>
       </v-btn>
       <!-- TODO: 카메라 ON/OFF 함수 구현 -->
-      <v-btn small fab color="#434649" class="ms-3">
+      <v-btn small fab color="#434649" class="ms-3" @click="toggleCamera">
         <v-icon color="white">mdi-camera-off</v-icon>
       </v-btn>
     </div>
@@ -39,8 +45,6 @@
       </v-btn>
     </div>
   </div>
-  <!-- <v-bottom-navigation elevation="0" app background-color="#202124">
-  </v-bottom-navigation> -->
 </template>
 
 <script>
@@ -57,6 +61,10 @@ export default {
     };
   },
   methods: {
+    toggleCamera() {
+      this.$emit("toggleCamera");
+      
+    },
     leaveRoom() {
       this.$emit("onLeaveRoom");
     },
@@ -74,9 +82,8 @@ export default {
   mounted() {
     setTimeout(() => {
       this.activeLeave = false;
-    }, 4000)
+    }, 4000);
   },
-  
 };
 </script>
 

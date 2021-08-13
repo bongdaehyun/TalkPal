@@ -4,6 +4,7 @@ import _ from "lodash";
 import getProfilePath from "@/mixin/getProfilePath.js";
 import ReviewMixin from "@/mixin/ReviewMixin.js";
 
+// NOTE: Web RTC 관련 함수 분리
 const WebRTCMixin = {
   mixins: [getProfilePath, ReviewMixin],
   data() {
@@ -27,6 +28,10 @@ const WebRTCMixin = {
   },
   
   methods: {
+    toggleCamera() {
+      console.log("toggleCamera")
+      this.participantComponents[this.userId].rtcPeer.videoEnabled = !this.participantComponents[this.userId].rtcPeer.videoEnabled;
+    },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
         this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
@@ -43,9 +48,9 @@ const WebRTCMixin = {
         message: message,
       });
     },
-    startVideo(video) {
-      video.play();
-    },
+    // startVideo(video) {
+    //   video.play();
+    // },
     questionResponse(response) {
       if (response === true) {
         this.joinAnswer = true;
@@ -56,23 +61,18 @@ const WebRTCMixin = {
     },
 
     openQuestionDialog() {
-
       this.joinQuestionDialog = true;
       this.joinAnswer = null;
     },
 
     onJoinQuestion(request) {
-      // NOTE: 다른 유저의 입장 요청 (uuid, requestUserId, hostId)
 
       // NOTE: 요청 수락/거부 Dialog OPEN
       http.get("/users/" + request.requestUserId).then((res) => {
         this.requestUserInfo = res.data;
         this.profilePath = this.getProfilePath(this.requestUserInfo.imgPath)
-        //console.log("requsetUser: ", this.requestUserInfo);
         this.openQuestionDialog();
       })
-
-
 
       // NOTE: 요청 결과 0.1초 마다 확인
       const responseInterval = setInterval(() => {
@@ -308,6 +308,7 @@ const WebRTCMixin = {
       this.exitRoom();
     },
     exitRoom() {
+      // NOTE: 카메라 기능 끄기
       const video = document.querySelector("video");
       const mediaStream = video.srcObject;
       const tracks = mediaStream.getTracks();
@@ -346,12 +347,9 @@ const WebRTCMixin = {
 
       this.ws.onopen = () => {
         this.join();
-        //console.log(this.ws);
       };
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
-        //console.log("[parsedMessage]");
-        //console.log(parsedMessage);
         switch (parsedMessage.id) {
           case "existingParticipants":
             this.onExistingParticipants(parsedMessage);
@@ -401,7 +399,6 @@ const WebRTCMixin = {
     },
   },
   beforeDestroy() {
-    // this.ws.close();
   },
 }
 export default WebRTCMixin

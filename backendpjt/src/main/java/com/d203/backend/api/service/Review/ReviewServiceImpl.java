@@ -30,20 +30,25 @@ public class ReviewServiceImpl implements ReviewService {
     public Review createReview(ReviewResiterReq reviewInfo) {
         // TODO Auto-generated method stub
         Review review = new Review();
-        review.setContent(reviewInfo.getContent());
 
-
+        // 리뷰 작성 유저
         User fromUser = userRepository.findById(reviewInfo.getFrom_user_id()).get();
-//        System.out.println("fromUser : " + fromUser.getEmail() + " " + fromUser.getId());
         review.setFromuserid(fromUser);
+
+        // 리뷰 받는 유저
         User toUser = userRepository.findById(reviewInfo.getTo_user_id()).get();
         review.setTouserid(toUser);
-//        System.out.println("toUser : " + toUser.getEmail() + " " + toUser.getId());
 
+        // 리뷰 내용
+        review.setContent(reviewInfo.getContent());
 
+        // 리뷰 점수
         review.setScore(reviewInfo.getScore());
 
-        toUser.setAvgScore(reviewRepository.getReviewAvgByTouserid(toUser.getId()));
+        // 리뷰 받는 유저의 평균 평점 ?
+        // toUser.setAvgScore(reviewRepository.getReviewAvgByTouserid(toUser
+        // .getId()));
+
         userRepository.save(toUser);
 
         return reviewRepository.save(review);
