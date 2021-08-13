@@ -11,10 +11,21 @@
   >
     <div class="d-flex" style="flex: 1"></div>
     <div class="d-flex align-center justify-center" style="flex: 3">
-      <!-- TODO: 마이크 ON/OFF 함수 구현 -->
-      <v-btn small fab color="#434649" class="me-3">
-        <v-icon color="white">mdi-microphone-off </v-icon>
-      </v-btn>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            @click="toggleMic"
+            class="me-3"
+            :color="micIcon.color"
+            small
+            fab
+            v-on="on"
+          >
+            <v-icon color="white">{{ micIcon.icon }}</v-icon>
+          </v-btn>
+        </template>
+        <span>{{ micIcon.tip }}</span>
+      </v-tooltip>
       <!-- NOTE: 나가기 버튼  -->
       <v-btn
         small
@@ -25,10 +36,21 @@
       >
         <v-icon color="white">mdi-location-exit</v-icon>
       </v-btn>
-      <!-- TODO: 카메라 ON/OFF 함수 구현 -->
-      <v-btn small fab color="#434649" class="ms-3" @click="toggleCamera">
-        <v-icon color="white">mdi-camera-off</v-icon>
-      </v-btn>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            @click="toggleCamera"
+            class="ms-3"
+            small
+            fab
+            :color="cameraIcon.color"
+            v-on="on"
+          >
+            <v-icon color="white">{{ cameraIcon.icon }}</v-icon>
+          </v-btn>
+        </template>
+        <span>{{ cameraIcon.tip }}</span>
+      </v-tooltip>
     </div>
     <div class="d-flex align-center justify-end" style="flex: 1">
       <v-btn v-if="activeChat" @click="toggleChat()" fab icon color="primary">
@@ -55,6 +77,18 @@ export default {
   mixins: [isMobile],
   data() {
     return {
+      micIcon: {
+        icon: "mdi-microphone",
+        status: true,
+        color: "#434649",
+        tip: this.$t("mic_off"),
+      },
+      cameraIcon: {
+        icon: "mdi-camera",
+        status: true,
+        color: "#434649",
+        tip: this.$t("camera_off"),
+      },
       activeChat: false,
       activeGuide: false,
       activeLeave: true,
@@ -63,7 +97,30 @@ export default {
   methods: {
     toggleCamera() {
       this.$emit("toggleCamera");
-      
+      this.cameraIcon.status = !this.cameraIcon.status;
+      if (this.cameraIcon.status) {
+        this.cameraIcon.icon = "mdi-camera";
+        this.cameraIcon.color = "#434649";
+        this.cameraIcon.tip = this.$t("camera_off");
+      } else {
+        this.cameraIcon.icon = "mdi-camera-off";
+        this.cameraIcon.color = "#EA5044";
+        this.cameraIcon.tip = this.$t("camera_on");
+      }
+    },
+    toggleMic() {
+      this.$emit("toggleMic");
+      this.micIcon.status = !this.micIcon.status;
+
+      if (this.micIcon.status) {
+        this.micIcon.icon = "mdi-microphone";
+        this.micIcon.color = "#434649";
+        this.micIcon.tip = this.$t("mic_off");
+      } else {
+        this.micIcon.icon = "mdi-microphone-off";
+        this.micIcon.color = "#EA5044";
+        this.micIcon.tip = this.$t("mic_on");
+      }
     },
     leaveRoom() {
       this.$emit("onLeaveRoom");

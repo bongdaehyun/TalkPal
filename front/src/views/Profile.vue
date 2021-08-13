@@ -175,7 +175,7 @@
             <!-- NOTE: 수정 완료 버튼 -->
             <v-btn
               class="mt-3"
-              outlined
+              tile
               color="primary"
               @click="submitUpdateButton"
             >

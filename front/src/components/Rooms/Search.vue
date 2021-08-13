@@ -4,7 +4,7 @@
       v-model="input.topic"
       :class="[isMobile ? 'me-3' : '']"
       :items="topicItems | searchi18n"
-      :label="$t('create_topic')"
+      :label="$t('search_topic')"
       item-text="name"
       item-value="value"
       @change="search"
@@ -39,7 +39,7 @@ export default {
         topic: "search_total",
         lang: "search_total",
       },
-      LangItems: ["search_total", "ko", "en","jp"],
+      LangItems: ["search_total", "ko", "en", "jp"],
       topicItems: [
         "search_total",
         "create_music",
