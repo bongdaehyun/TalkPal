@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on, attrs }">
       <div class="mt-6" v-if="!isMobile">
         <v-btn width="100%" color="primary" v-bind="attrs" v-on="on" tile>
-          <span>
+          <span class="caption">
             {{ $t("room_create") }}
           </span>
         </v-btn>

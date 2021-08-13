@@ -2,7 +2,6 @@
   <div>
     <video
       ref="video"
-      muted
       autoplay
       :width="videoWidth"
       :height="[isMobile ? '' : videoHeight]"
