@@ -13,8 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service("roomService")
@@ -45,9 +43,6 @@ public class RoomServiceImpl implements RoomService {
         room.setHost_lang(langRepository.getOne(roomInfo.getHost_lang()));
 
         room.setUuid(UUID.randomUUID().toString());
-        //System.out.println(roomInfo);
-        //System.out.println(room);
-
 
         return roomRepository.save(room);
     }

@@ -114,11 +114,9 @@ public class UserController {
 
         //check branch
         if (userService.checkEmail(email)) {
-            //System.out.println("User email dup");
             return ResponseEntity.status(409).body(BaseResponseBody.of(409, "Duplicate Error"));
 
         } else {
-            //System.out.println("success");
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
         }
 
@@ -134,11 +132,9 @@ public class UserController {
 
         //check branch
         if (userService.checkNick(nickname)) {
-           // System.out.println("User nickname dup");
             return ResponseEntity.status(409).body(BaseResponseBody.of(409, "Duplicate Error"));
 
         } else {
-           // System.out.println("success");
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
         }
 
@@ -160,7 +156,6 @@ public class UserController {
 
 
         SsafyUserDetails userDetails = (SsafyUserDetails) authentication.getDetails();
-        //System.out.println("userDetails : success" + userDetails.getUsername());
         String email = userDetails.getUsername();
         User user = userService.getUserByEamil(email);
         return ResponseEntity.status(200).body(UserRes.of(user));
@@ -186,7 +181,6 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<?> updateUser(@RequestBody UserReq userReq) {
-       // System.out.println("update" + userReq.toString());
         if (userService.updateUser(userReq)) {
             return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
         }

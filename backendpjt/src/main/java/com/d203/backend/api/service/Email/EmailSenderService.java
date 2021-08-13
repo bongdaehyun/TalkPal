@@ -1,9 +1,7 @@
 package com.d203.backend.api.service.Email;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +27,6 @@ public class EmailSenderService {
         //mss.setTo(toemail);//받는 사람
         mss.setSubject("회원가입 인증 메일");//메일 제목
         javaMailSender.send(mss);
-        //System.out.println(text+" "+toemail);
     }
 
 }

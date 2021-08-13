@@ -72,22 +72,16 @@ public class FollowController {
     public ResponseEntity<FollowListRes> getFollowerList(@PathVariable Long userId, @PathVariable int pageno) {
 
         User user = userService.getUserByuserId(userId);
-       // System.out.println("ReqUser : try" + user.toString());
 
         Page<Follow> firstPage = followService.getFollowerList(user, pageno);
 
-
         List<Follow> follower = firstPage.getContent();
-        //System.out.println("ReqUser : try" + follower.toString());
         return ResponseEntity.status(200).body(FollowListRes.getErList(follower));
     }
 
     @GetMapping("/checkFollowing/{fromuserid}/{touserid}")
     @ApiOperation(value = "팔로잉 채크하기", notes = "팔로워 목록 ")
     public boolean checkFollowing(@PathVariable Long fromuserid, @PathVariable Long touserid) {
-
-
-        //System.out.println("Chek Following : try" + fromuserid + "   " + touserid);
 
         User myId = userService.getUserByuserId(fromuserid);
         User toId = userService.getUserByuserId(touserid);

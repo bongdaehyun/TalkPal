@@ -31,8 +31,6 @@ public class RoomManager {
 
         if (roomSession == null) {
             log.debug("Room not existent");
-//            roomSession = new RoomSession(roomName, kurento.createMediaPipeline());
-//            rooms.put(roomName, roomSession);
         }
         log.debug("Room {} found!", uuid);
         return roomSession;

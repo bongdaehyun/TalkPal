@@ -29,9 +29,6 @@ public class CallHandler extends TextWebSocketHandler {
     private RoomManager roomManager;
 
     @Autowired
-    private UserManager userManager;
-
-    @Autowired
     private ParticipantManager participantManager;
 
     @Autowired
@@ -50,12 +47,6 @@ public class CallHandler extends TextWebSocketHandler {
         }
 
         switch (jsonMessage.get("id").getAsString()) {
-            case "newUser":
-                newUser(jsonMessage, session);
-                break;
-            case "sendDM":
-                sendDM(jsonMessage);
-                break;
             case "sendChat":
                 sendChat(jsonMessage);
                 break;
@@ -98,41 +89,10 @@ public class CallHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         try {
-            userManager.remove(session);
-        } catch (NullPointerException e) {
-            log.error("No User in UserManager");
-        }
-
-        try {
             ParticipantSession user = participantManager.removeBySession(session);
             roomManager.getRoom(user.getUuid()).leave(user);
         } catch (NullPointerException e) {
-            log.error("No User in ParticipantManager");
-        }
-    }
-
-    private void newUser(JsonObject params, WebSocketSession session) throws IOException {
-        final String userId = params.get("userId").getAsString();
-        UserSession user = new UserSession(userId, session);
-        userManager.register(user);
-
-        log.info("New User connected : {}", userId);
-    }
-
-    private void sendDM(JsonObject params) throws IOException {
-        final String receiver = params.get("receiver").getAsString();
-        final String content = params.get("content").getAsString();
-
-        if (userManager.exists(receiver)) {
-            final JsonObject DMInfo = new JsonObject();
-            DMInfo.addProperty("id", "receiveDM");
-            DMInfo.addProperty("content", content);
-            DMInfo.addProperty("time", "time");
-
-            UserSession receiverSession = userManager.getByUserId(receiver);
-            synchronized (receiverSession) {
-                receiverSession.sendMessage(DMInfo);
-            }
+            log.info("No User in ParticipantManager");
         }
     }
 
@@ -176,10 +136,9 @@ public class CallHandler extends TextWebSocketHandler {
     }
 
     private void joinRoom(JsonObject params, WebSocketSession session) throws IOException {
-        log.info("********joinRoom*********");
         final String uuid = params.get("uuid").getAsString();
         final String userId = params.get("userId").getAsString();
-        log.info("PARTICIPANT {}: trying to join room {}", userId, uuid);
+        log.info("joinRoom => PARTICIPANT {}: trying to join room {}", userId, uuid);
 
         RoomSession roomSession = roomManager.getRoom(uuid);
         final ParticipantSession user = roomSession.join(userId, session);
@@ -187,7 +146,6 @@ public class CallHandler extends TextWebSocketHandler {
     }
 
     private void joinRequest(JsonObject params, WebSocketSession session) throws IOException {
-        log.info("********joinRequest*********");
         // 호스트에게 현재 입장 요청한 클라이언트 userId 전송
         final String uuid = params.get("uuid").getAsString();
         final String requestUserId = params.get("requestUserId").getAsString(); // 제이슨객체 수정 (id)
@@ -201,7 +159,7 @@ public class CallHandler extends TextWebSocketHandler {
 
         ParticipantSession hostSession = participantManager.getByUserId(hostId);
 
-        log.info("joinRequest = uuid : {}, requestUserId : {}, hostId : {}", uuid, requestUserId, hostId);
+        log.info("joinRequest => uuid : {}, requestUserId : {}, hostId : {}", uuid, requestUserId, hostId);
 
         ParticipantSession requestUser = new ParticipantSession(requestUserId, "tmp", session, kurento.createMediaPipeline());
         participantManager.register(requestUser);
@@ -212,13 +170,12 @@ public class CallHandler extends TextWebSocketHandler {
     }
 
     private void joinResponse(JsonObject params) throws IOException {
-        log.info("********joinResponse*********");
         // 입장 요청한 클라이언트에게 수락/거절여부 + uuid 전송
         final String requestUserId = params.get("requestUserId").getAsString();
         final String uuid = params.get("uuid").getAsString();
         final String answer = params.get("answer").getAsString();
 
-        log.info("requestUserId : {}, uuid : {}, answer : {}", requestUserId, uuid, answer);
+        log.info("joinResponse => requestUserId : {}, uuid : {}, answer : {}", requestUserId, uuid, answer);
 
         final JsonObject responseMsg = new JsonObject();
         responseMsg.addProperty("id", "joinAnswer");
@@ -243,7 +200,6 @@ public class CallHandler extends TextWebSocketHandler {
             roomManager.removeRoom(roomSession);
             return;
         }
-
         roomSession.leave(user);
     }
 }

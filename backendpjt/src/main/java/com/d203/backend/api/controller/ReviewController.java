@@ -67,11 +67,7 @@ public class ReviewController {
             @ApiResponse(code = 500, message = "서버 오류")
     })
     public ResponseEntity<ReviewListRes> getReviewFrom(@PathVariable Long from_user_id, @PathVariable int pageno) {
-//        System.out.println("ReqUser : try");
         User user = userService.getUserByuserId(from_user_id);
-//        System.out.println("ReqUser : " + user.toString());
-
-//        System.out.println("ReqUser : " + user.getId());
 
         Page<Review> firstPage = reviewService.getWriteReviewById(user, pageno);
 
@@ -90,11 +86,7 @@ public class ReviewController {
     })
     public ResponseEntity<ReviewListRes> getReviewTo(@PathVariable Long to_user_id, @PathVariable int pageno) {
 
-//        System.out.println("ReqUser : try");
         User user = userService.getUserByuserId(to_user_id);
-//        System.out.println("ReqUser : " + user.toString());
-
-//        System.out.println("ReqUser : " + user.getId().longValue());
 
         Page<Review> firstPage = reviewService.getReviewById(user, pageno);
         List<Review> review = firstPage.getContent();
@@ -111,7 +103,6 @@ public class ReviewController {
             @RequestBody @ApiParam(value = "평가 작성 수정 정보", required = true) ReviewUpdateReq updateReviewInfo,
             @PathVariable Long review_id) {
 
-        //System.out.println(updateReviewInfo.toString());
         if (reviewService.updateReview(review_id, updateReviewInfo)) {
             return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
         }

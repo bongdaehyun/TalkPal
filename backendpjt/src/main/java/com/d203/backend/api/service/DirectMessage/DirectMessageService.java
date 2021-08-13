@@ -2,10 +2,8 @@ package com.d203.backend.api.service.DirectMessage;
 
 import com.d203.backend.api.request.DirectMessage.ChatRoomPostReq;
 import com.d203.backend.api.request.DirectMessage.DirectMessagePostReq;
-import com.d203.backend.api.response.DirectMessage.ChatRoomListRes;
 import com.d203.backend.db.entity.ChatJoinInfo;
 import com.d203.backend.db.entity.ChatMessage;
-import com.d203.backend.db.entity.ChatRoom;
 
 import java.util.List;
 

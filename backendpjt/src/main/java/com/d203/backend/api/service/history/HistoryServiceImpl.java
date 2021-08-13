@@ -23,7 +23,6 @@ public class HistoryServiceImpl implements HistoryService {
     public List<UserHistory> getMeetPeople(Long userid) {
 
         List<UserHistory> result= repo.findAllByFrom_user_id(userid);
-        //System.out.println("========="+result.size());
         return result;
     }
 
