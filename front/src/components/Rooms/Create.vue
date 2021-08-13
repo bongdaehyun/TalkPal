@@ -34,7 +34,7 @@
         <v-btn color="primary" tile @click="reqeustCreateRoom">
           {{ $t("create_save") }}
         </v-btn>
-        <v-btn tile @click="dialog = false">
+        <v-btn tile color="#F8F9FA" @click="dialog = false">
           {{ $t("create_close") }}
         </v-btn>
       </v-card-actions>

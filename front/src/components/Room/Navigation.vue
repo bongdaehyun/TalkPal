@@ -45,8 +45,6 @@
       </v-btn>
     </div>
   </div>
-  <!-- <v-bottom-navigation elevation="0" app background-color="#202124">
-  </v-bottom-navigation> -->
 </template>
 
 <script>
@@ -65,6 +63,7 @@ export default {
   methods: {
     toggleCamera() {
       this.$emit("toggleCamera");
+      
     },
     leaveRoom() {
       this.$emit("onLeaveRoom");

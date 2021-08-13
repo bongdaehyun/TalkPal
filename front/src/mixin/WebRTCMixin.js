@@ -29,7 +29,7 @@ const WebRTCMixin = {
   methods: {
     toggleCamera() {
       console.log("toggleCamera")
-      console.log(this.participantComponents)
+      this.participantComponents[this.userId].rtcPeer.videoEnabled = !this.participantComponents[this.userId].rtcPeer.videoEnabled;
     },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
