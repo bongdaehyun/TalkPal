@@ -34,12 +34,7 @@
         class="d-flex flex-column-reverse maxWidth maxHeight"
         style="position: fixed; bottom: 56px"
       >
-        <Guide
-          v-if="showGuide"
-          :height="guideHeight"
-          :hostLang="hostLang"
-          :guestLang="guestLang"
-        />
+        <Guide v-if="showGuide" :height="guideHeight" />
         <Chat
           v-if="showChat"
           :items="msgList"
@@ -54,12 +49,7 @@
         class="d-flex flex-column maxHeight"
         rounded="xl"
       >
-        <Guide
-          v-if="showGuide"
-          :height="guideHeight"
-          :hostLang="hostLang"
-          :guestLang="guestLang"
-        />
+        <Guide v-if="showGuide" :height="guideHeight" />
         <Chat
           v-if="showChat"
           :items="msgList"
@@ -69,26 +59,14 @@
       </v-sheet>
     </v-container>
     <Navigation
+      @onLeaveRoom="leaveRoom"
       @toggleMic="toggleMic"
       @toggleCamera="toggleCamera"
-      @onLeaveRoom="leaveRoom"
       @onToggleChat="toggleChat"
       @onToggleGuide="toggleGuide"
     />
-    <QuestionDialog
-      v-if="requestUserInfo"
-      :timer="timer"
-      :joinQuestionDialog="joinQuestionDialog"
-      :profilePath="profilePath"
-      :requestUserInfo="requestUserInfo"
-      @onQuestionResponse="questionResponse"
-    />
-    <ReviewDialog
-      :reviewDialog="reviewDialog"
-      :reviewUserId="reviewUserId"
-      @onReviewSubmit="reviewSubmit"
-      @closeReviewDialog="closeReviewDialog"
-    />
+    <QuestionDialog v-if="joinRequestUser" />
+    <ReviewDialog @onCreateReview="createReview" />
   </div>
 </template>
 
@@ -126,12 +104,12 @@ export default {
       videoWidth: null,
       videoHeight: null,
       innerHeight: window.innerHeight,
-
-      hostLang: null,
-      guestLang: null,
     };
   },
   computed: {
+    joinRequestUser() {
+      return this.$store.getters["questionStore/getJoinRequestUser"];
+    },
     containerHeight() {
       return `${this.innerHeight - 56}px`;
     },
@@ -186,8 +164,10 @@ export default {
         .then((res) => {
           this.hostId = res.data.hostId;
           this.roomId = res.data.roomId;
-          this.hostLang = res.data.host_lang;
-          this.guestLang = res.data.guest_lang;
+          this.$store.dispatch("roomStore/setHostGuestLang", {
+            hostLang: res.data.host_lang,
+            guestLang: res.data.guest_lang,
+          });
         });
     },
     onResize(width, height) {
@@ -210,18 +190,15 @@ export default {
       this.innerHeight = window.innerHeight;
     },
   },
-  mounted() {
-    window.addEventListener("resize", this.handleResize);
-  },
-  unmounted() {
-    window.removeEventListener("resize", this.handleResize);
-  },
   created() {
+    window.addEventListener("resize", this.handleResize);
     this.requestRoomInfo();
     this.connect();
     this.$store.dispatch("roomStore/enterRoom");
   },
   beforeDestroy() {
+    window.removeEventListener("resize", this.handleResize);
+    this.$store.dispatch("roomStore/resetGuideLocale");
     this.leaveRoom();
   },
   components: {

@@ -3,8 +3,10 @@ import http from '@/util/http-common'
 const getDefaultState = () => {
   return {
     isRoom: null,
-    reviewDialog: false,
-    reviewUserId: null,
+    isHostGuide: true,
+    isGuestGuide: false,
+    hostLang: null,
+    guestLang: null
   }
 }
 
@@ -16,12 +18,18 @@ const roomStore = {
     getIsRoom(state) {
       return state.isRoom
     },
-    getIsReview(state) {
-      return {
-        reviewDialog: state.reviewDialog,
-        reviewUserId: state.reviewUserId,
-      }
+    getIsHostGuide(state) {
+      return state.isHostGuide
     },
+    getIsGuestGuide(state) {
+      return state.isGuestGuide
+    },
+    getHostLang(state) {
+      return state.hostLang
+    },
+    getGuestLang(state) {
+      return state.guestLang
+    }
   },
 
   mutations: {
@@ -31,14 +39,18 @@ const roomStore = {
     EXIT_ROOM(state) {
       state.isRoom = false
     },
-    REVIEW_FALSE(state) {
-      state.reviewUserId = null;
-      state.reviewDialog = false;
+    SET_HOST_GUEST_LANG(state, payload) {
+      state.hostLang = payload.hostLang
+      state.guestLang = payload.guestLang
     },
-    REVIEW_TRUE(state, reviewUserId) {
-      state.reviewUserId = reviewUserId;
-      state.reviewDialog = true;
+    CHANGE_GUIDE_LOCALE(state) {
+      state.isHostGuide = !state.isHostGuide;
+      state.isGuestGuide = !state.isGuestGuide;
     },
+    RESET_GUIDE_LOCALE(state) {
+      state.isHostGuide = true;
+      state.isGuestGuide = false;
+    }
   },
 
   actions: {
@@ -59,12 +71,6 @@ const roomStore = {
         url: `/rooms/${payload.roomId}`,
         headers: payload.header,
       })
-    },
-    setReviewTrue(context, reviewUserId) {
-      context.commit("REVIEW_TRUE", reviewUserId);
-    },
-    setReviewFalse(context) {
-      context.commit("REVIEW_FALSE");
     },
     enterRoom(context) {
       context.commit("ENTER_ROOM");
@@ -87,7 +93,19 @@ const roomStore = {
         method: "PUT",
         url: `/rooms/cal/${payload.uuid}?num=${payload.num}`
       })
-    }
+    },
+    // 가이드 언어 전환
+    changeGuideLocale(context) {
+      context.commit("CHANGE_GUIDE_LOCALE")
+    },
+    // 가이드 언어 초기화
+    resetGuideLocale(context) {
+      context.commit("RESET_GUIDE_LOCALE")
+    },
+    // 방 입장 시 호스트&게스트 언어 설정
+    setHostGuestLang(context, payload) {
+      context.commit("SET_HOST_GUEST_LANG", payload)
+    },
   },
 }
 export default roomStore

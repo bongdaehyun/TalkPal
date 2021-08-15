@@ -86,11 +86,9 @@ export default {
       this.dialog = false;
       let hostId = this.$store.getters["userStore/getUserId"];
       this.inputs.hostId = hostId;
-      console.log(this.inputs);
       this.$store
         .dispatch("roomStore/requestCreate", this.inputs)
         .then((res) => {
-          console.log(res);
           const uuid = res.data.uuid;
           this.$emit("onCreateRoom", uuid);
         });

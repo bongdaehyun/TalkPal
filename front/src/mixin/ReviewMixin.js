@@ -1,3 +1,5 @@
+import LanguageMixin from "@/mixin/LanguageMixin.js";
+
 const ReviewMixin = {
   data() {
     return {
@@ -15,11 +17,10 @@ const ReviewMixin = {
         url: "requestGiveReviews",
         isEnd: false,
       },
-      reviewDialog: false,
-      reviewUserId: null,
-      opponentId: null,
     }
   },
+  mixins: [LanguageMixin],
+
   methods: {
     // NOTE: 응답 리뷰 목록 추가
     pushReviews(Item, res) {
@@ -31,13 +32,14 @@ const ReviewMixin = {
       }
       this.overlay = false;
     },
+
     // NOTE: 평가 목록 요청
     requestReviews(Item) {
       if (Item.isEnd === true) {
         return;
       }
       this.overlay = true;
-      let url = "userStore/" + Item.url;
+      let url = "reviewStore/" + Item.url;
       this.$store
         .dispatch(url, {
           userId: this.profileId,
@@ -50,28 +52,11 @@ const ReviewMixin = {
           console.error(err)
         });
     },
-    // NOTE: 유저 정보 요청
-
-    // NOTE: 리뷰 작성 여부 상태 세팅
-    checkReview() {
-      let reviewInfo = this.$store.getters["roomStore/getIsReview"];
-      this.reviewDialog = reviewInfo.reviewDialog;
-      this.reviewUserId = reviewInfo.reviewUserId;
-    },
-
-    // NOTE: 호스트 리뷰창 띄우기
-    openReviewDialog(reviewUserId) {
-      this.reviewUserId = reviewUserId;
-      this.reviewDialog = true;
-      this.opponentId = null;
-    },
 
     // NOTE: 리뷰 작성
-    reviewSubmit(reviewInfo) {
-      reviewInfo.from_user_id = this.$store.getters["userStore/getUserId"];
-      // console.log(reviewInfo, reviewInfo.from_user_id)
+    createReview(response) {
       this.$store
-        .dispatch("userStore/submitReview", reviewInfo)
+        .dispatch("reviewStore/createReview", response)
         .then(() => {
           this.$store.dispatch("onSnackbar", {
             text: "리뷰 작성 완료",
@@ -81,15 +66,8 @@ const ReviewMixin = {
         .catch((err) => {
           console.error(err);
         });
-      this.closeReviewDialog()
+      this.$store.dispatch("reviewStore/closeDialog");
     },
-    // NOTE: 리뷰 다이얼로그 닫기
-    closeReviewDialog() {
-      this.$store.dispatch("roomStore/setReviewFalse");
-
-      this.reviewDialog = false;
-      this.reviewUserId = null;
-    }
   },
 }
 export default ReviewMixin

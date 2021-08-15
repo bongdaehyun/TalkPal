@@ -1,12 +1,9 @@
 import kurentoUtils from "kurento-utils";
 import http from "@/util/http-common";
 import _ from "lodash";
-import getProfilePath from "@/mixin/getProfilePath.js";
-import ReviewMixin from "@/mixin/ReviewMixin.js";
 
 // NOTE: Web RTC 관련 함수 분리
 const WebRTCMixin = {
-  mixins: [getProfilePath, ReviewMixin],
   data() {
     return {
       ws: null,
@@ -18,12 +15,6 @@ const WebRTCMixin = {
       UUID: this.$route.params.UUID,
       participants: [],
       participantComponents: {},
-      joinQuestionDialog: false,
-      joinAnswer: null,
-      timer: null,
-      requestUserId: null,
-      requestUserInfo: null,
-      profilePath: null,
     }
   },
   methods: {
@@ -53,67 +44,55 @@ const WebRTCMixin = {
     },
     // startVideo(video) {
     //   video.play();
-    // },
-    questionResponse(response) {
-      if (response === true) {
-        this.joinAnswer = true;
-      } else if (response === false) {
-        this.joinAnswer = false;
-      }
-      this.joinQuestionDialog = false;
+    // }, 
+
+    responseJoinQuestion(answer, uuid, requestUserId) {
+      let message = {
+        id: "joinResponse",
+        requestUserId: requestUserId,
+        uuid: uuid,
+        answer: answer,
+      };
+
+      this.sendMessage(message);
+      this.$store.dispatch("questionStore/closeDialog")
     },
+    // NOTE: 요청 수락/거부 다이얼로그 OPEN
+    onJoinQuestion(parsedMessage) {
+      const requestUserId = parsedMessage.requestUserId
+      const uuid = parsedMessage.uuid
 
-    openQuestionDialog() {
-      this.joinQuestionDialog = true;
-      this.joinAnswer = null;
-    },
-
-    onJoinQuestion(request) {
-
-      // NOTE: 요청 수락/거부 Dialog OPEN
-      http.get("/users/" + request.requestUserId).then((res) => {
-        this.requestUserInfo = res.data;
-        this.profilePath = this.getProfilePath(this.requestUserInfo.imgPath)
-        this.openQuestionDialog();
+      // NOTE: 상대 유저 정보 요청
+      http.get("/users/" + requestUserId).then((res) => {
+        const joinRequestUser = res.data;
+        this.$store.dispatch("questionStore/openDialog", { joinRequestUser })
       })
 
       // NOTE: 요청 결과 0.1초 마다 확인
       const responseInterval = setInterval(() => {
-        if (this.joinAnswer !== null) {
-          let message = {
-            id: "joinResponse",
-            requestUserId: request.requestUserId,
-            uuid: request.uuid,
-            answer: this.joinAnswer,
-          };
-          this.sendMessage(message);
-          this.joinAnswer = null;
-          this.requestUserId = null;
+        const answer = this.$store.getters["questionStore/getAnswer"]
+
+        if (answer !== null) {
+          this.responseJoinQuestion(answer, uuid, requestUserId)
           clearInterval(responseInterval);
           clearInterval(timerInterval);
         }
       }, 100);
 
       // NOTE: 제한시간(10초) 후 거절 강제 전송
-      this.timer = 10;
+      this.$store.dispatch("questionStore/setTimer", { value: 10 })
       const timerInterval = setInterval(() => {
-        this.timer = this.timer - 1;
-        if (this.timer === 0) {
-          let message = {
-            id: "joinResponse",
-            requestUserId: request.requestUserId,
-            uuid: request.uuid,
-            answer: false,
-          };
-          this.sendMessage(message);
-          this.joinQuestionDialog = false;
-          this.joinAnswer = null;
-          this.requestUserId = null;
-          clearInterval(timerInterval);
+        // 타이머 감소
+        this.$store.dispatch("questionStore/minusTimer", { value: 1 })
+
+        if (this.$store.getters["questionStore/getTimer"] === 0) {
+          this.responseJoinQuestion(false, uuid, requestUserId)
           clearInterval(responseInterval);
+          clearInterval(timerInterval);
         }
       }, 1000);
     },
+
     onNewParticipant(request) {
       // NOTE: 새로 들어온 유저 만난 사람들에 추가
       this.$store
@@ -124,9 +103,11 @@ const WebRTCMixin = {
         .then((res) => {
           // this.$log(res);
         });
-      this.opponentId = request.userId;
+
+      this.$store.dispatch("reviewStore/setToUserId", { toUserId: request.userId })
       this.receiveVideo(request.userId);
     },
+    // NOTE: 유저 나갔을 때
     onParticipantLeft(request) {
       // this.$log("Participant " + request.userId + " left");
 
@@ -141,7 +122,9 @@ const WebRTCMixin = {
 
       delete this.participantComponents[request.userId];
 
-      this.openReviewDialog(request.userId);
+      // NOTE: 리뷰 다이얼로그 OPEN
+      this.$store
+        .dispatch("reviewStore/openDialog")
     },
 
     receiveVideoResponse(result) {
@@ -208,10 +191,9 @@ const WebRTCMixin = {
           })
           .then((res) => {
             // this.$log(res);
-            this.opponentId = toId;
+            this.$store.dispatch("reviewStore/setToUserId", { toUserId: toId })
           });
       }
-
       const constraints = {
         audio: true,
         video: {
@@ -320,9 +302,11 @@ const WebRTCMixin = {
 
       this.$store.dispatch("roomStore/exitRoom");
       this.ws.close();
+
       // NOTE: 평가할 상대가 있으면 방 목록으로 나가서 평가
-      if (this.opponentId) {
-        this.$store.dispatch("roomStore/setReviewTrue", this.opponentId);
+      const toUserId = this.$store.getters["reviewStore/getToUserId"]
+      if (toUserId) {
+        this.$store.dispatch("reviewStore/openDialog");
       }
       this.$router.push({ name: "Rooms" });
     },
