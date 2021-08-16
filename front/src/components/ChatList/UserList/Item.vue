@@ -1,12 +1,12 @@
 <template>
   <v-list dense>
     <v-list-item-group color="primary">
-      <v-list-item>
-        <v-list-item-icon>
-          <v-icon v-text="item.icon"></v-icon>
-        </v-list-item-icon>
+      <v-list-item @click="onSelectChatRoom">
+        <v-list-item-avatar size="50">
+          <v-img :src="profilePath"></v-img>
+        </v-list-item-avatar>
         <v-list-item-content>
-          <v-list-item-title v-text="item.text"></v-list-item-title>
+          <v-list-item-title v-text="chatRoom.nickName"></v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list-item-group>
@@ -14,12 +14,28 @@
 </template>
 
 <script>
+import getProfilePath from "@/mixin/getProfilePath.js";
 export default {
   name: "item",
+  mixins: [getProfilePath],
+
+  data() {
+    return {
+      profilePath: null,
+    }
+  },
   props: {
-    item: {
+    chatRoom: {
       type: Object,
     },
+  },
+  methods: {
+    onSelectChatRoom() {
+      this.$emit("onSelectChatRoom", this.chatRoom.chatRoomId);
+    },
+  },
+  created() {
+    this.profilePath = this.getProfilePath(this.chatRoom.profilePath);
   },
 };
 </script>
