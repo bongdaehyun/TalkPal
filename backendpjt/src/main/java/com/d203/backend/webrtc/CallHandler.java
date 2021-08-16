@@ -120,12 +120,14 @@ public class CallHandler extends TextWebSocketHandler {
 
     private void sendDM(JsonObject params) throws IOException {
         final String receiver = params.get("receiver").getAsString();
-        final String message = params.get("content").getAsString();
+        final String message = params.get("message").getAsString();
         final String senderId = params.get("userId").getAsString();
+        final String chatRoomId = params.get("chatRoomId").getAsString();
 
         if (userManager.exists(receiver)) {
             final JsonObject DMInfo = new JsonObject();
             DMInfo.addProperty("id", "receiveDM");
+            DMInfo.addProperty("chatRoomId", chatRoomId);
             DMInfo.addProperty("userId", senderId);
             DMInfo.addProperty("message", message);
             DMInfo.addProperty("time", "tmpTime");

@@ -16,4 +16,6 @@ public interface DirectMessageService {
     List<ChatJoinInfo> getChatRoomList (Long userId);
 
     List<ChatMessage> getChatMessageList (Long chatRoomId);
+
+    Long getOpponentId (Long userId, Long chatRoomId);
 }

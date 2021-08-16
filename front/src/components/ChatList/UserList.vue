@@ -1,6 +1,8 @@
 <template>
   <div>
     <!-- NOTE: 데스크탑 버전 -->
+
+    <!-- NOTE: 새로운 채팅 추가 -->
     유저 목록
     <div
       v-if="!isMobile"
