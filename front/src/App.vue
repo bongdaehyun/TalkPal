@@ -17,9 +17,9 @@
             {{ $t("nav_profile") }}
           </span>
         </v-btn>
-        <v-btn tile elevation="3" color="white">
-          <span @click="goChatList">
-            {{$t('nav_chat')}}
+        <v-btn tile elevation="3" :color="chatColor">
+          <span @click="goChat">
+            {{ $t("nav_chat") }}
           </span>
         </v-btn>
         <v-btn tile elevation="3" color="white">
@@ -124,7 +124,7 @@ export default {
       }
       return "white";
     },
-    ChatColor() {
+    chatColor() {
       if (this.$store.getters["getActiveMenu"] == "Chat") {
         return "primary";
       }
@@ -172,8 +172,8 @@ export default {
     goMain() {
       this.$router.push({ name: "Main" });
     },
-    goChatList() {
-      this.$router.push({ name: "ChatList" });
+    goChat() {
+      this.$router.push({ name: "Chat" });
     },
     onLogout() {
       this.$store.dispatch("userStore/logout");

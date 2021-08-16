@@ -8,7 +8,6 @@ import com.d203.backend.api.service.DirectMessage.DirectMessageService;
 import com.d203.backend.common.model.response.BaseResponseBody;
 import com.d203.backend.db.entity.ChatJoinInfo;
 import com.d203.backend.db.entity.ChatMessage;
-import com.d203.backend.db.entity.ChatRoom;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -72,5 +71,17 @@ public class DirectMessageController {
     public ResponseEntity<ChatMessageListRes> getChatMessageList(@PathVariable Long chatRoomId) {
         List<ChatMessage> chatMessageList = directMessageService.getChatMessageList(chatRoomId);
         return ResponseEntity.status(200).body(ChatMessageListRes.of(chatMessageList));
+    }
+
+    @GetMapping("/getOpponentId/{userId}/{chatRoomId}")
+    @ApiOperation(value = "채팅방 참여자 정보", notes = "해당하는 채팅방에 참여중인 유저들의 Id를 반환한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<Long> getOpponentId(@PathVariable Long userId, @PathVariable Long chatRoomId) {
+        Long opponentId = directMessageService.getOpponentId(userId, chatRoomId);
+        return ResponseEntity.status(200).body(opponentId);
     }
 }

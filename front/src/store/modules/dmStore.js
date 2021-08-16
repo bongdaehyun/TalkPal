@@ -24,9 +24,15 @@ const dmStore = {
       return http.get(`/directMessage/getChatMessageList/${payload.chatRoomId}`);
     },
     sendDirectMessage(context, payload) {
-      return http.post(`/directMessage/sendDirectMessage`, payload)
-    }
+      return http.post(`/directMessage/sendDirectMessage`, payload);
+    },
+    requestOpponentId(context, payload) {
+      return http.get(`/directMessage/getOpponentId/${payload.userId}/${payload.chatRoomId}`);
+    },
   },
+  sendDirectMessage(context, payload) {
+    return http.post(`/directMessage/sendDirectMessage`, payload)
+  }
 }
 
 export default dmStore

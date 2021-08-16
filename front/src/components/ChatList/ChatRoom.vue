@@ -8,32 +8,21 @@
     <!-- NOTE: 채팅 목록 -->
     <v-list ref="chatList" style="overflow: auto">
       <template v-for="(message, index) in msgList">
-        <v-list-item :key="index">
+        <v-list-item :key="index" v-if="message.userId == userId" class="justify-end">
           <!-- NOTE: 본인이 보낸 채팅 오른쪽에 표시 -->
           <!-- TODO: 오른쪽 정렬 -->
           <v-chip
-            v-if="message.userId == userId"
             color="primary"
             >
             {{ message.message }}
           </v-chip>
-          <!-- <v-list-item-content
-            v-if="message.userId == userId"
-            class="mb-2 mt-2 pa-0"
-          >
-          </v-list-item-content> -->
-          <!-- NOTE: 상대가 보낸 채팅 왼쪽에 표시 -->
-          <v-chip
-            v-else
-            >
+        </v-list-item>
+        <v-list-item :key="index" v-else>
+          <!-- NOTE: 본인이 보낸 채팅 오른쪽에 표시 -->
+          <!-- TODO: 오른쪽 정렬 -->
+          <v-chip>
             {{ message.message }}
           </v-chip>
-          <!-- <v-list-item-content
-            v-else
-            class="mb-2 mt-2 pa-0"
-          >
-            {{ message.userId }} {{ message.message }}
-          </v-list-item-content> -->
         </v-list-item>
       </template>
     </v-list>
@@ -60,6 +49,7 @@ export default {
     return {
       userId: this.$store.getters["userStore/getUserId"],
       chatRoomId: null,
+      opponentId: null,
       msgList: [],
       inputMessage: "",
     };
@@ -88,12 +78,13 @@ export default {
       })
 
       // NOTE: 소켓 메세지 전송
-      let msg = {
+      this.$emit("onSendMessage", {
         id: "sendDM",
+        receiver: this.opponentId,
+        chatRoomId: this.chatRoomId,
         userId: this.userId,
         message: this.inputMessage,
-      }
-      this.sendMessage(msg);
+      });
       
       this.inputMessage = "";
     },
@@ -104,7 +95,7 @@ export default {
           message: newMsg.message,
           userId: newMsg.userId,
           chatRoomId: this.chatRoomId,
-          // TODO: 시간 정보는 꼭 필요 없긴 함........
+          // TODO: 시간 정보는 굳이 필요 없긴 함........ 임시로 "tmpTime 저장됨"
           time: newMsg.time,
         });
       }
@@ -120,16 +111,19 @@ export default {
           res.data.chatMessageList.forEach(chatMessage => {
             this.msgList.push(chatMessage);
           });
+          this.requestOpponentId();
         });
+      
     },
-    sendMessage(message) {
-      if (this.ws.readyState !== this.ws.OPEN) {
-        // this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
-        return;
-      }
-      const jsonMessage = JSON.stringify(message);
-      // this.$log("[sendMessage] message: " + jsonMessage);
-      this.ws.send(jsonMessage);
+    requestOpponentId() {
+      this.$store
+        .dispatch("dmStore/requestOpponentId", {
+          userId: this.userId,
+          chatRoomId: this.chatRoomId,
+        })
+        .then((res) => {
+          this.opponentId = res.data;
+        });
     },
     connect() {
       this.ws.onmessage = (message) => {

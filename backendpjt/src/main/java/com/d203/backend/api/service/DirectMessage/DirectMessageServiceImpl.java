@@ -83,4 +83,10 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         List<ChatMessage> chatMessageList = chatMessageRepository.findAllByChatRoomIdOrderByCreateDate(chatRoomId);
         return chatMessageList;
     }
+
+    @Override
+    public Long getOpponentId(Long userId, Long chatRoomId) {
+        Long opponentId = chatJoinInfoRepository.getOpponentId(userId, chatRoomId);
+        return opponentId;
+    }
 }

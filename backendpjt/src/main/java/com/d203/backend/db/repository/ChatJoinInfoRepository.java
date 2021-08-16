@@ -16,4 +16,7 @@ public interface ChatJoinInfoRepository extends JpaRepository<ChatJoinInfo, Long
             "where j.chat_room_id in (select chat_room_id from chatjoininfo where user_id = ?1) and user_id != ?1 " +
             "order by r.last_modified_date desc", nativeQuery = true)
     List<ChatJoinInfo> getChatRoomListByUserId(Long userId);
+
+    @Query(value = "select user_id from chatjoininfo where user_id != ?1 and chat_room_id = ?2", nativeQuery = true)
+    Long getOpponentId(Long userId, Long chatRoomId);
 }

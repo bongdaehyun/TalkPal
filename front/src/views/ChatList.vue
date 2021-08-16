@@ -18,6 +18,7 @@
             ref="chatRoom"
             :ws="ws"
             @onSubmitMessage="submitMessage"
+            @onSendMessage="sendMessage"
           />
         </v-sheet>
       </v-sheet>
@@ -46,8 +47,10 @@ export default {
 
       this.ws.onopen = () => {
         let msg = {
-          
+          id: "newUserDM",
+          userId: this.userId,
         }
+        this.sendMessage(msg);
       };
 
       this.ws.onmessage = (message) => {
@@ -65,7 +68,6 @@ export default {
           userId: this.userId
           })
         .then((res) => {
-          console.log(res.data.chatRoomList);
           this.chatRooms = res.data.chatRoomList;
         })
     },
@@ -74,9 +76,16 @@ export default {
       this.$refs.chatRoom.requestChatMessageList(selectedChatRoomId);
     },
     submitMessage(data) {
-      // TODO: 공백일 때, 채팅방 선택되지 않았을 때 보낼 수 없도록 변경
+      // TODO: 채팅방 선택되지 않았을 때 보낼 수 없도록 변경
       this.$store
         .dispatch("dmStore/sendDirectMessage", data)
+    },
+    sendMessage(message) {
+      if (this.ws.readyState !== this.ws.OPEN) {
+        return;
+      }
+      const jsonMessage = JSON.stringify(message);
+      this.ws.send(jsonMessage);
     },
   },
 
