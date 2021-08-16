@@ -43,11 +43,16 @@
         </v-sheet>
         <v-divider></v-divider>
       </div>
+      <div>
+        <Trans @onTranslate="transLang" />
+      </div>
     </div>
   </div>
 </template>
 <script>
 import isMobile from "@/mixin/isMobile.js";
+import Trans from "./Trans.vue";
+import $ from "jquery";
 
 // NOTE: TTS API 문서
 // https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisUtterance
@@ -84,9 +89,74 @@ export default {
     guestLang: {
       type: String,
     },
+    str: {
+      type: String,
+    },
   },
 
   methods: {
+    async transLang(str) {
+      var langCode = await this.detectLang(str);
+      console.log(langCode);
+
+      //NOTE: 호스트 게스트 언어 생각 해보기..
+      
+      var trans = await this.translate(str, langCode, this.$i18n.locale);
+      this.speech(trans);
+      console.log(trans);
+      
+    },
+    detectLang(str) {
+      return new Promise(function (resolve, reject) {
+        $.ajax({
+          type: "GET",
+          url:
+            "https://dapi.kakao.com/v3/translation/language/detect?query=" +
+            str,
+          dataType: "json",
+          headers: {
+            Authorization: "KakaoAK f60288777b84ebe97274cfc4cdffdd37",
+          },
+          data: {},
+          success: function (data) {
+            var res = null;
+            var confidence = data.language_info.map(function (v) {
+              return v.confidence;
+            });
+            var index = confidence.indexOf(Math.max.apply(null, confidence));
+            resolve(data.language_info[0].code);
+          },
+          error: function (xhr, ajaxOptions, throwError) {
+            reject(throwError);
+          },
+        });
+      });
+    },
+    translate(str, src_lang, target_lang) {
+      return new Promise(function (resolve, reject) {
+        $.ajax({
+          type: "GET",
+          url:
+            "https://dapi.kakao.com/v2/translation/translate?src_lang=" +
+            src_lang +
+            "&target_lang=" +
+            target_lang +
+            "&query=" +
+            str,
+          dataType: "json",
+          headers: {
+            Authorization: "KakaoAK f60288777b84ebe97274cfc4cdffdd37",
+          },
+          data: "{}",
+          success: function (data) {
+            resolve(data.translated_text[0][0]);
+          },
+          error: function (xhr, ajaxOptions, throwError) {
+            reject(throwError);
+          },
+        });
+      });
+    },
     changeLocale() {
       if (this.isHost) {
         this.isHost = false;
@@ -108,6 +178,9 @@ export default {
 
       this.synth.speak(this.Speech);
     },
+  },
+  components: {
+    Trans,
   },
 };
 </script>
