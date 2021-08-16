@@ -8,10 +8,17 @@
         :class="[isMobile ? 'col-10' : 'col-8']"
       >
         <v-sheet class="col-3" elevation="3">
-          <UserList />
+          <UserList 
+            :chatRooms="chatRooms"
+            @onSelectChatRoom="selectChatRoom"
+          />
         </v-sheet>
         <v-sheet class="col-9">
-          <ChatRoom />
+          <ChatRoom 
+            ref="chatRoom"
+            :ws="ws"
+            @onSubmitMessage="submitMessage"
+          />
         </v-sheet>
       </v-sheet>
     </v-row>
@@ -24,6 +31,7 @@ import ChatRoom from "@/components/ChatList/ChatRoom";
 import isMobile from "@/mixin/isMobile.js";
 
 export default {
+  mixins: [isMobile],
   data() {
     return {
       ws: null,
@@ -32,12 +40,15 @@ export default {
       chatRooms: [],
     };
   },
-  mixins: [isMobile],
   methods: {
     connect() {
       this.ws = new WebSocket(this.socketUrl);
 
-      this.ws.onopen = () => {};
+      this.ws.onopen = () => {
+        let msg = {
+          
+        }
+      };
 
       this.ws.onmessage = (message) => {
         let parsedMessage = JSON.parse(message.data);
@@ -48,13 +59,30 @@ export default {
         }
       };
     },
+    requestChatRoomList() {
+      this.$store
+        .dispatch("dmStore/requestChatRoomList", {
+          userId: this.userId
+          })
+        .then((res) => {
+          console.log(res.data.chatRoomList);
+          this.chatRooms = res.data.chatRoomList;
+        })
+    },
+    selectChatRoom(selectedChatRoomId) {
+      console.log(selectedChatRoomId);
+      this.$refs.chatRoom.requestChatMessageList(selectedChatRoomId);
+    },
+    submitMessage(data) {
+      // TODO: 공백일 때, 채팅방 선택되지 않았을 때 보낼 수 없도록 변경
+      this.$store
+        .dispatch("dmStore/sendDirectMessage", data)
+    },
   },
 
   created() {
     this.connect();
-    // TODO: 채팅방 목록 불러오기
-    // TODO: 최근 메세지 순으로 정렬.. ChatRoom에 마지막 메세지 시간 속성 추가 必
-    // TODO: 읽지 않은 채팅방 표시.. ............ 이것도 ChatRoom 속성..?
+    this.requestChatRoomList();
   },
   components: {
     UserList,

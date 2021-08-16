@@ -35,7 +35,7 @@
           <v-btn color="primary" tile @click="questionResponse(true)">
             {{ $t("questiondialog_yes") }}
           </v-btn>
-          <v-btn tile @click="closeQuestionDialog">
+          <v-btn tile @click="questionResponse(false)">
             {{ $t("questiondialog_no") }}
           </v-btn>
         </v-card-actions>
@@ -72,10 +72,6 @@ export default {
     // NOTE: 입장 요청 다이얼로그 응답 이벤트
     questionResponse(answer) {
       this.$store.dispatch("questionStore/setAnswer", { answer });
-    },
-    // NOTE: 다이얼로그 close
-    closeQuestionDialog() {
-      this.$store.dispatch("questionStore/closeDialog");
     },
   },
   watch: {

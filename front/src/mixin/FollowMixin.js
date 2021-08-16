@@ -1,5 +1,3 @@
-import http from "@/util/http-common";
-
 const FollowMixin = {
   data() {
     return {

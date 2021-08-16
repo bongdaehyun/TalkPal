@@ -14,6 +14,9 @@ const LanguageMixin = {
     },
     guestLang() {
       return this.$store.getters["roomStore/getGuestLang"];
+    },
+    isHost() {
+      return this.$store.getters["roomStore/getIsHost"];
     }
   },
   methods: {
@@ -23,8 +26,8 @@ const LanguageMixin = {
       this.$i18n.locale = this.userLang
       this.$store.dispatch("roomStore/resetGuideLocale")
     },
-    // NOTE: 가이드 언어 변경
 
+    // NOTE: 가이드 언어 변경
     setGuideLocale() {
       if (this.isHostGuide) {
         this.$i18n.locale = this.hostLang;

@@ -2,6 +2,7 @@
   <div
     class="d-flex flex-column"
     style="background-color: #ffffff"
+    :class="isMobile ? 'pa-3' : ''"
     :style="{ height: height }"
   >
     <div class="d-flex justify-center align-center text-button">
@@ -44,11 +45,15 @@
         <v-divider></v-divider>
       </div>
     </div>
+    <div>
+      <Trans />
+    </div>
   </div>
 </template>
 <script>
 import isMobile from "@/mixin/isMobile.js";
 import LanguageMixin from "@/mixin/LanguageMixin.js";
+import Trans from "./Guide/Trans.vue";
 
 // NOTE: TTS API 문서
 // https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisUtterance
@@ -85,6 +90,18 @@ export default {
       });
     },
 
+    changeLocale() {
+      if (this.isHost) {
+        this.isHost = false;
+        this.isGuest = true;
+        this.locale = this.guestLang;
+      } else {
+        this.isHost = true;
+        this.isGuest = false;
+        this.locale = this.hostLang;
+      }
+    },
+
     speech(value) {
       // it should be 'craic', but it doesn't sound right
       // console.log(value);
@@ -97,6 +114,9 @@ export default {
   },
   created() {
     this.setGuideLocale();
+  },
+  components: {
+    Trans,
   },
 };
 </script>

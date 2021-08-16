@@ -81,6 +81,7 @@ import ReviewDialog from "@/components/Room/ReviewDialog.vue";
 
 // NOTE: MIXIN
 import WebRTCMixin from "@/mixin/WebRTCMixin.js";
+import ReviewMixin from "@/mixin/ReviewMixin.js";
 import isMobile from "@/mixin/isMobile.js";
 
 // NOTE: 외부 모듈
@@ -91,7 +92,7 @@ import _ from "lodash";
 export default {
   name: "Room",
   // NOTE: Web RTC 관련 함수 분리
-  mixins: [WebRTCMixin, isMobile],
+  mixins: [WebRTCMixin, ReviewMixin, isMobile],
   data() {
     return {
       // NOTE: 채팅 관련 변수
@@ -162,7 +163,9 @@ export default {
       this.$store
         .dispatch("roomStore/reqeustRoomInfo", { uuid: this.UUID })
         .then((res) => {
-          this.hostId = res.data.hostId;
+          this.$store.dispatch("roomStore/setHostId", {
+            hostId: res.data.hostId,
+          });
           this.roomId = res.data.roomId;
           this.$store.dispatch("roomStore/setHostGuestLang", {
             hostLang: res.data.host_lang,
@@ -191,15 +194,15 @@ export default {
     },
   },
   created() {
+    this.$store.dispatch("roomStore/enterRoom");
     window.addEventListener("resize", this.handleResize);
+
     this.requestRoomInfo();
     this.connect();
-    this.$store.dispatch("roomStore/enterRoom");
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.handleResize);
     this.$store.dispatch("roomStore/resetGuideLocale");
-    this.leaveRoom();
   },
   components: {
     Participant,

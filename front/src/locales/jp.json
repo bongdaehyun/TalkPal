@@ -1,5 +1,6 @@
 {
     "voicelang": "ja-JA",
+    "translate": "翻訳",
     "ko": "韓国語",
     "en": "英語",
     "jp": "日本語",
@@ -29,7 +30,7 @@
     "register_error_nick_alpha": "英文の小文字と数字のみ入力してください。",
     "register_error_nick_same": "すでに存在するニックネームです。",
     "nav_rooms": "部屋の一覧",
-    "nav_chat" : "チャット",
+    "nav_chat": "チャット",
     "nav_profile": "私の情報",
     "nav_logout": "ログアウト",
     "room_enter": "入場する",

@@ -28,6 +28,7 @@
               auto-grow
               hide-details
               dense
+              flat
             >
             </v-textarea>
           </v-list-item-content>
@@ -36,7 +37,7 @@
     </v-list>
     <!-- NOTE: 채팅 입력 -->
     <v-card-actions class="pa-0 mt-auto">
-      <v-textarea
+      <v-text-field
         style="position: sticky; bottom: 0px; width: 100%"
         v-model="inputMessage"
         placeholder="메세지를 입력하세요."
@@ -47,7 +48,7 @@
         dense
         rounded
         auto-grow
-      ></v-textarea>
+      ></v-text-field>
     </v-card-actions>
   </div>
 </template>
@@ -65,6 +66,7 @@ export default {
   },
   methods: {
     submitMessage() {
+      if (this.inputMessage.length < 1) return;
       this.$emit("onSubmitMessage", this.inputMessage);
       this.inputMessage = "";
     },

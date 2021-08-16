@@ -4,7 +4,6 @@ const getDefaultState = () => {
   return {
     dialog: false,
     toUserId: null,
-    opponentId: null,
   }
 }
 
@@ -29,8 +28,8 @@ const reviewStore = {
       state.toUserId = payload.toUserId
     },
     CLOSE_DIALOG(state) {
-      state.toUserId = null
       state.dialog = false
+      state.toUserId = null
     },
   },
 

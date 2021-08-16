@@ -7,7 +7,12 @@
       class="mt-2"
       style="text-align: center; overflow: auto; height: 70vh"
     >
-      <Item :item="item" v-for="(item, index) in items" :key="index" />
+      <Item 
+        :chatRoom="chatRoom" 
+        v-for="(chatRoom, index) in chatRooms" 
+        :key="index" 
+        @onSelectChatRoom="onSelectChatRoom"
+      />
     </div>
     <!-- NOTE: 모바일 버전 -->
     <div v-else></div>
@@ -22,33 +27,19 @@ export default {
   data() {
     return {
       selectedItem: 0,
-      items: [
-        { text: "유저1", icon: "mdi-folder" },
-        { text: "유저1 ", icon: "mdi-account-multiple" },
-        { text: "유저1", icon: "mdi-star" },
-        { text: "유저1", icon: "mdi-history" },
-        { text: "유저1", icon: "mdi-check-circle" },
-        { text: "유저1", icon: "mdi-upload" },
-        { text: "유저1", icon: "mdi-cloud-upload" },
-        { text: "유저1", icon: "mdi-history" },
-        { text: "유저1", icon: "mdi-check-circle" },
-        { text: "유저1", icon: "mdi-upload" },
-        { text: "유저1", icon: "mdi-cloud-upload" },
-        { text: "유저1", icon: "mdi-folder" },
-        { text: "유저1 ", icon: "mdi-account-multiple" },
-        { text: "유저1", icon: "mdi-star" },
-        { text: "유저1", icon: "mdi-history" },
-        { text: "유저1", icon: "mdi-check-circle" },
-        { text: "유저1", icon: "mdi-upload" },
-        { text: "유저1", icon: "mdi-cloud-upload" },
-        { text: "유저1", icon: "mdi-history" },
-        { text: "유저1", icon: "mdi-check-circle" },
-        { text: "유저1", icon: "mdi-upload" },
-        { text: "유저1", icon: "mdi-cloud-upload" },
-      ],
     };
   },
   mixins: [isMobile],
+
+  props: {
+    chatRooms: {},
+  },
+
+  methods: {
+    onSelectChatRoom(data) {
+      this.$emit("onSelectChatRoom", data);
+    },
+  },
 
   components: {
     Item,

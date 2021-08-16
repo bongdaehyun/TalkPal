@@ -34,6 +34,9 @@ public class CallHandler extends TextWebSocketHandler {
     @Autowired
     private KurentoClient kurento;
 
+    @Autowired
+    private UserManager userManager;
+
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         final JsonObject jsonMessage = gson.fromJson(message.getPayload(), JsonObject.class);
@@ -47,6 +50,12 @@ public class CallHandler extends TextWebSocketHandler {
         }
 
         switch (jsonMessage.get("id").getAsString()) {
+            case "newUserDM":
+                newUserDM(jsonMessage, session);
+                break;
+            case "sendDM":
+                sendDM(jsonMessage);
+                break;
             case "sendChat":
                 sendChat(jsonMessage);
                 break;
@@ -89,10 +98,42 @@ public class CallHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         try {
+            userManager.remove(session);
+        } catch (NullPointerException e) {
+            log.error("No User in UserManager");
+        }
+        try {
             ParticipantSession user = participantManager.removeBySession(session);
             roomManager.getRoom(user.getUuid()).leave(user);
         } catch (NullPointerException e) {
             log.info("No User in ParticipantManager");
+        }
+    }
+
+    private void newUserDM(JsonObject params, WebSocketSession session) throws IOException {
+        final String userId = params.get("userId").getAsString();
+        UserSession user = new UserSession(userId, session);
+        userManager.register(user);
+
+        log.info("New DM User connected : {}", userId);
+    }
+
+    private void sendDM(JsonObject params) throws IOException {
+        final String receiver = params.get("receiver").getAsString();
+        final String message = params.get("content").getAsString();
+        final String senderId = params.get("userId").getAsString();
+
+        if (userManager.exists(receiver)) {
+            final JsonObject DMInfo = new JsonObject();
+            DMInfo.addProperty("id", "receiveDM");
+            DMInfo.addProperty("userId", senderId);
+            DMInfo.addProperty("message", message);
+            DMInfo.addProperty("time", "tmpTime");
+
+            UserSession receiverSession = userManager.getByUserId(receiver);
+            synchronized (receiverSession) {
+                receiverSession.sendMessage(DMInfo);
+            }
         }
     }
 

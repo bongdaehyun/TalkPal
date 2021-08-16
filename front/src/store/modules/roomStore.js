@@ -5,6 +5,8 @@ const getDefaultState = () => {
     isRoom: null,
     isHostGuide: true,
     isGuestGuide: false,
+    hostId: null,
+    isHost: null,
     hostLang: null,
     guestLang: null
   }
@@ -29,6 +31,12 @@ const roomStore = {
     },
     getGuestLang(state) {
       return state.guestLang
+    },
+    getHostId(state) {
+      return state.hostId
+    },
+    getIsHost(state, getters, rootState, rootGetters) {
+      return state.hostId === rootGetters["userStore/getUserId"]
     }
   },
 
@@ -50,6 +58,9 @@ const roomStore = {
     RESET_GUIDE_LOCALE(state) {
       state.isHostGuide = true;
       state.isGuestGuide = false;
+    },
+    SET_HOST_ID(state, payload) {
+      state.hostId = payload.hostId
     }
   },
 
@@ -106,6 +117,9 @@ const roomStore = {
     setHostGuestLang(context, payload) {
       context.commit("SET_HOST_GUEST_LANG", payload)
     },
+    setHostId(context, payload) {
+      context.commit("SET_HOST_ID", payload)
+    }
   },
 }
 export default roomStore

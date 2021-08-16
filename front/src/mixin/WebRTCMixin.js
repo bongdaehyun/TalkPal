@@ -7,8 +7,8 @@ const WebRTCMixin = {
   data() {
     return {
       ws: null,
-      hostId: null,
       roomId: null,
+      hostId: this.$store.getters["roomStore/getHostId"],
       userId: this.$store.getters["userStore/getUserId"],
       userNickName: this.$store.getters["userStore/getNickName"],
       socketUrl: process.env.VUE_APP_SOCKET_URL,
@@ -67,45 +67,49 @@ const WebRTCMixin = {
         const joinRequestUser = res.data;
         this.$store.dispatch("questionStore/openDialog", { joinRequestUser })
       })
+      // NOTE: 제한시간(10초) 후 거절 강제 전송
+      this.$store.dispatch("questionStore/setTimer", { value: 10 })
+
+      const timerInterval = setInterval(() => {
+        // 타이머 감소
+        this.$store.dispatch("questionStore/minusTimer", { value: 1 })
+
+        if (this.$store.getters["questionStore/getTimer"] === 0) {
+          clearInterval(responseInterval);
+          clearInterval(timerInterval);
+          this.responseJoinQuestion(false, uuid, requestUserId)
+        }
+      }, 1000);
 
       // NOTE: 요청 결과 0.1초 마다 확인
       const responseInterval = setInterval(() => {
         const answer = this.$store.getters["questionStore/getAnswer"]
 
         if (answer !== null) {
-          this.responseJoinQuestion(answer, uuid, requestUserId)
           clearInterval(responseInterval);
           clearInterval(timerInterval);
+          this.responseJoinQuestion(answer, uuid, requestUserId)
         }
       }, 100);
 
-      // NOTE: 제한시간(10초) 후 거절 강제 전송
-      this.$store.dispatch("questionStore/setTimer", { value: 10 })
-      const timerInterval = setInterval(() => {
-        // 타이머 감소
-        this.$store.dispatch("questionStore/minusTimer", { value: 1 })
 
-        if (this.$store.getters["questionStore/getTimer"] === 0) {
-          this.responseJoinQuestion(false, uuid, requestUserId)
-          clearInterval(responseInterval);
-          clearInterval(timerInterval);
-        }
-      }, 1000);
     },
 
     onNewParticipant(request) {
+      const toUserId = request.userId
       // NOTE: 새로 들어온 유저 만난 사람들에 추가
       this.$store
         .dispatch("userStore/addUserHistorie", {
           fromid: this.userId,
-          toid: request.userId,
+          toid: toUserId,
         })
         .then((res) => {
           // this.$log(res);
         });
 
-      this.$store.dispatch("reviewStore/setToUserId", { toUserId: request.userId })
-      this.receiveVideo(request.userId);
+      // 리뷰 작성 대사장 저장
+      this.$store.dispatch("reviewStore/setToUserId", { toUserId: toUserId })
+      this.receiveVideo(toUserId);
     },
     // NOTE: 유저 나갔을 때
     onParticipantLeft(request) {
@@ -191,6 +195,7 @@ const WebRTCMixin = {
           })
           .then((res) => {
             // this.$log(res);
+            // 리뷰 작성 대상자 저장
             this.$store.dispatch("reviewStore/setToUserId", { toUserId: toId })
           });
       }
@@ -244,6 +249,7 @@ const WebRTCMixin = {
         msg.data.forEach(this.receiveVideo);
       });
     },
+
     join() {
       let payload = {
         uuid: this.UUID,
@@ -258,8 +264,16 @@ const WebRTCMixin = {
       };
       this.sendMessage(message);
     },
+
     leaveRoom() {
-      // this.$log("leaveRoom");
+      // 호스트가 방 나갈 때 방 삭제 요청
+      if (this.hostId === this.userId) {
+        this.$store
+          .dispatch("roomStore/requestDelete", {
+            roomId: this.roomId,
+            header: this.$store.getters["userStore/getHeader"],
+          })
+      }
       // 1. Host가 나갈 떄 Host => leaveHost 메세지 수신, Guest => leaveGeust 메세지 수신
       // 2. Guest가 혼자 나갈 때 => 메세지 수신 X
       let message = {
@@ -267,29 +281,18 @@ const WebRTCMixin = {
         hostId: this.hostId,
       };
       this.sendMessage(message);
-      // this.exitRoom();
     },
+    // 호스트 방 나가기
     leaveHost() {
-      // this.$log("leaveHost");
-      // 방 삭제 API 호출
-      this.$store
-        .dispatch("roomStore/requestDelete", {
-          roomId: this.roomId,
-          header: this.$store.getters["userStore/getHeader"],
-        })
-        .then((res) => {
-          //console.log(res);
-          this.exitRoom();
-        });
+      this.exitRoom();
     },
+    // 게스트 방 나가기
     leaveGuest() {
       let payload = {
         uuid: this.UUID,
         num: -1,
       };
       this.$store.dispatch("roomStore/requestAddPerson", payload);
-      // this.$log("leaveGuest");
-      // 방 나가기
       this.exitRoom();
     },
     exitRoom() {
@@ -300,7 +303,6 @@ const WebRTCMixin = {
       tracks[0].stop();
       tracks.forEach((track) => track.stop());
 
-      this.$store.dispatch("roomStore/exitRoom");
       this.ws.close();
 
       // NOTE: 평가할 상대가 있으면 방 목록으로 나가서 평가
@@ -385,7 +387,6 @@ const WebRTCMixin = {
       };
     },
   },
-  beforeDestroy() {
-  },
+
 }
 export default WebRTCMixin

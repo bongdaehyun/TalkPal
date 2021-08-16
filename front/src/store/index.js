@@ -5,7 +5,7 @@ import userStore from "@/store/modules/userStore.js";
 import roomStore from "@/store/modules/roomStore.js";
 import reviewStore from "@/store/modules/reviewStore.js";
 import questionStore from "@/store/modules/questionStore.js";
-
+import dmStore from "@/store/modules/dmStore.js";
 
 import createPersistedState from "vuex-persistedstate";
 import Cookies from "js-cookie";
@@ -28,7 +28,8 @@ export default new Vuex.Store({
     userStore,
     roomStore,
     reviewStore,
-    questionStore
+    questionStore,
+    dmStore,
   },
   state: getDefaultState(),
   getters: {
