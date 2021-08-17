@@ -31,7 +31,10 @@ const dmStore = {
     },
     addChatUser(context,) {
 
-    }
+    },
+    createChatRoom(context, payload) {
+      return http.post(`/directMessage/createChatRoom`, payload);
+    },
   },
   sendDirectMessage(context, payload) {
     return http.post(`/directMessage/sendDirectMessage`, payload)
