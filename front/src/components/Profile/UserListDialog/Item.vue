@@ -7,9 +7,6 @@
     <span class="ms-3" @click="goProfile" style="cursor: pointer">
       {{ this.item.nickname }}
     </span>
-    <!-- <span class="ml-auto">
-      {{ this.item.lang }}
-    </span> -->
     <v-avatar size="32" class="ml-auto" style="cursor: pointer">
       <img :src="langImage" />
     </v-avatar>
@@ -40,15 +37,14 @@ export default {
     profilePath: {
       get() {
         return this.getProfilePath(this.item.imgPath);
-        
       },
       set() {},
     },
-    langImage:{
-      get(){
-        return require(`@/assets/image/flag/${this.item.lang}.png`)
-      }
-    }
+    langImage: {
+      get() {
+        return require(`@/assets/image/flag/${this.item.lang}.png`);
+      },
+    },
   },
   created() {
     this.checkFollow();

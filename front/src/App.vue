@@ -125,7 +125,7 @@ export default {
       return "white";
     },
     chatColor() {
-      if (this.$store.getters["getActiveMenu"] == "Chat") {
+      if (this.$store.getters["getActiveMenu"] == "ChatList") {
         return "primary";
       }
       return "white";

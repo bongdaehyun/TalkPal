@@ -8,13 +8,10 @@
         :class="[isMobile ? 'col-10' : 'col-8']"
       >
         <v-sheet class="col-3" elevation="3">
-          <UserList 
-            :chatRooms="chatRooms"
-            @onSelectChatRoom="selectChatRoom"
-          />
+          <UserList :chatRooms="chatRooms" @onSelectChatRoom="selectChatRoom" />
         </v-sheet>
         <v-sheet class="col-9">
-          <ChatRoom 
+          <ChatRoom
             ref="chatRoom"
             :ws="ws"
             @onSubmitMessage="submitMessage"
@@ -49,7 +46,7 @@ export default {
         let msg = {
           id: "newUserDM",
           userId: this.userId,
-        }
+        };
         this.sendMessage(msg);
       };
 
@@ -65,11 +62,11 @@ export default {
     requestChatRoomList() {
       this.$store
         .dispatch("dmStore/requestChatRoomList", {
-          userId: this.userId
-          })
+          userId: this.userId,
+        })
         .then((res) => {
           this.chatRooms = res.data.chatRoomList;
-        })
+        });
     },
     selectChatRoom(selectedChatRoomId) {
       console.log(selectedChatRoomId);
@@ -77,8 +74,7 @@ export default {
     },
     submitMessage(data) {
       // TODO: 채팅방 선택되지 않았을 때 보낼 수 없도록 변경
-      this.$store
-        .dispatch("dmStore/sendDirectMessage", data)
+      this.$store.dispatch("dmStore/sendDirectMessage", data);
     },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {

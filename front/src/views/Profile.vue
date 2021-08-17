@@ -230,8 +230,8 @@
 </template>
 
 <script>
-import ReviewSlide from "../components/Profile/ReviewSlide.vue";
-import UserListDialog from "../components/Profile/UserListDialog.vue";
+import ReviewSlide from "@/components/Profile/ReviewSlide.vue";
+import UserListDialog from "@/components/Profile/UserListDialog.vue";
 import http from "@/util/http-common";
 import { validationMixin } from "vuelidate";
 import {
