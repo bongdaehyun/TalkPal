@@ -1,5 +1,6 @@
 package com.d203.backend.db.repository;
 
+import com.d203.backend.db.entity.Follow;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +19,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query(value = "select round(avg(r.score),1)  from review as r where r.touserid = ?1", nativeQuery = true)
     double getReviewAvgByTouserid(Long touserid);
+
 }
 
