@@ -29,6 +29,7 @@
               hide-details
               dense
               flat
+              solo
             >
             </v-textarea>
           </v-list-item-content>

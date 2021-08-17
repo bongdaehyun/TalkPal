@@ -11,7 +11,6 @@
       rows="2"
       outlined
       hide-details
-      @input="translate"
     ></v-textarea>
     <v-textarea
       style="width: 100%"
@@ -23,9 +22,14 @@
       readonly
       flat
     ></v-textarea>
-    <v-btn icon @click="speech">
-      <v-icon color="primary">mdi-bullhorn-outline</v-icon>
-    </v-btn>
+    <div class="d-flex" :class="[isMobile ? 'flex-column' : '']">
+      <v-btn icon @click="speech">
+        <v-icon color="primary">mdi-bullhorn-outline</v-icon>
+      </v-btn>
+      <v-btn icon @click="translate">
+        <v-icon color="primary">mdi-translate</v-icon>
+      </v-btn>
+    </div>
   </div>
 </template>
 <script>
