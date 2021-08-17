@@ -6,6 +6,7 @@ import com.d203.backend.api.response.DirectMessage.ChatMessageListRes;
 import com.d203.backend.api.response.DirectMessage.ChatRoomListRes;
 import com.d203.backend.api.service.DirectMessage.DirectMessageService;
 import com.d203.backend.common.model.response.BaseResponseBody;
+import com.d203.backend.db.entity.BaseEntity;
 import com.d203.backend.db.entity.ChatJoinInfo;
 import com.d203.backend.db.entity.ChatMessage;
 import io.swagger.annotations.*;
@@ -30,11 +31,11 @@ public class DirectMessageController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<Long> createChatRoom(
+    public ResponseEntity<? extends BaseResponseBody> createChatRoom(
             @RequestBody @ApiParam(value = "유저, 상대 유저 ID", required = true) ChatRoomPostReq chatRoomPostReq) {
         Long chatRoomId = directMessageService.createChatRoom(chatRoomPostReq);
 
-        return ResponseEntity.status(200).body(chatRoomId);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, chatRoomId == null ? "-1" : chatRoomId.toString()));
     }
 
     @PostMapping("/sendDirectMessage")

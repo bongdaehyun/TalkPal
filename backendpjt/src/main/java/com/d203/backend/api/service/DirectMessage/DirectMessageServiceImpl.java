@@ -32,6 +32,12 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
     @Override
     public Long createChatRoom(ChatRoomPostReq chatRoomPostReq) {
+        ChatJoinInfo tmp = chatJoinInfoRepository.isExist(chatRoomPostReq.getFromUserId(), chatRoomPostReq.getToUserId());
+        System.out.println(tmp);
+        if (tmp != null) {
+            return null;
+        }
+
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.setMsgCnt(0l);
         chatRoomRepository.save(chatRoom);

@@ -19,9 +19,6 @@ const dmStore = {
     SET_CHAT_ROOMS(state, payload) {
       state.chatRooms = payload;
     },
-    // ADD_CHAT_ROOM(state, payload) {
-    //   state.chatRooms.push(payload);
-    // },
   },
 
   actions: {
@@ -36,9 +33,6 @@ const dmStore = {
     },
     requestOpponentId(context, payload) {
       return http.get(`/directMessage/getOpponentId/${payload.userId}/${payload.chatRoomId}`);
-    },
-    addChatUser(context, payload) {
-      
     },
     createChatRoom(context, payload) {
       return http.post(`/directMessage/createChatRoom`, payload);

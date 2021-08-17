@@ -53,11 +53,11 @@ export default {
           toUserId: this.item.id,
         })
         .then((res) => {
-          this.$store.commit("dmStore/ADD_CHAT_ROOM", {
-            chatRoomId: res.data,
-            imgPath: this.item.imgPath,
-            nickName: this.item.nickName,
-          })
+          if (res.data.message == "-1") {
+            console.log("dup");
+            return;
+          }
+          console.log("ok");
         })
     },
   },
