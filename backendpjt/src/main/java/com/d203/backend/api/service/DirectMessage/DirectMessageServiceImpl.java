@@ -100,7 +100,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     public boolean deleteChatRoom(Long chatRoomId) {
         ChatRoom delChatRoom = chatRoomRepository.getOne(chatRoomId);
         System.out.println(delChatRoom.toString());
-        delChatRoom.set
+        chatRoomRepository.delete(delChatRoom);
         return true;
     }
 }
