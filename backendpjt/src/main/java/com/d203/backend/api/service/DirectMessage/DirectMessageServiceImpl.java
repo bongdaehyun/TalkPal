@@ -31,7 +31,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     UserRepository userRepository;
 
     @Override
-    public boolean createChatRoom(ChatRoomPostReq chatRoomPostReq) {
+    public Long createChatRoom(ChatRoomPostReq chatRoomPostReq) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.setMsgCnt(0l);
         chatRoomRepository.save(chatRoom);
@@ -50,7 +50,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         chatJoinInfo.setUserId(toUser);
         chatJoinInfoRepository.save(chatJoinInfo);
 
-        return true;
+        return chatRoom.getId();
     }
 
     @Override

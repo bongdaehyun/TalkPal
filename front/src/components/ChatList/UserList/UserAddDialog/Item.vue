@@ -43,10 +43,22 @@ export default {
     },
   },
   methods: {
-    // 유저 추가 메서드
+    // NOTE: 유저 추가 메서드
     addChatUser() {
       console.log("채팅 유저 추가");
       console.log(this.item);
+      this.$store
+        .dispatch("dmStore/createChatRoom", {
+          fromUserId: this.$store.getters["userStore/getUserId"],
+          toUserId: this.item.id,
+        })
+        .then((res) => {
+          this.$store.commit("dmStore/ADD_CHAT_ROOM", {
+            chatRoomId: res.data,
+            imgPath: this.item.imgPath,
+            nickName: this.item.nickName,
+          })
+        })
     },
   },
 };

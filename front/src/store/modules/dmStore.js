@@ -2,6 +2,7 @@ import http from '@/util/http-common'
 
 const getDefaultState = () => {
   return {
+    chatRooms: [],
   }
 }
 const dmStore = {
@@ -9,11 +10,18 @@ const dmStore = {
   state: getDefaultState(),
 
   getters: {
-
+    getChatRooms(state) {
+      return state.chatRooms;
+    }
   },
 
   mutations: {
-
+    SET_CHAT_ROOMS(state, payload) {
+      state.chatRooms = payload;
+    },
+    // ADD_CHAT_ROOM(state, payload) {
+    //   state.chatRooms.push(payload);
+    // },
   },
 
   actions: {
@@ -29,16 +37,13 @@ const dmStore = {
     requestOpponentId(context, payload) {
       return http.get(`/directMessage/getOpponentId/${payload.userId}/${payload.chatRoomId}`);
     },
-    addChatUser(context,) {
-
+    addChatUser(context, payload) {
+      
     },
     createChatRoom(context, payload) {
       return http.post(`/directMessage/createChatRoom`, payload);
     },
   },
-  sendDirectMessage(context, payload) {
-    return http.post(`/directMessage/sendDirectMessage`, payload)
-  }
 }
 
 export default dmStore

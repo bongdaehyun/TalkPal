@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DirectMessageService {
 
-    boolean createChatRoom (ChatRoomPostReq chatRoomPostReq);
+    Long createChatRoom (ChatRoomPostReq chatRoomPostReq);
 
     boolean sendDirectMessage (DirectMessagePostReq directMessagePostReq);
 

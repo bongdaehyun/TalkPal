@@ -8,7 +8,7 @@
         :class="[isMobile ? 'col-10' : 'col-8']"
       >
         <v-sheet class="col-3" elevation="3">
-          <UserList :chatRooms="chatRooms" @onSelectChatRoom="selectChatRoom" />
+          <UserList @onSelectChatRoom="selectChatRoom" />
         </v-sheet>
         <v-sheet class="col-9">
           <ChatRoom
@@ -35,7 +35,6 @@ export default {
       ws: null,
       socketUrl: process.env.VUE_APP_SOCKET_URL,
       userId: this.$store.getters["userStore/getUserId"],
-      chatRooms: [],
     };
   },
   methods: {
@@ -65,7 +64,8 @@ export default {
           userId: this.userId,
         })
         .then((res) => {
-          this.chatRooms = res.data.chatRoomList;
+          this.$store.commit("dmStore/SET_CHAT_ROOMS", res.data.chatRoomList);
+          console.log(res.data.chatRoomList)
         });
     },
     selectChatRoom(selectedChatRoomId) {
@@ -73,7 +73,6 @@ export default {
       this.$refs.chatRoom.requestChatMessageList(selectedChatRoomId);
     },
     submitMessage(data) {
-      // TODO: 채팅방 선택되지 않았을 때 보낼 수 없도록 변경
       this.$store.dispatch("dmStore/sendDirectMessage", data);
     },
     sendMessage(message) {

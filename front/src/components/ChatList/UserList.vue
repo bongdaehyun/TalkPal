@@ -3,8 +3,18 @@
     <!-- NOTE: 데스크탑 버전 -->
 
     <!-- NOTE: 새로운 채팅 추가 -->
-    유저 목록
-    <v-btn @click="following.dialog = true">유저추가</v-btn>
+    <!-- <v-btn @click="following.dialog = true"> -->
+    <div class="d-flex justify-center align-center">
+      <!-- {{ userId }} -->
+      <v-icon
+        @click="following.dialog = true"
+        class="mt-1 mb-2"
+      >
+      fa-edit
+      </v-icon>
+    <!-- </v-btn> -->
+    </div>
+    <v-divider></v-divider>
     <div
       v-if="!isMobile"
       class="mt-2"
@@ -41,6 +51,7 @@ export default {
         dialog: false,
       },
       selectedItem: 0,
+      chatRooms: this.$store.getters[`dmStore/getChatRooms`],
     };
   },
   mixins: [isMobile],

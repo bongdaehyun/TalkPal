@@ -30,10 +30,11 @@ public class DirectMessageController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<? extends BaseResponseBody> createChatRoom(
+    public ResponseEntity<Long> createChatRoom(
             @RequestBody @ApiParam(value = "유저, 상대 유저 ID", required = true) ChatRoomPostReq chatRoomPostReq) {
-        directMessageService.createChatRoom(chatRoomPostReq);
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+        Long chatRoomId = directMessageService.createChatRoom(chatRoomPostReq);
+
+        return ResponseEntity.status(200).body(chatRoomId);
     }
 
     @PostMapping("/sendDirectMessage")
