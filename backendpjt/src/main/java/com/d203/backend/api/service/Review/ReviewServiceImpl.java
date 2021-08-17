@@ -57,7 +57,6 @@ public class ReviewServiceImpl implements ReviewService {
     // 받은 리뷰
     @Override
     public Page<Review> getReviewById(User touserid, int pageno) {
-//        System.out.println("Review Service : try userid: " + " " + touserid);
         Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 5);
         return reviewRepository.findAllByTouseridOrderByLastModifiedDateDesc(touserid, firstPageWithTwoElements);
     }
@@ -65,9 +64,7 @@ public class ReviewServiceImpl implements ReviewService {
     // 작성한 리뷰
     @Override
     public Page<Review> getWriteReviewById(User fromuserid, int pageno) {
-//        System.out.println("Review Service : try userid: " + " " + fromuserid);
         Pageable firstPageWithTwoElements = PageRequest.of(pageno - 1, 5);
-//        System.out.println("Review Service" + " " + firstPageWithTwoElements.getPageSize());
         return reviewRepository.findAllByFromuseridOrderByLastModifiedDateDesc(fromuserid, firstPageWithTwoElements);
     }
 

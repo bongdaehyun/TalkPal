@@ -1,9 +1,5 @@
 package com.d203.backend.api.request.User;
 
-import org.springframework.web.multipart.MultipartFile;
-
-import com.d203.backend.db.entity.Lang;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

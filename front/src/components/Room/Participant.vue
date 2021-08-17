@@ -38,7 +38,7 @@ export default {
   methods: {
     offerToReceiveVideo(error, offerSdp, wp) {
       if (error) return console.error("sdp offer error");
-      console.log("Invoking SDP offer callback function");
+      // console.log("Invoking SDP offer callback function");
       let message = {
         id: "receiveVideoFrom",
         sender: this.userId,
@@ -47,7 +47,7 @@ export default {
       this.sendMessage(message);
     },
     onIceCandidate(candidate, wp) {
-      console.log("Local candidate" + JSON.stringify(candidate));
+      // console.log("Local candidate" + JSON.stringify(candidate));
 
       let message = {
         id: "onIceCandidate",
@@ -57,7 +57,7 @@ export default {
       this.sendMessage(message);
     },
     dispose() {
-      console.log("Disposing participant " + this.userId);
+      // console.log("Disposing participant " + this.userId);
       this.rtcPeer.dispose();
     },
     getVideoElement() {
@@ -65,12 +65,12 @@ export default {
     },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
-        console.log("[errMessage] Skip, WebSocket session isn't open");
-        console.log(this.ws);
+        // console.log("[errMessage] Skip, WebSocket session isn't open");
+        // console.log(this.ws);
         return;
       }
       const jsonMessage = JSON.stringify(message);
-      console.log("[sendMessage] message: " + jsonMessage);
+      // console.log("[sendMessage] message: " + jsonMessage);
       this.ws.send(jsonMessage);
     },
   },

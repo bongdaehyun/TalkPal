@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="reviewDialog" width="500" persistent>
+    <v-dialog v-model="dialog" width="500" persistent>
       <v-sheet
         elevation="2"
         background-color="white"
@@ -9,13 +9,11 @@
         <div class="mx-auto pt-6">
           <span class="black--text title-text">
             {{ $t("review_create_title_1") }}
-            
           </span>
         </div>
         <div class="mx-auto pa-3">
           <span class="grey--text">
             {{ $t("review_create_title_2") }}
-            
           </span>
         </div>
         <div class="mx-auto">
@@ -46,10 +44,10 @@
         </v-col>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn tile color="primary" @click="reviewSubmit">
+          <v-btn tile color="primary" @click="onCreateReview()">
             {{ $t("questiondialog_yes") }}
           </v-btn>
-          <v-btn tile color="#F8F9FA" @click="closeReviewDialog">
+          <v-btn tile color="#F8F9FA" @click="closeDialog()">
             {{ $t("questiondialog_no") }}
           </v-btn>
         </v-card-actions>
@@ -59,37 +57,55 @@
 </template>
 
 <script>
+import LanguageMixin from "@/mixin/LanguageMixin.js";
 export default {
   name: "ReviewDialog",
+  mixins: [LanguageMixin],
   data() {
     return {
       score: 5,
       content: "",
       rules: [(v) => v.length < 255 || "최대 255글자까지 입력 가능합니다."],
+      locale: this.$store.getters["userStore/getLocale"],
     };
   },
-  props: {
-    reviewDialog: {
-      type: Boolean,
+  computed: {
+    dialog() {
+      return this.$store.getters["reviewStore/getDialog"];
     },
-    reviewUserId: {
-      type: String,
+    toUserId() {
+      return this.$store.getters["reviewStore/getToUserId"];
+    },
+    loginUserId() {
+      return this.$store.getters["userStore/getUserId"];
     },
   },
   methods: {
     setRating(score) {
       this.score = score;
     },
-    reviewSubmit() {
-      this.$emit("onReviewSubmit", {
+    onCreateReview() {
+      this.$emit("onCreateReview", {
         content: this.content,
         score: this.score,
-        to_user_id: this.reviewUserId,
+        to_user_id: this.toUserId,
+        from_user_id: this.loginUserId,
       });
     },
-    closeReviewDialog() {
-      this.$emit("closeReviewDialog");
+    closeDialog() {
+      this.$store.dispatch("reviewStore/closeDialog");
     },
+  },
+  watch: {
+    dialog(newValue, oldValue) {
+      // NOTE: 다이얼로그 열렸을 때 유저 언어로 전환
+      if (newValue) {
+        this.setUserLocale();
+      }
+    },
+  },
+  created() {
+    this.setUserLocale();
   },
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
-  <div class="text-center">
-    <v-dialog v-model="joinQuestionDialog" width="500">
+  <div class="text-cjoin">
+    <v-dialog v-model="dialog" width="500">
       <v-sheet
         elevation="2"
         background-color="white"
@@ -18,15 +18,15 @@
           <v-avatar size="128">
             <v-img :src="profilePath"> </v-img>
           </v-avatar>
-          <div class="d-flex flex-column justify-center ml-5">
+          <div class="d-flex flex-column justify-cjoin ml-5">
             <div class="text-h5 mb-1">
               <v-avatar size="24" class="mb-1">
                 <v-img :src="getPlagPath"></v-img>
               </v-avatar>
-              {{ requestUserInfo.nickname }}
+              {{ joinRequestUser.nickname }}
             </div>
             <div class="text-body-2 mb-1">
-              {{ requestUserInfo.introduction }}
+              {{ joinRequestUser.introduction }}
             </div>
           </div>
         </div>
@@ -45,35 +45,45 @@
 </template>
 
 <script>
+import LanguageMixin from "@/mixin/LanguageMixin.js";
+import getProfilePath from "@/mixin/getProfilePath.js";
+
 export default {
   name: "QuestionDialog",
-  data() {
-    return {};
-  },
-  props: {
-    joinQuestionDialog: {
-      type: Boolean,
+  mixins: [LanguageMixin, getProfilePath],
+  computed: {
+    dialog() {
+      return this.$store.getters["questionStore/getDialog"];
     },
-    timer: {
-      type: Number,
+    joinRequestUser() {
+      return this.$store.getters["questionStore/getJoinRequestUser"];
     },
-    requestUserInfo: {
-      type: Object,
+    timer() {
+      return this.$store.getters["questionStore/getTimer"];
     },
-    profilePath: {
-      type: String,
+    profilePath() {
+      return this.getProfilePath(this.joinRequestUser.imgPath);
+    },
+    getPlagPath() {
+      return require(`@/assets/image/flag/${this.joinRequestUser.lang}.png`);
     },
   },
   methods: {
-    questionResponse(response) {
-      this.$emit("onQuestionResponse", response);
+    // NOTE: 입장 요청 다이얼로그 응답 이벤트
+    questionResponse(answer) {
+      this.$store.dispatch("questionStore/setAnswer", { answer });
     },
   },
-  computed: {
-    getPlagPath() {
-      console.log("[this.requestUserInfo] :" + this.requestUserInfo);
-      return require(`@/assets/image/flag/${this.requestUserInfo.lang}.png`);
+  watch: {
+    dialog(newValue, oldValue) {
+      // NOTE: 다이얼로그 열렸을 때 유저 언어로 전환
+      if (newValue) {
+        this.setUserLocale();
+      }
     },
+  },
+  created() {
+    this.setUserLocale();
   },
 };
 </script>

@@ -3,6 +3,9 @@ import Vuex from "vuex";
 
 import userStore from "@/store/modules/userStore.js";
 import roomStore from "@/store/modules/roomStore.js";
+import reviewStore from "@/store/modules/reviewStore.js";
+import questionStore from "@/store/modules/questionStore.js";
+import dmStore from "@/store/modules/dmStore.js";
 
 import createPersistedState from "vuex-persistedstate";
 import Cookies from "js-cookie";
@@ -23,7 +26,10 @@ export default new Vuex.Store({
   modules: {
     namespaced: true,
     userStore,
-    roomStore
+    roomStore,
+    reviewStore,
+    questionStore,
+    dmStore,
   },
   state: getDefaultState(),
   getters: {
@@ -46,7 +52,6 @@ export default new Vuex.Store({
       state.snackbarText = payload.text
       state.snackbarColor = payload.color
     },
-
     OFF_SNACKBAR(state) {
       state.snackbarText = null
       state.snackbarStatus = false
@@ -70,7 +75,6 @@ export default new Vuex.Store({
 
   plugins: [
     createPersistedState({
-      // TODO: secure 값 문제인듯 확인해봐야함
       // paths: ["userStore"], 
       storage: {
         getItem: (key) => Cookies.get(key),

@@ -116,11 +116,9 @@ public class UserController {
 
         //check branch
         if (userService.checkEmail(email)) {
-            //System.out.println("User email dup");
             return ResponseEntity.status(409).body(BaseResponseBody.of(409, "Duplicate Error"));
 
         } else {
-            //System.out.println("success");
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
         }
 
@@ -136,11 +134,10 @@ public class UserController {
 
         //check branch
         if (userService.checkNick(nickname)) {
-            // System.out.println("User nickname dup");
+
             return ResponseEntity.status(409).body(BaseResponseBody.of(409, "Duplicate Error"));
 
         } else {
-            // System.out.println("success");
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
         }
 
@@ -155,14 +152,7 @@ public class UserController {
             @ApiResponse(code = 500, message = "서버 오류")
     })
     public ResponseEntity<UserRes> getUserInfo(@ApiIgnore Authentication authentication) {
-        /**
-         * 요청 헤더 액세스 토큰이 포함된 경우에만 실행되는 인증 처리이후, 리턴되는 인증 정보 객체(authentication) 통해서 요청한 유저 식별.
-         * 액세스 토큰이 없이 요청하는 경우, 403 에러({"error": "Forbidden", "message": "Access Denied"}) 발생.
-         */
-
-
         SsafyUserDetails userDetails = (SsafyUserDetails) authentication.getDetails();
-        //System.out.println("userDetails : success" + userDetails.getUsername());
         String email = userDetails.getUsername();
         User user = userService.getUserByEamil(email);
         return ResponseEntity.status(200).body(UserRes.of(user));
@@ -177,10 +167,6 @@ public class UserController {
             @ApiResponse(code = 500, message = "서버 오류")
     })
     public ResponseEntity<UserRes> getUserInfo(@PathVariable Long user_id) {
-        /**
-         * 요청 헤더 액세스 토큰이 포함된 경우에만 실행되는 인증 처리이후, 리턴되는 인증 정보 객체(authentication) 통해서 요청한 유저 식별.
-         * 액세스 토큰이 없이 요청하는 경우, 403 에러({"error": "Forbidden", "message": "Access Denied"}) 발생.
-         */
         User user = userService.getUserByuserId(user_id);
 
         return ResponseEntity.status(200).body(UserRes.of(user));
@@ -188,7 +174,6 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<?> updateUser(@RequestBody UserReq userReq) {
-        // System.out.println("update" + userReq.toString());
         if (userService.updateUser(userReq)) {
             return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
         }

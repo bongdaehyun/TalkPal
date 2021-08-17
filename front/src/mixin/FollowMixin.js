@@ -1,5 +1,3 @@
-import http from "@/util/http-common";
-
 const FollowMixin = {
   data() {
     return {
@@ -65,7 +63,6 @@ const FollowMixin = {
         })
         .catch((err) => {
           console.error(err);
-          this.$log("이미 요청한 팔로우");
         });
     },
 

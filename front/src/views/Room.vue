@@ -34,12 +34,7 @@
         class="d-flex flex-column-reverse maxWidth maxHeight"
         style="position: fixed; bottom: 56px"
       >
-        <Guide
-          v-if="showGuide"
-          :height="guideHeight"
-          :hostLang="hostLang"
-          :guestLang="guestLang"
-        />
+        <Guide v-if="showGuide" :height="guideHeight" />
         <Chat
           v-if="showChat"
           :items="msgList"
@@ -54,12 +49,7 @@
         class="d-flex flex-column maxHeight"
         rounded="xl"
       >
-        <Guide
-          v-if="showGuide"
-          :height="guideHeight"
-          :hostLang="hostLang"
-          :guestLang="guestLang"
-        />
+        <Guide v-if="showGuide" :height="guideHeight" />
         <Chat
           v-if="showChat"
           :items="msgList"
@@ -69,26 +59,14 @@
       </v-sheet>
     </v-container>
     <Navigation
+      @onLeaveRoom="leaveRoom"
       @toggleMic="toggleMic"
       @toggleCamera="toggleCamera"
-      @onLeaveRoom="leaveRoom"
       @onToggleChat="toggleChat"
       @onToggleGuide="toggleGuide"
     />
-    <QuestionDialog
-      v-if="requestUserInfo"
-      :timer="timer"
-      :joinQuestionDialog="joinQuestionDialog"
-      :profilePath="profilePath"
-      :requestUserInfo="requestUserInfo"
-      @onQuestionResponse="questionResponse"
-    />
-    <ReviewDialog
-      :reviewDialog="reviewDialog"
-      :reviewUserId="reviewUserId"
-      @onReviewSubmit="reviewSubmit"
-      @closeReviewDialog="closeReviewDialog"
-    />
+    <QuestionDialog v-if="joinRequestUser" />
+    <ReviewDialog @onCreateReview="createReview" />
   </div>
 </template>
 
@@ -103,6 +81,7 @@ import ReviewDialog from "@/components/Room/ReviewDialog.vue";
 
 // NOTE: MIXIN
 import WebRTCMixin from "@/mixin/WebRTCMixin.js";
+import ReviewMixin from "@/mixin/ReviewMixin.js";
 import isMobile from "@/mixin/isMobile.js";
 
 // NOTE: 외부 모듈
@@ -113,7 +92,7 @@ import _ from "lodash";
 export default {
   name: "Room",
   // NOTE: Web RTC 관련 함수 분리
-  mixins: [WebRTCMixin, isMobile],
+  mixins: [WebRTCMixin, ReviewMixin, isMobile],
   data() {
     return {
       // NOTE: 채팅 관련 변수
@@ -126,12 +105,12 @@ export default {
       videoWidth: null,
       videoHeight: null,
       innerHeight: window.innerHeight,
-
-      hostLang: null,
-      guestLang: null,
     };
   },
   computed: {
+    joinRequestUser() {
+      return this.$store.getters["questionStore/getJoinRequestUser"];
+    },
     containerHeight() {
       return `${this.innerHeight - 56}px`;
     },
@@ -184,10 +163,14 @@ export default {
       this.$store
         .dispatch("roomStore/reqeustRoomInfo", { uuid: this.UUID })
         .then((res) => {
-          this.hostId = res.data.hostId;
+          this.$store.dispatch("roomStore/setHostId", {
+            hostId: res.data.hostId,
+          });
           this.roomId = res.data.roomId;
-          this.hostLang = res.data.host_lang;
-          this.guestLang = res.data.guest_lang;
+          this.$store.dispatch("roomStore/setHostGuestLang", {
+            hostLang: res.data.host_lang,
+            guestLang: res.data.guest_lang,
+          });
         });
     },
     onResize(width, height) {
@@ -210,19 +193,16 @@ export default {
       this.innerHeight = window.innerHeight;
     },
   },
-  mounted() {
-    window.addEventListener("resize", this.handleResize);
-  },
-  unmounted() {
-    window.removeEventListener("resize", this.handleResize);
-  },
   created() {
+    this.$store.dispatch("roomStore/enterRoom");
+    window.addEventListener("resize", this.handleResize);
+
     this.requestRoomInfo();
     this.connect();
-    this.$store.dispatch("roomStore/enterRoom");
   },
   beforeDestroy() {
-    this.leaveRoom();
+    window.removeEventListener("resize", this.handleResize);
+    this.$store.dispatch("roomStore/resetGuideLocale");
   },
   components: {
     Participant,

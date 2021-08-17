@@ -4,7 +4,6 @@ package com.d203.backend.api.service.follow;
 import com.d203.backend.db.entity.Follow;
 import com.d203.backend.db.entity.User;
 import com.d203.backend.db.repository.FollowRepository;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +33,6 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public void followDelete(User fromUserId, User toUserId) {
         Follow follow = followRepository.isExist(fromUserId, toUserId);
-       // System.out.println("Follow Del" + follow.toString());
         followRepository.delete(follow);
     }
 
@@ -56,18 +54,4 @@ public class FollowServiceImpl implements FollowService {
         if (follow == null) return true;
         else return false;
     }
-
-    @Override
-    public Long getCountFollower(User myid) {
-        Long num= followRepository.countAllByTouserid(myid);
-        return num;
-    }
-
-    @Override
-    public Long getCountFollowing(User myid) {
-        Long num=followRepository.countAllByFromuserid(myid);
-        return num;
-    }
-
-
 }

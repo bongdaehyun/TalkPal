@@ -1,9 +1,5 @@
 package com.d203.backend.api.response.Review;
 
-import java.util.List;
-
-import com.d203.backend.db.entity.User;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

@@ -1,29 +1,20 @@
 import kurentoUtils from "kurento-utils";
 import http from "@/util/http-common";
 import _ from "lodash";
-import getProfilePath from "@/mixin/getProfilePath.js";
-import ReviewMixin from "@/mixin/ReviewMixin.js";
 
 // NOTE: Web RTC 관련 함수 분리
 const WebRTCMixin = {
-  mixins: [getProfilePath, ReviewMixin],
   data() {
     return {
       ws: null,
-      hostId: null,
       roomId: null,
+      hostId: this.$store.getters["roomStore/getHostId"],
       userId: this.$store.getters["userStore/getUserId"],
       userNickName: this.$store.getters["userStore/getNickName"],
       socketUrl: process.env.VUE_APP_SOCKET_URL,
       UUID: this.$route.params.UUID,
       participants: [],
       participantComponents: {},
-      joinQuestionDialog: false,
-      joinAnswer: null,
-      timer: null,
-      requestUserId: null,
-      requestUserInfo: null,
-      profilePath: null,
     }
   },
   
@@ -38,15 +29,15 @@ const WebRTCMixin = {
     },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
-        this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
+        // this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
         return;
       }
       const jsonMessage = JSON.stringify(message);
-      this.$log("[sendMessage] message: " + jsonMessage);
+      // this.$log("[sendMessage] message: " + jsonMessage);
       this.ws.send(jsonMessage);
     },
     sendError(message) {
-      this.$log("[errMessage] " + message);
+      // this.$log("[errMessage] " + message);
       this.sendMessage({
         id: "ERROR",
         message: message,
@@ -54,82 +45,76 @@ const WebRTCMixin = {
     },
     // startVideo(video) {
     //   video.play();
-    // },
-    questionResponse(response) {
-      if (response === true) {
-        this.joinAnswer = true;
-      } else if (response === false) {
-        this.joinAnswer = false;
-      }
-      this.joinQuestionDialog = false;
+    // }, 
+
+    responseJoinQuestion(answer, uuid, requestUserId) {
+      let message = {
+        id: "joinResponse",
+        requestUserId: requestUserId,
+        uuid: uuid,
+        answer: answer,
+      };
+
+      this.sendMessage(message);
+      this.$store.dispatch("questionStore/closeDialog")
     },
+    // NOTE: 요청 수락/거부 다이얼로그 OPEN
+    onJoinQuestion(parsedMessage) {
+      const requestUserId = parsedMessage.requestUserId
+      const uuid = parsedMessage.uuid
 
-    openQuestionDialog() {
-      this.joinQuestionDialog = true;
-      this.joinAnswer = null;
-    },
-
-    onJoinQuestion(request) {
-
-      // NOTE: 요청 수락/거부 Dialog OPEN
-      http.get("/users/" + request.requestUserId).then((res) => {
-        this.requestUserInfo = res.data;
-        this.profilePath = this.getProfilePath(this.requestUserInfo.imgPath)
-        this.openQuestionDialog();
+      // NOTE: 상대 유저 정보 요청
+      http.get("/users/" + requestUserId).then((res) => {
+        const joinRequestUser = res.data;
+        this.$store.dispatch("questionStore/openDialog", { joinRequestUser })
       })
+      // NOTE: 제한시간(10초) 후 거절 강제 전송
+      this.$store.dispatch("questionStore/setTimer", { value: 10 })
+
+      const timerInterval = setInterval(() => {
+        // 타이머 감소
+        this.$store.dispatch("questionStore/minusTimer", { value: 1 })
+
+        if (this.$store.getters["questionStore/getTimer"] === 0) {
+          clearInterval(responseInterval);
+          clearInterval(timerInterval);
+          this.responseJoinQuestion(false, uuid, requestUserId)
+        }
+      }, 1000);
 
       // NOTE: 요청 결과 0.1초 마다 확인
       const responseInterval = setInterval(() => {
-        if (this.joinAnswer !== null) {
-          let message = {
-            id: "joinResponse",
-            requestUserId: request.requestUserId,
-            uuid: request.uuid,
-            answer: this.joinAnswer,
-          };
-          this.sendMessage(message);
-          this.joinAnswer = null;
-          this.requestUserId = null;
+        const answer = this.$store.getters["questionStore/getAnswer"]
+
+        if (answer !== null) {
           clearInterval(responseInterval);
           clearInterval(timerInterval);
+          this.responseJoinQuestion(answer, uuid, requestUserId)
         }
       }, 100);
 
-      // NOTE: 제한시간(10초) 후 거절 강제 전송
-      this.timer = 10;
-      const timerInterval = setInterval(() => {
-        this.timer = this.timer - 1;
-        if (this.timer === 0) {
-          let message = {
-            id: "joinResponse",
-            requestUserId: request.requestUserId,
-            uuid: request.uuid,
-            answer: false,
-          };
-          this.sendMessage(message);
-          this.joinQuestionDialog = false;
-          this.joinAnswer = null;
-          this.requestUserId = null;
-          clearInterval(timerInterval);
-          clearInterval(responseInterval);
-        }
-      }, 1000);
+
     },
+
     onNewParticipant(request) {
+      const toUserId = request.userId
       // NOTE: 새로 들어온 유저 만난 사람들에 추가
       this.$store
         .dispatch("userStore/addUserHistorie", {
           fromid: this.userId,
-          toid: request.userId,
+          toid: toUserId,
         })
         .then((res) => {
-          this.$log(res);
+          // this.$log(res);
         });
-      this.opponentId = request.userId;
-      this.receiveVideo(request.userId);
+
+      // 리뷰 작성 대사장 저장
+      this.$store.dispatch("reviewStore/setToUserId", { toUserId: toUserId })
+      this.receiveVideo(toUserId);
     },
+    // NOTE: 유저 나갔을 때
     onParticipantLeft(request) {
-      this.$log("Participant " + request.userId + " left");
+      // this.$log("Participant " + request.userId + " left");
 
       const index = _.findIndex(this.participants, (participant) => {
         return participant.userId == request.userId;
@@ -142,12 +127,14 @@ const WebRTCMixin = {
 
       delete this.participantComponents[request.userId];
 
-      this.openReviewDialog(request.userId);
+      // NOTE: 리뷰 다이얼로그 OPEN
+      this.$store
+        .dispatch("reviewStore/openDialog")
     },
 
     receiveVideoResponse(result) {
-      this.$log("receiveVideoResponse");
-      this.$log(this.participantComponents[result.userId]);
+      // this.$log("receiveVideoResponse");
+      // this.$log(this.participantComponents[result.userId]);
 
       this.participantComponents[result.userId].rtcPeer.processAnswer(
         result.sdpAnswer,
@@ -158,7 +145,7 @@ const WebRTCMixin = {
     },
     callResponse(message) {
       if (message.response != "accepted") {
-        this.$log("Call not accepted by peer. Closing call");
+        // this.$log("Call not accepted by peer. Closing call");
         stop();
       } else {
         this.webRtcPeer.processAnswer(message.sdpAnswer, (error) => {
@@ -167,7 +154,7 @@ const WebRTCMixin = {
       }
     },
     async receiveVideo(senderId) {
-      this.$log(senderId);
+      // this.$log(senderId);
       let res = await this.$store.dispatch(
         "userStore/requestUserInfo",
         senderId
@@ -208,11 +195,11 @@ const WebRTCMixin = {
             toid: toId,
           })
           .then((res) => {
-            this.$log(res);
-            this.opponentId = toId;
+            // this.$log(res);
+            // 리뷰 작성 대상자 저장
+            this.$store.dispatch("reviewStore/setToUserId", { toUserId: toId })
           });
       }
-
       const constraints = {
         audio: true,
         video: {
@@ -222,7 +209,7 @@ const WebRTCMixin = {
           },
         },
       };
-      this.$log(this.userId + " registered in room " + this.UUID);
+      // this.$log(this.userId + " registered in room " + this.UUID);
       let res = await this.$store.dispatch(
         "userStore/requestUserInfo",
         this.userId
@@ -263,6 +250,7 @@ const WebRTCMixin = {
         msg.data.forEach(this.receiveVideo);
       });
     },
+
     join() {
       let payload = {
         uuid: this.UUID,
@@ -277,8 +265,16 @@ const WebRTCMixin = {
       };
       this.sendMessage(message);
     },
+
     leaveRoom() {
-      this.$log("leaveRoom");
+      // 호스트가 방 나갈 때 방 삭제 요청
+      if (this.hostId === this.userId) {
+        this.$store
+          .dispatch("roomStore/requestDelete", {
+            roomId: this.roomId,
+            header: this.$store.getters["userStore/getHeader"],
+          })
+      }
       // 1. Host가 나갈 떄 Host => leaveHost 메세지 수신, Guest => leaveGeust 메세지 수신
       // 2. Guest가 혼자 나갈 때 => 메세지 수신 X
       let message = {
@@ -286,29 +282,18 @@ const WebRTCMixin = {
         hostId: this.hostId,
       };
       this.sendMessage(message);
-      // this.exitRoom();
     },
+    // 호스트 방 나가기
     leaveHost() {
-      this.$log("leaveHost");
-      // 방 삭제 API 호출
-      this.$store
-        .dispatch("roomStore/requestDelete", {
-          roomId: this.roomId,
-          header: this.$store.getters["userStore/getHeader"],
-        })
-        .then((res) => {
-          //console.log(res);
-          this.exitRoom();
-        });
+      this.exitRoom();
     },
+    // 게스트 방 나가기
     leaveGuest() {
       let payload = {
         uuid: this.UUID,
         num: -1,
       };
       this.$store.dispatch("roomStore/requestAddPerson", payload);
-      this.$log("leaveGuest");
-      // 방 나가기
       this.exitRoom();
     },
     exitRoom() {
@@ -319,11 +304,12 @@ const WebRTCMixin = {
       tracks[0].stop();
       tracks.forEach((track) => track.stop());
 
-      this.$store.dispatch("roomStore/exitRoom");
       this.ws.close();
+
       // NOTE: 평가할 상대가 있으면 방 목록으로 나가서 평가
-      if (this.opponentId) {
-        this.$store.dispatch("roomStore/setReviewTrue", this.opponentId);
+      const toUserId = this.$store.getters["reviewStore/getToUserId"]
+      if (toUserId) {
+        this.$store.dispatch("reviewStore/openDialog");
       }
       this.$router.push({ name: "Rooms" });
     },
@@ -337,7 +323,7 @@ const WebRTCMixin = {
       });
     },
     onRecieveChat(msgInfo) {
-      this.$log(msgInfo);
+      // this.$log(msgInfo);
       let msg = {
         sender: msgInfo.senderId,
         nick: msgInfo.senderNickName,
@@ -402,7 +388,6 @@ const WebRTCMixin = {
       };
     },
   },
-  beforeDestroy() {
-  },
+
 }
 export default WebRTCMixin

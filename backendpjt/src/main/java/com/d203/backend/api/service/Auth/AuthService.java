@@ -43,7 +43,6 @@ public class AuthService {
         String link=url+"/api/v1/auth/confirm/";
         if(user==null) throw new NotFoundException("사용자 조회 없음");
         String token=createToken(user);
-        //System.out.println(link);
         emailSenderService.sendEmail(link+token,user.getEmail());
     }
 

@@ -68,18 +68,6 @@ const userStore = {
     requestUserHistory(context, userId) {
       return http.get()
     },
-    // NOTE: 리뷰 작성
-    submitReview(context, payload) {
-      return http.post(`/review`, payload)
-    },
-    // NOTE: 작성한 리뷰 요청
-    requestGiveReviews(context, payload) {
-      return http.get(`/review/from/${payload.userId}/${payload.page}`)
-    },
-    // NOTE: 받은 리뷰 요청
-    requestReceivedReviews(context, payload) {
-      return http.get(`/review/to/${payload.userId}/${payload.page}`)
-    },
     // NOTE: 만난 사람 추가
     addUserHistorie(context, payload) {
       return http.post('/history/add/', payload)

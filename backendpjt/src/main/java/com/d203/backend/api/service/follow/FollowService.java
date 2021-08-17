@@ -15,8 +15,4 @@ public interface FollowService {
     Page<Follow> getFollowerList(User userid, int pageno);
 
     boolean checkFollowing(User myid, User toId);
-
-    Long getCountFollower(User myid);
-
-    Long getCountFollowing(User myid);
 }

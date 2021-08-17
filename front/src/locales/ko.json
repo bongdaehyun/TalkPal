@@ -1,5 +1,6 @@
 {
   "voicelang": "ko",
+  "translate": "번역",
   "ko": "한국어",
   "en": "영어",
   "jp": "일본어",
@@ -29,6 +30,7 @@
   "register_error_nick_alpha": "영문 소문자 및 숫자만 입력해야 합니다.",
   "register_error_nick_same": "이미 존재하는 별명입니다.",
   "nav_rooms": "방 목록",
+  "nav_chat": "채팅",
   "nav_profile": "내 정보",
   "nav_logout": "로그아웃",
   "room_enter": "입장하기",

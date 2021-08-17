@@ -58,12 +58,7 @@
         대기중...
       </v-progress-circular>
     </v-overlay>
-    <ReviewDialog
-      :reviewDialog="reviewDialog"
-      :reviewUserId="reviewUserId"
-      @onReviewSubmit="reviewSubmit"
-      @closeReviewDialog="closeReviewDialog"
-    />
+    <ReviewDialog @onCreateReview="createReview" />
   </v-container>
 </template>
 
@@ -108,11 +103,11 @@ export default {
     },
     sendMessage(message) {
       if (this.ws.readyState !== this.ws.OPEN) {
-        this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
+        // this.$log("[errMessage] Skip, WebSocket session isn't open" + message);
         return;
       }
       const jsonMessage = JSON.stringify(message);
-      this.$log("[sendMessage] message: " + jsonMessage);
+      // this.$log("[sendMessage] message: " + jsonMessage);
       this.ws.send(jsonMessage);
     },
     /*
@@ -213,7 +208,6 @@ export default {
   },
   created() {
     this.$store.dispatch("roomStore/exitRoom");
-    this.checkReview();
     this.connect();
   },
   mounted() {

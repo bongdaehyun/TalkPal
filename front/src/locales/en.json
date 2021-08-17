@@ -1,5 +1,6 @@
 {
   "voicelang": "en-US",
+  "translate":"translate",
   "ko": "korean",
   "en": "english",
   "jp": "Japanese",
@@ -32,6 +33,7 @@
   "questiondialog_yes": "Yes",
   "questiondialog_no": "No",
   "nav_rooms": "Rooms",
+  "nav_chat" : "Chats",
   "nav_profile": "Profile",
   "nav_logout": "Logout",
   "room_enter": "Enter",

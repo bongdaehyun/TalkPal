@@ -5,9 +5,6 @@ import com.d203.backend.api.request.Room.RoomUpadateReq;
 import com.d203.backend.db.entity.Room;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-import java.util.UUID;
-
 public interface RoomService {
     Room createRoom(RoomReq roomInfo);
 

@@ -91,8 +91,6 @@ public class RoomController {
             @PathVariable Long room_id,
             @ApiIgnore Authentication authentication
     ) {
-        //System.out.println("[room_id] : " + room_id);
-        //System.out.println("[authentication] : " + authentication);
         SsafyUserDetails userDetails = (SsafyUserDetails) authentication.getDetails();
         Long tokenUserId = userDetails.getUser().getId();
 

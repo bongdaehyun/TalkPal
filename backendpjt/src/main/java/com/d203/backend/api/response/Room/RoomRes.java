@@ -1,7 +1,5 @@
 package com.d203.backend.api.response.Room;
 
-import com.d203.backend.api.response.User.UserRes;
-import com.d203.backend.db.entity.Lang;
 import com.d203.backend.db.entity.Room;
 import com.d203.backend.db.entity.User;
 import io.swagger.annotations.ApiModel;
