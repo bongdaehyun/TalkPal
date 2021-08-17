@@ -15,7 +15,7 @@
       </infinite-loading>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="primary" text @click="Item.dialog = false"> Close </v-btn>
+      <v-btn color="primary" text @click="closeDialog"> Close </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -38,6 +38,9 @@ export default {
     },
   },
   methods: {
+    closeDialog() {
+      this.$store.dispatch("chatStore/closeDialog");
+    },
     requestItems($state) {
       let url = "userStore/" + this.Item.url;
       const param = {

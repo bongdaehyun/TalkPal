@@ -56,7 +56,7 @@
             </v-sheet>
             <!-- NOTE: 사진 -->
             <v-col class="col-md-6 d-none d-lg-block d-print-block">
-              <v-img class="" src="@/assets/image/talking.png"> </v-img>
+              <v-img src="@/assets/image/talking.png"> </v-img>
             </v-col>
           </v-row>
         </v-container>

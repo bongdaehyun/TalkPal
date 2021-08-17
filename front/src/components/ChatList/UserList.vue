@@ -1,39 +1,22 @@
 <template>
-  <div>
+  <!-- NOTE: 새로운 채팅 추가 -->
+  <v-sheet color="white" class="col-3 d-flex flex-column" style="height: 100%">
     <!-- NOTE: 데스크탑 버전 -->
-
-    <!-- NOTE: 새로운 채팅 추가 -->
-    <!-- <v-btn @click="following.dialog = true"> -->
-    <div class="d-flex justify-center align-center">
-      <!-- {{ userId }} -->
-      <v-icon
-        @click="following.dialog = true"
-        class="mt-1 mb-2"
-      >
-      fa-edit
-      </v-icon>
-    <!-- </v-btn> -->
-    </div>
-    <v-divider></v-divider>
-    <div
-      v-if="!isMobile"
-      class="mt-2"
-      style="text-align: center; overflow: auto; height: 70vh"
-    >
-      <Item
-        :chatRoom="chatRoom"
-        v-for="(chatRoom, index) in chatRooms"
-        :key="index"
-        @onSelectChatRoom="onSelectChatRoom"
-      />
-    </div>
+    <v-btn @click="openDialog" tile depressed color="primary">
+      <v-icon> fa-edit </v-icon>
+    </v-btn>
+    <v-list v-if="!isMobile" style="overflow: auto">
+      <template v-for="(chatRoom, index) in chatRooms">
+        <Item :chatRoom="chatRoom" :key="index" style="cursor: pointer" />
+      </template>
+    </v-list>
     <!-- NOTE: 모바일 버전 -->
     <div v-else></div>
-    <!-- NOTE: 팔로워 다이얼로그 -->
-    <v-dialog v-model="following.dialog" :max-width="dialogMaxWidth" scrollable>
+    <!-- NOTE: 채팅 추가 유저 다이얼로그 -->
+    <v-dialog v-model="dialog" :max-width="dialogMaxWidth" scrollable>
       <UserAddDialog :profileId="loginId" :Item="following" />
     </v-dialog>
-  </div>
+  </v-sheet>
 </template>
 <script>
 import Item from "@/components/ChatList/UserList/Item";
@@ -48,14 +31,19 @@ export default {
         url: "requestFollowings",
         page: 0,
         count: 0,
-        dialog: false,
       },
       selectedItem: 0,
-      chatRooms: this.$store.getters[`dmStore/getChatRooms`],
     };
   },
   mixins: [isMobile],
+  props: {},
   computed: {
+    chatRooms() {
+      return this.$store.getters[`chatStore/getChatRooms`];
+    },
+    dialog() {
+      return this.$store.getters[`chatStore/getDialog`];
+    },
     dialogMaxWidth() {
       if (this.isMobile) {
         return "90%";
@@ -64,8 +52,8 @@ export default {
     },
   },
   methods: {
-    onSelectChatRoom(data) {
-      this.$emit("onSelectChatRoom", data);
+    openDialog() {
+      this.$store.dispatch("chatStore/openDialog");
     },
   },
 

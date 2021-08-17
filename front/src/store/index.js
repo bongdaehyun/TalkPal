@@ -5,7 +5,7 @@ import userStore from "@/store/modules/userStore.js";
 import roomStore from "@/store/modules/roomStore.js";
 import reviewStore from "@/store/modules/reviewStore.js";
 import questionStore from "@/store/modules/questionStore.js";
-import dmStore from "@/store/modules/dmStore.js";
+import chatStore from "@/store/modules/chatStore.js";
 
 import createPersistedState from "vuex-persistedstate";
 import Cookies from "js-cookie";
@@ -29,7 +29,7 @@ export default new Vuex.Store({
     roomStore,
     reviewStore,
     questionStore,
-    dmStore,
+    chatStore,
   },
   state: getDefaultState(),
   getters: {
@@ -75,7 +75,7 @@ export default new Vuex.Store({
 
   plugins: [
     createPersistedState({
-      // paths: ["userStore"], 
+      paths: ["userStore"],
       storage: {
         getItem: (key) => Cookies.get(key),
         setItem: (key, value) => Cookies.set(key, value, { secure: false }),

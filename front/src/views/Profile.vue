@@ -145,16 +145,13 @@
               >
             </div>
             <!--  NOTE: 팔로우 버튼 -->
-            <div
-              v-if="profileId != loginId && isFollow != null"
-              class="ms-1 pb-1 ps-1"
-            >
-              <button v-if="isFollow" dark @click="addFollow">
-                <v-icon color="purple">mdi-link-variant</v-icon>
-              </button>
-              <button v-else dark @click="delFollow">
-                <v-icon color="purple">mdi-link-variant-off</v-icon>
-              </button>
+            <div v-if="profileId != loginId && isFollow != null">
+              <v-btn v-if="isFollow" icon @click="addFollow">
+                <v-icon color="primary">mdi-link-variant</v-icon>
+              </v-btn>
+              <v-btn v-else icon @click="delFollow">
+                <v-icon color="primary">mdi-link-variant-off</v-icon>
+              </v-btn>
             </div>
           </div>
           <!-- NOTE: 자기소개 -->

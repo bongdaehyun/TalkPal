@@ -1,13 +1,18 @@
 
 <template>
-  <div class="d-flex align-center mt-3" v-if="item" @click="addChatUser">
-    <v-avatar size="32" style="cursor: pointer">
+  <div
+    class="d-flex align-center mt-3"
+    style="cursor: pointer"
+    v-if="item"
+    @click="addChatUser"
+  >
+    <v-avatar size="32">
       <img :src="profilePath" />
     </v-avatar>
-    <span class="ms-3" style="cursor: pointer">
+    <span class="ms-3">
       {{ this.item.nickname }}
     </span>
-    <v-avatar size="32" class="ml-auto" style="cursor: pointer">
+    <v-avatar size="32" class="ml-auto">
       <img :src="langImage" />
     </v-avatar>
   </div>
@@ -18,7 +23,9 @@ import getProfilePath from "@/mixin/getProfilePath.js";
 
 export default {
   data() {
-    return {};
+    return {
+      userId: this.$store.getters["userStore/getUserId"],
+    };
   },
 
   props: {
@@ -44,21 +51,30 @@ export default {
   },
   methods: {
     // NOTE: 유저 추가 메서드
-    addChatUser() {
-      console.log("채팅 유저 추가");
-      console.log(this.item);
-      this.$store
-        .dispatch("dmStore/createChatRoom", {
-          fromUserId: this.$store.getters["userStore/getUserId"],
-          toUserId: this.item.id,
-        })
-        .then((res) => {
-          this.$store.commit("dmStore/ADD_CHAT_ROOM", {
-            chatRoomId: res.data,
-            imgPath: this.item.imgPath,
-            nickName: this.item.nickName,
-          })
-        })
+    async addChatUser() {
+      await this.$store.dispatch("chatStore/closeDialog");
+
+      const payload = {
+        fromUserId: this.userId,
+        toUserId: this.item.id,
+      };
+      // 방 생성
+      await this.$store.dispatch("chatStore/createChatRoom", payload);
+
+      // 방 새로 불러오기
+      const res = await this.$store.dispatch("chatStore/requestChatRoomList", {
+        userId: this.userId,
+      });
+      try {
+        await this.$store.dispatch("chatStore/setChatRooms", {
+          chatRooms: res.data.chatRoomList,
+        });
+      } catch {
+        this.$store.dispatch("onSnackbar", {
+          text: "이미 대화중인 유저입니다.",
+          color: "error",
+        });
+      }
     },
   },
 };

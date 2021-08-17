@@ -5,7 +5,7 @@ import Rooms from "@/views/Rooms.vue";
 import Room from "@/views/Room.vue";
 import Profile from "@/views/Profile.vue";
 import ERROR404 from '@/views/ERROR404.vue';
-import ChatList from '@/views/ChatList.vue';
+import Chat from '@/views/Chat.vue';
 import store from '@/store/index';
 import i18n from '@/i18n'
 
@@ -38,9 +38,9 @@ const routes = [
     meta: { auth: true },
   },
   {
-    path: "/chatlist",
-    name: "ChatList",
-    component: ChatList,
+    path: "/chat",
+    name: "Chat",
+    component: Chat,
     meta: { auth: true },
   },
 
