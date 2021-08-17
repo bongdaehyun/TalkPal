@@ -86,4 +86,16 @@ public class DirectMessageController {
         Long opponentId = directMessageService.getOpponentId(userId, chatRoomId);
         return ResponseEntity.status(200).body(opponentId);
     }
+
+    @DeleteMapping("/{chatRoomId}")
+    @ApiOperation(value = "채팅방 삭제", notes = "해당하는 채팅방을 삭제한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<? extends BaseResponseBody> deleteChatRooom(@PathVariable Long chatRoomId) {
+        directMessageService.deleteChatRoom(chatRoomId);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+    }
 }

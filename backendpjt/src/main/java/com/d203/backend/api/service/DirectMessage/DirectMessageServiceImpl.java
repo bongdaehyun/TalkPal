@@ -95,4 +95,12 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         Long opponentId = chatJoinInfoRepository.getOpponentId(userId, chatRoomId);
         return opponentId;
     }
+
+    @Override
+    public boolean deleteChatRoom(Long chatRoomId) {
+        ChatRoom delChatRoom = chatRoomRepository.getOne(chatRoomId);
+        System.out.println(delChatRoom.toString());
+        delChatRoom.set
+        return true;
+    }
 }

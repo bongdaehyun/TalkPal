@@ -15,11 +15,11 @@ public class ChatMessage extends BaseEntity {
 
     private String message;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn(name = "userId")
     private User userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn(name = "chatRoomId")
     private ChatRoom chatRoom;
 }

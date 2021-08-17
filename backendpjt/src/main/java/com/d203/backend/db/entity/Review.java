@@ -1,10 +1,6 @@
 package com.d203.backend.db.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,11 +16,11 @@ public class Review extends BaseEntity{
 	String content;
 	Long score;
 	
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
     @JoinColumn(name = "fromuserid")
     private User fromuserid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
     @JoinColumn(name = "touserid")
     private User touserid;
 }

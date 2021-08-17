@@ -18,4 +18,6 @@ public interface DirectMessageService {
     List<ChatMessage> getChatMessageList (Long chatRoomId);
 
     Long getOpponentId (Long userId, Long chatRoomId);
+
+    boolean deleteChatRoom(Long chatRoomId);
 }
