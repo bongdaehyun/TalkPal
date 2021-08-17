@@ -8,18 +8,21 @@
     <!-- NOTE: 채팅 목록 -->
     <v-list ref="chatList" style="overflow: auto">
       <template v-for="(message, index) in msgList">
+        <!-- NOTE: 본인이 보낸 채팅 (우측, 파란색) -->
         <v-list-item :key="index" v-if="message.userId == userId" class="justify-end">
-          <!-- NOTE: 본인이 보낸 채팅 오른쪽에 표시 -->
-          <!-- TODO: 오른쪽 정렬 -->
-          <v-chip
-            color="primary"
-            >
+          <v-chip color="primary">
             {{ message.message }}
           </v-chip>
+          <!-- <v-card 
+            class="pa-1"
+            color="blue lighten-1"
+            outlined
+          >
+            {{ message.message }}
+          </v-card> -->
         </v-list-item>
+        <!-- NOTE: 상대가 보낸 채팅 (좌측, 기본회색) -->
         <v-list-item :key="index" v-else>
-          <!-- NOTE: 본인이 보낸 채팅 오른쪽에 표시 -->
-          <!-- TODO: 오른쪽 정렬 -->
           <v-chip>
             {{ message.message }}
           </v-chip>
@@ -28,7 +31,6 @@
     </v-list>
     <!-- NOTE: 메세지 입력 -->
     <v-card-actions class="pa-0 mt-auto">
-      <!-- NOTE: v-textarea => v-text-field로 변경 -->
       <v-text-field
         style="position: sticky; bottom: 0px; width: 100%"
         v-model="inputMessage"
@@ -38,6 +40,7 @@
         filled
         dense
         rounded
+        :disabled="chatRoomId == null ? true : false"
       ></v-text-field>
     </v-card-actions>
   </div>
@@ -95,8 +98,6 @@ export default {
           message: newMsg.message,
           userId: newMsg.userId,
           chatRoomId: this.chatRoomId,
-          // TODO: 시간 정보는 굳이 필요 없긴 함........ 임시로 "tmpTime 저장됨"
-          time: newMsg.time,
         });
       }
     },

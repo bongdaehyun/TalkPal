@@ -29,6 +29,9 @@ const dmStore = {
     requestOpponentId(context, payload) {
       return http.get(`/directMessage/getOpponentId/${payload.userId}/${payload.chatRoomId}`);
     },
+    createChatRoom(context, payload) {
+      return http.post(`/directMessage/createChatRoom`, payload);
+    },
   },
   sendDirectMessage(context, payload) {
     return http.post(`/directMessage/sendDirectMessage`, payload)

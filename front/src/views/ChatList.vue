@@ -76,7 +76,6 @@ export default {
       this.$refs.chatRoom.requestChatMessageList(selectedChatRoomId);
     },
     submitMessage(data) {
-      // TODO: 채팅방 선택되지 않았을 때 보낼 수 없도록 변경
       this.$store
         .dispatch("dmStore/sendDirectMessage", data)
     },
@@ -86,6 +85,24 @@ export default {
       }
       const jsonMessage = JSON.stringify(message);
       this.ws.send(jsonMessage);
+    },
+    // NOTE: 새로운 채팅 생성 (상대 아이디만 파라미터로)
+    createChatRoom(toUserId) {
+      this.$store
+        .dispatch("dmStore/createChatRoom", {
+          fromUserId: this.userId,
+          toUserId: toUserId,
+        })
+        .then(() => {
+          // TODO: 방 목록에 새로운 채팅방 추가
+        })
+        .catch(() => {
+          // NOTE: 채팅방 생성 실패 경우(보통 이미 존재하는 채팅방) 안내메시지 출력
+          this.$store.dispatch("onSnackbar", {
+            text: "이미 존재하는 채팅방입니다.",
+            color: "error",
+          });
+        })
     },
   },
 
