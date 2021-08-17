@@ -7,7 +7,7 @@
     </v-btn>
     <v-list v-if="!isMobile" style="overflow: auto">
       <template v-for="(chatRoom, index) in chatRooms">
-        <Item :chatRoom="chatRoom" :key="index" style="cursor: pointer" />
+        <Item :chatRoom="chatRoom" :key="index" />
       </template>
     </v-list>
     <!-- NOTE: 모바일 버전 -->

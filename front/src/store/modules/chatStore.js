@@ -77,6 +77,9 @@ const chatStore = {
     createChatRoom(context, payload) {
       return http.post(`/directMessage/createChatRoom`, payload);
     },
+    deleteChatRoom(context, payload) {
+      return http.delete(`/directMessage/${payload.chatRoomId}`)
+    },
     openDialog(context) {
       context.commit("OPEN_DIALOG")
     },

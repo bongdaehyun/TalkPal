@@ -32,6 +32,11 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
     @Override
     public Long createChatRoom(ChatRoomPostReq chatRoomPostReq) {
+        ChatJoinInfo tmp = chatJoinInfoRepository.isExist(chatRoomPostReq.getFromUserId(), chatRoomPostReq.getToUserId());
+        if (tmp != null) {
+            return null;
+        }
+
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.setMsgCnt(0l);
         chatRoomRepository.save(chatRoom);
@@ -88,5 +93,13 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     public Long getOpponentId(Long userId, Long chatRoomId) {
         Long opponentId = chatJoinInfoRepository.getOpponentId(userId, chatRoomId);
         return opponentId;
+    }
+
+    @Override
+    public boolean deleteChatRoom(Long chatRoomId) {
+        ChatRoom delChatRoom = chatRoomRepository.getOne(chatRoomId);
+        System.out.println(delChatRoom.toString());
+        chatRoomRepository.delete(delChatRoom);
+        return true;
     }
 }

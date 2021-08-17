@@ -12,11 +12,11 @@ import javax.persistence.*;
 @ToString
 @Table(name = "follow")
 public class Follow extends BaseEntity {
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn(name = "fromuserid")
     private User fromuserid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn(name = "touserid")
     private User touserid;
 

@@ -2,9 +2,9 @@
 <template>
   <div
     class="d-flex align-center mt-3"
+    @click="addChatUser"
     style="cursor: pointer"
     v-if="item"
-    @click="addChatUser"
   >
     <v-avatar size="32">
       <img :src="profilePath" />
@@ -50,7 +50,7 @@ export default {
     },
   },
   methods: {
-    // NOTE: 유저 추가 메서드
+    // NOTE: 채팅방  추가 메서드
     async addChatUser() {
       await this.$store.dispatch("chatStore/closeDialog");
 
@@ -59,21 +59,34 @@ export default {
         toUserId: this.item.id,
       };
       // 방 생성
-      await this.$store.dispatch("chatStore/createChatRoom", payload);
-
-      // 방 새로 불러오기
-      const res = await this.$store.dispatch("chatStore/requestChatRoomList", {
-        userId: this.userId,
-      });
       try {
+        const res = await this.$store.dispatch(
+          "chatStore/createChatRoom",
+          payload
+        );
+
+        console.log(res);
+      } catch (error) {
+        // 방 중복 에러
+        this.$store.dispatch("onSnackbar", {
+          text: "이미 존재하는 방입니다.",
+          color: "error",
+        });
+      }
+
+      // 방 목록 다시 불러오기
+      try {
+        const res = await this.$store.dispatch(
+          "chatStore/requestChatRoomList",
+          {
+            userId: this.userId,
+          }
+        );
         await this.$store.dispatch("chatStore/setChatRooms", {
           chatRooms: res.data.chatRoomList,
         });
-      } catch {
-        this.$store.dispatch("onSnackbar", {
-          text: "이미 대화중인 유저입니다.",
-          color: "error",
-        });
+      } catch (error) {
+        console.log(error);
       }
     },
   },
