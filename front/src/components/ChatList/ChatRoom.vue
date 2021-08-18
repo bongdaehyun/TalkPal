@@ -1,16 +1,13 @@
 <template>
   <v-sheet
     color="white"
-    class="d-flex flex-column col-9"
+    :class="['d-flex flex-column', { 'col-9': !isMobile }]"
     style="height: 100%"
   >
     <!-- NOTE: 대화 상대정보 -->
-    <div class="d-flex justify-center align-center text-button">
-      <span class="font-weight-black"><UserInfo /></span>
-    </div>
-    <v-divider></v-divider>
+    <UserInfo @loadComplete="load = true" />
     <!-- NOTE: 채팅 목록 -->
-    <v-list ref="chatList" style="overflow: auto">
+    <v-list ref="chatList" style="overflow: auto" v-if="load">
       <template v-for="(message, index) in msgList">
         <!-- NOTE: 본인이 보낸 채팅 (우측, 파란색) -->
         <div
@@ -41,7 +38,7 @@
       </template>
     </v-list>
     <!-- NOTE: 메세지 입력 -->
-    <v-card-actions class="pa-3 mt-auto">
+    <v-card-actions class="pa-3 mt-auto" v-if="load">
       <v-text-field
         style="position: sticky; bottom: 0px; width: 100%"
         v-model="inputMessage"
@@ -59,13 +56,18 @@
 
 <script>
 import UserInfo from "@/components/ChatList/ChatRoom/UserInfo";
+import isMobile from "@/mixin/isMobile.js";
+
 export default {
   data() {
     return {
       userId: this.$store.getters["userStore/getUserId"],
       inputMessage: "",
+      load: false,
     };
   },
+  mixins: [isMobile],
+
   props: {
     ws: {
       type: WebSocket,
@@ -152,7 +154,10 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.$refs.chatList.$el.scrollTop = this.$refs.chatList.$el.scrollHeight;
+      if (this.load) {
+        this.$refs.chatList.$el.scrollTop =
+          this.$refs.chatList.$el.scrollHeight;
+      }
     });
   },
   components: {

@@ -1,12 +1,12 @@
 <template>
-  <v-container class="pa-0">
-    <div class="d-flex justify-center">
+  <v-container class="pa-0 mt-3">
+    <!-- NOTE : 데스크탑 버전 -->
+    <div class="d-flex justify-center" v-if="!isMobile">
       <div
-        class="row no-gutters"
-        :class="[isMobile ? 'col-10' : 'col-8']"
+        class="row no-gutters pa-0 col-8"
         :style="{ height: innerHeight + `px` }"
       >
-        <UserList v-if="chatRooms" :chatRooms="chatRooms" />
+        <UserList />
         <ChatRoom
           v-if="opponentId"
           ref="chatRoom"
@@ -14,9 +14,27 @@
           @onSubmitMessage="submitMessage"
           @onSendMessage="sendMessage"
         />
-        <v-sheet v-else color="white" class="col-9" style="height: 100%">
-          <v-img src="@/assets/image/talking.png"></v-img>
+        <!-- 기본 이미지 -->
+        <v-sheet v-else class="col-9 d-flex align-center" color="white">
+          <v-img
+            contain
+            :max-height="innerHeight + `px`"
+            src="@/assets/image/talking.png"
+          ></v-img>
         </v-sheet>
+      </div>
+    </div>
+    <!-- NOTE : 모바일버전 -->
+    <div class="d-flex justify-center" v-else>
+      <div class="pa-0 col-10" :style="{ height: innerHeight + `px` }">
+        <UserList v-if="isActive === 'userList'" />
+        <ChatRoom
+          v-if="isActive === 'chatRoom'"
+          ref="chatRoom"
+          :ws="ws"
+          @onSubmitMessage="submitMessage"
+          @onSendMessage="sendMessage"
+        />
       </div>
     </div>
   </v-container>
@@ -35,12 +53,15 @@ export default {
       socketUrl: process.env.VUE_APP_SOCKET_URL,
       userId: this.$store.getters["userStore/getUserId"],
       chatRooms: this.$store.getters["chatStore/getChatRooms"],
-      innerHeight: window.innerHeight - (60 + 64),
+      innerHeight: window.innerHeight - (60 + 64 + 24),
     };
   },
   computed: {
     opponentId() {
       return this.$store.getters["chatStore/getOpponentId"];
+    },
+    isActive() {
+      return this.$store.getters["chatStore/getIsActive"];
     },
   },
   methods: {
@@ -80,7 +101,7 @@ export default {
     },
 
     handleResize() {
-      this.innerHeight = window.innerHeight - (60 + 64);
+      this.innerHeight = window.innerHeight - (60 + 64 + 24);
     },
   },
 

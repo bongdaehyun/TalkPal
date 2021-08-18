@@ -7,6 +7,7 @@ const getDefaultState = () => {
     opponentId: null,
     dialog: false,
     msgList: [],
+    isActive: "userList",
   }
 }
 const chatStore = {
@@ -28,6 +29,9 @@ const chatStore = {
     },
     getMsgList(state) {
       return state.msgList
+    },
+    getIsActive(state) {
+      return state.isActive
     }
   },
 
@@ -52,6 +56,9 @@ const chatStore = {
     },
     CLEAR_MSG_LIST(state) {
       state.msgList = []
+    },
+    SET_IS_ACTIVE(state, payload) {
+      state.isActive = payload.isActive
     },
     CLEAR_STATE(state) {
       Object.assign(state, getDefaultState());
@@ -98,9 +105,13 @@ const chatStore = {
     pushMsgList(context, payload) {
       context.commit("PUSH_MSG_LIST", payload)
     },
+    setIsActive(context, payload) {
+      context.commit("SET_IS_ACTIVE", payload)
+    },
     clearState(context) {
       context.commit("CLEAR_STATE")
     }
+
   },
 }
 

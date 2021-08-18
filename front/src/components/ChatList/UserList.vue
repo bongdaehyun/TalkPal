@@ -1,18 +1,26 @@
 <template>
-  <!-- NOTE: 새로운 채팅 추가 -->
-  <v-sheet color="white" class="col-3 d-flex flex-column" style="height: 100%">
-    <!-- NOTE: 데스크탑 버전 -->
+  <v-sheet
+    color="white"
+    :class="['d-flex flex-column', { 'col-3': !isMobile }]"
+    style="height: 100%"
+  >
+    <!-- NOTE : 채팅방 추가 버튼 -->
     <v-btn @click="openDialog" tile depressed color="primary">
       <v-icon> fa-edit </v-icon>
     </v-btn>
+    <!-- NOTE : 데스크탑 버전 -->
     <v-list v-if="!isMobile" style="overflow: auto">
       <template v-for="(chatRoom, index) in chatRooms">
         <Item :chatRoom="chatRoom" :key="index" />
       </template>
     </v-list>
-    <!-- NOTE: 모바일 버전 -->
-    <div v-else></div>
-    <!-- NOTE: 채팅 추가 유저 다이얼로그 -->
+    <!-- NOTE : 모바일 버전 -->
+    <div v-else>
+      <template v-for="(chatRoom, index) in chatRooms">
+        <Item :chatRoom="chatRoom" :key="index" />
+      </template>
+    </div>
+    <!-- NOTE : 채팅 추가 유저 다이얼로그 -->
     <v-dialog v-model="dialog" :max-width="dialogMaxWidth" scrollable>
       <UserAddDialog :profileId="loginId" :Item="following" />
     </v-dialog>

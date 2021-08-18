@@ -98,6 +98,11 @@ export default {
       url = "chatStore/setOpponentId";
       const opponentId = res.data;
       await this.$store.dispatch(url, { opponentId });
+
+      // NOTE: 모바일, 채팅창으로 전환
+      url = "chatStore/setIsActive";
+      const isActive = "chatRoom";
+      await this.$store.dispatch(url, { isActive });
     },
   },
 };
