@@ -27,8 +27,8 @@
   </v-sheet>
 </template>
 <script>
-import Item from "@/components/ChatList/UserList/Item";
-import UserAddDialog from "@/components/ChatList/UserList/UserAddDialog.vue";
+import Item from "@/components/Chat/UserList/Item";
+import UserAddDialog from "@/components/Chat/UserList/UserAddDialog.vue";
 import isMobile from "@/mixin/isMobile.js";
 export default {
   data() {

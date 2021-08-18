@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import UserList from "@/components/ChatList/UserList";
-import ChatRoom from "@/components/ChatList/ChatRoom";
+import UserList from "@/components/Chat/UserList";
+import ChatRoom from "@/components/Chat/ChatRoom";
 import isMobile from "@/mixin/isMobile.js";
 
 export default {
