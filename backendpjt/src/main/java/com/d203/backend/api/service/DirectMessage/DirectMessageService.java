@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DirectMessageService {
 
-    boolean createChatRoom (ChatRoomPostReq chatRoomPostReq);
+    Long createChatRoom (ChatRoomPostReq chatRoomPostReq);
 
     boolean sendDirectMessage (DirectMessagePostReq directMessagePostReq);
 
@@ -18,4 +18,6 @@ public interface DirectMessageService {
     List<ChatMessage> getChatMessageList (Long chatRoomId);
 
     Long getOpponentId (Long userId, Long chatRoomId);
+
+    boolean deleteChatRoom(Long chatRoomId);
 }

@@ -166,6 +166,7 @@ export default {
           this.$store.dispatch("roomStore/setHostId", {
             hostId: res.data.hostId,
           });
+          this.hostId = this.$store.getters["roomStore/getHostId"];
           this.roomId = res.data.roomId;
           this.$store.dispatch("roomStore/setHostGuestLang", {
             hostLang: res.data.host_lang,

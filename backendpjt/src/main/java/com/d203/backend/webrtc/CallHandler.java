@@ -130,7 +130,6 @@ public class CallHandler extends TextWebSocketHandler {
             DMInfo.addProperty("chatRoomId", chatRoomId);
             DMInfo.addProperty("userId", senderId);
             DMInfo.addProperty("message", message);
-            DMInfo.addProperty("time", "tmpTime");
 
             UserSession receiverSession = userManager.getByUserId(receiver);
             synchronized (receiverSession) {

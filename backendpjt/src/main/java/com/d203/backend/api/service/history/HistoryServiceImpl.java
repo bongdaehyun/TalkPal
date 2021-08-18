@@ -22,31 +22,30 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public List<UserHistory> getMeetPeople(Long userid) {
 
-        List<UserHistory> result= repo.findAllByFrom_user_id(userid);
+        List<UserHistory> result = repo.findAllByFrom_user_id(userid);
         return result;
     }
 
     @Override
-    public boolean addHistory(Long fromid,Long toid) {
-        
+    public boolean addHistory(Long fromid, Long toid) {
+
         Optional<User> fuser = urepo.findById(fromid);
         Optional<User> tuser = urepo.findById(toid);
 
-        if(fuser.isPresent() && tuser.isPresent()){
+        if (fuser.isPresent() && tuser.isPresent()) {
             Optional<UserHistory> history = repo.isExist(fuser.get(), tuser.get());
-            UserHistory userHistory=null;
-            if(history.isPresent()){
-                userHistory=history.get();
-            }else{
-                userHistory=new UserHistory();
+            UserHistory userHistory = null;
+            if (history.isPresent()) {
+                userHistory = history.get();
+            } else {
+                userHistory = new UserHistory();
                 userHistory.setFrom_user_id(fuser.get());
                 userHistory.setTo_user_id(tuser.get());
-                
+
             }
             repo.save(userHistory);
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }

@@ -1,16 +1,15 @@
 <template>
-  <v-list dense>
-    <v-list-item-group color="primary">
-      <v-list-item @click="onSelectChatRoom">
-        <v-list-item-avatar size="50">
-          <v-img :src="profilePath"></v-img>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title v-text="chatRoom.nickName"></v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-    </v-list-item-group>
-  </v-list>
+  <div class="d-flex justify-space-between align-center pa-3">
+    <div @click="onSelectChatRoom" style="cursor: pointer">
+      <v-avatar size="48">
+        <v-img :src="profilePath"></v-img>
+      </v-avatar>
+      <span class="ms-3 font-weight-black">{{ chatRoom.nickName }} </span>
+    </div>
+    <div>
+      <v-btn @click="deleteChatRoom" icon> ❌ </v-btn>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -21,8 +20,13 @@ export default {
 
   data() {
     return {
-      profilePath: null,
-    }
+      userId: this.$store.getters["userStore/getUserId"],
+    };
+  },
+  computed: {
+    profilePath() {
+      return this.getProfilePath(this.chatRoom.imgPath);
+    },
   },
   props: {
     chatRoom: {
@@ -30,12 +34,76 @@ export default {
     },
   },
   methods: {
-    onSelectChatRoom() {
-      this.$emit("onSelectChatRoom", this.chatRoom.chatRoomId);
+    // NOTE: 채팅방 삭제
+    async deleteChatRoom() {
+      // 방 삭제
+      try {
+        const chatRoomId = this.chatRoom.chatRoomId;
+        const url = "chatStore/deleteChatRoom";
+
+        await this.$store.dispatch(url, { chatRoomId });
+      } catch (error) {
+        console.log(error);
+      }
+
+      // NOTE: 방 목록 다시 설정
+      try {
+        // NOTE: 채팅 관련 state 삭제
+        this.$store.dispatch("chatStore/clearState");
+
+        // NOTE : 채팅 방 목록 불러오기
+        const userId = this.userId;
+        const url = "chatStore/requestChatRoomList";
+        const res = await this.$store.dispatch(url, { userId });
+
+        // NOTE: 채팅 방 목록 저장
+        const chatRooms = res.data.chatRoomList;
+        await this.$store.dispatch("chatStore/setChatRooms", { chatRooms });
+      } catch (error) {
+        console.log(error);
+      }
     },
-  },
-  created() {
-    this.profilePath = this.getProfilePath(this.chatRoom.profilePath);
+    // NOTE : 채팅 방 선택
+    async onSelectChatRoom() {
+      let url = "chatStore/setSelectChatRoomId";
+      await this.$store.dispatch(url, {
+        selectChatRoomId: this.chatRoom.chatRoomId,
+      });
+
+      // NOTE : 채팅 목록 클리어
+      url = "chatStore/clearMsgList";
+
+      await this.$store.dispatch(url);
+
+      // NOTE : 채팅 목록 불러오기
+      const chatRoomId = this.chatRoom.chatRoomId;
+      url = "chatStore/requestChatMessageList";
+      let res = await this.$store.dispatch(url, { chatRoomId });
+
+      // NOTE : 채팅 목록 저장
+      url = "chatStore/pushMsgList";
+      await res.data.chatMessageList.forEach((chatMessage) => {
+        this.$store.dispatch(url, { chatMessage });
+      });
+
+      // NOTE: 상대방 ID 요청
+      url = "chatStore/requestOpponentId";
+      const payload = {
+        userId: this.userId,
+        chatRoomId: this.chatRoom.chatRoomId,
+      };
+      res = await this.$store.dispatch(url, payload);
+
+      // NOTE: 채팅 상대 ID 저장
+      url = "chatStore/setOpponentId";
+      const opponentId = res.data;
+      await this.$store.dispatch(url, { opponentId });
+
+      // NOTE: 모바일, 채팅창으로 전환
+      url = "chatStore/setIsActive";
+      const isActive = "chatRoom";
+      await this.$store.dispatch(url, { isActive });
+    },
   },
 };
 </script>

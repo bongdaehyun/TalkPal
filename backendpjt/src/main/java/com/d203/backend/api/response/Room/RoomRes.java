@@ -58,8 +58,11 @@ public class RoomRes {
         roomRes.setHost_nickname(hostUser.getNickname());
         roomRes.setHost_introduction((hostUser.getIntroduction()));
         roomRes.setHost_imgPath(hostUser.getImgpath());
-        roomRes.setHost_score(hostUser.getAvgScore());
-
+        try {
+            roomRes.setHost_score(hostUser.getAvgScore());
+        }catch (Exception e){
+            roomRes.setHost_score((double) 0);
+        }
         roomRes.setGuest_lang(room.getGuest_lang().getName());
         roomRes.setHost_lang(room.getHost_lang().getName());
         roomRes.setUuid(room.getUuid());

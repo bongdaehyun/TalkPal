@@ -13,11 +13,11 @@ import javax.persistence.*;
 @Table(name = "USERHISTORY")
 public class UserHistory extends BaseEntity{
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY )
     @JoinColumn(name = "from_user_id")
     private User from_user_id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY )
     @JoinColumn(name = "to_user_id")
     private User to_user_id;
 }

@@ -8,16 +8,24 @@ const WebRTCMixin = {
     return {
       ws: null,
       roomId: null,
-      hostId: this.$store.getters["roomStore/getHostId"],
-      userId: this.$store.getters["userStore/getUserId"],
-      userNickName: this.$store.getters["userStore/getNickName"],
+
       socketUrl: process.env.VUE_APP_SOCKET_URL,
       UUID: this.$route.params.UUID,
       participants: [],
       participantComponents: {},
     }
   },
-  
+  computed: {
+    userId() {
+      return this.$store.getters["userStore/getUserId"]
+    },
+    userNickName() {
+      return this.$store.getters["userStore/getNickName"]
+    },
+    hostId() {
+      return this.$store.getters["roomStore/getHostId"]
+    }
+  },
   methods: {
     // NOTE: 카메라 ON/OFF
     toggleCamera() {
@@ -267,6 +275,7 @@ const WebRTCMixin = {
     },
 
     leaveRoom() {
+      console.log("leaveRoom 2")
       // 호스트가 방 나갈 때 방 삭제 요청
       if (this.hostId === this.userId) {
         this.$store
@@ -297,6 +306,8 @@ const WebRTCMixin = {
       this.exitRoom();
     },
     exitRoom() {
+      console.log("leaveRoom 3")
+
       // NOTE: 카메라 기능 끄기
       const video = document.querySelector("video");
       const mediaStream = video.srcObject;

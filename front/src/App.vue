@@ -173,7 +173,7 @@ export default {
       this.$router.push({ name: "Main" });
     },
     goChat() {
-      this.$router.push({ name: "ChatList" });
+      this.$router.push({ name: "Chat" });
     },
     onLogout() {
       this.$store.dispatch("userStore/logout");

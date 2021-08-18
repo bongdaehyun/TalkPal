@@ -19,7 +19,7 @@ public class ChatMessage extends BaseEntity {
     @JoinColumn(name = "userId")
     private User userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY )
     @JoinColumn(name = "chatRoomId")
     private ChatRoom chatRoom;
 }
