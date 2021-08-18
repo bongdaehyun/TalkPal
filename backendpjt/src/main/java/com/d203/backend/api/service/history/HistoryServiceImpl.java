@@ -33,17 +33,11 @@ public class HistoryServiceImpl implements HistoryService {
         Optional<User> tuser = urepo.findById(toid);
 
         if (fuser.isPresent() && tuser.isPresent()) {
-            Optional<UserHistory> history = repo.isExist(fuser.get(), tuser.get());
-            UserHistory userHistory = null;
-            if (history.isPresent()) {
-                userHistory = history.get();
-            } else {
-                userHistory = new UserHistory();
-                userHistory.setFrom_user_id(fuser.get());
-                userHistory.setTo_user_id(tuser.get());
+            UserHistory userHistoryTo = new UserHistory();
+            userHistoryTo.setFrom_user_id(fuser.get());
+            userHistoryTo.setTo_user_id(tuser.get());
+            repo.save(userHistoryTo);
 
-            }
-            repo.save(userHistory);
             return true;
         } else {
             return false;
