@@ -10,13 +10,24 @@ import com.d203.backend.db.repository.ChatJoinInfoRepository;
 import com.d203.backend.db.repository.ChatMessageRepository;
 import com.d203.backend.db.repository.ChatRoomRepository;
 import com.d203.backend.db.repository.UserRepository;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionManager;
 
+import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
+import java.util.SortedSet;
+
 
 @Service("DirectMessageService")
 public class DirectMessageServiceImpl implements DirectMessageService {
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     ChatJoinInfoRepository chatJoinInfoRepository;
@@ -30,8 +41,10 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     @Autowired
     UserRepository userRepository;
 
+    @Transactional
     @Override
     public Long createChatRoom(ChatRoomPostReq chatRoomPostReq) {
+
         ChatJoinInfo tmp = chatJoinInfoRepository.isExist(chatRoomPostReq.getFromUserId(), chatRoomPostReq.getToUserId());
         if (tmp != null) {
             return null;
@@ -39,40 +52,48 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.setMsgCnt(0l);
-        chatRoomRepository.save(chatRoom);
+
 
         ChatJoinInfo chatJoinInfo = new ChatJoinInfo();
         User fromUser = userRepository.findById(chatRoomPostReq.getFromUserId()).get();
-
-        chatJoinInfo.setChatRoom(chatRoom);
         chatJoinInfo.setUserId(fromUser);
-        chatJoinInfoRepository.save(chatJoinInfo);
+
+        chatRoom.addJoinInfo(chatJoinInfo);
+
 
         chatJoinInfo = new ChatJoinInfo();
         User toUser = userRepository.findById(chatRoomPostReq.getToUserId()).get();
-
-        chatJoinInfo.setChatRoom(chatRoom);
         chatJoinInfo.setUserId(toUser);
-        chatJoinInfoRepository.save(chatJoinInfo);
+
+        chatRoom.addJoinInfo(chatJoinInfo);
+
+        Session session = entityManager.unwrap(Session.class);
+        session.save(chatRoom);
+
 
         return chatRoom.getId();
     }
-
+    @Transactional
     @Override
     public boolean sendDirectMessage(DirectMessagePostReq directMessagePostReq) {
         ChatMessage chatMessage = new ChatMessage();
 
-        ChatRoom chatRoom = chatRoomRepository.findById(directMessagePostReq.getChatRoomId()).get();
+
+        Session session = entityManager.unwrap(Session.class);
+        Long chatRoomId = directMessagePostReq.getChatRoomId();
+
+
+        ChatRoom chatRoom = chatRoomRepository.getOne(directMessagePostReq.getChatRoomId());
         User user = userRepository.findById(directMessagePostReq.getUserId()).get();
 
-        chatMessage.setChatRoom(chatRoom);
+
         chatMessage.setUserId(user);
         chatMessage.setMessage(directMessagePostReq.getMessage());
-
         chatRoom.setMsgCnt(chatRoom.getMsgCnt() + 1);
 
-        chatMessageRepository.save(chatMessage);
-        chatRoomRepository.save(chatRoom);
+        chatRoom.addMessages(chatMessage);
+
+        session.save(chatRoom);
 
         return true;
     }
@@ -95,11 +116,14 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         return opponentId;
     }
 
+    @Transactional
     @Override
     public boolean deleteChatRoom(Long chatRoomId) {
-        ChatRoom delChatRoom = chatRoomRepository.getOne(chatRoomId);
-        System.out.println(delChatRoom.toString());
-        chatRoomRepository.delete(delChatRoom);
+
+        Session session = entityManager.unwrap(Session.class);
+        ChatRoom chatroom = session.get(ChatRoom.class ,chatRoomId );
+        session.delete(chatroom);
+
         return true;
     }
 }

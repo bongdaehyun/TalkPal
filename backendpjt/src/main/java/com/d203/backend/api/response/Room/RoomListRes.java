@@ -34,7 +34,12 @@ public class RoomListRes {
             User hostUser = room.get(i).getHostId();
 
             res.setHostId(room.get(i).getHostId().getId());
-            res.setHost_score(hostUser.getAvgScore());
+
+            try {
+                res.setHost_score(hostUser.getAvgScore());
+            }catch (Exception e){
+                res.setHost_score((double) 0);
+            }
             res.setHost_nickname(hostUser.getNickname());
             res.setHost_imgPath(hostUser.getImgpath());
 

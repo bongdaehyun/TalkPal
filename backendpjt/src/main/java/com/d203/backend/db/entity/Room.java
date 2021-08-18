@@ -16,7 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 public class Room extends BaseEntity{
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY )
 	@JoinColumn(name = "hostId")
 	User hostId;
 

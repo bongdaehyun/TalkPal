@@ -2,8 +2,10 @@ package com.d203.backend.db.repository;
 
 import com.d203.backend.db.entity.ChatJoinInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,4 +28,9 @@ public interface ChatJoinInfoRepository extends JpaRepository<ChatJoinInfo, Long
             "on j1.chat_room_id = j2.chat_room_id " +
             "where j1.user_id = ?1 and j2.user_id = ?2", nativeQuery = true)
     ChatJoinInfo isExist(Long fromUserId, Long toUserId);
+
+    @Modifying
+    @Transactional
+    @Query(value ="delete from chatjoininfo where chat_room_id = 1?" , nativeQuery = true)
+    int chatRoomDelete(Long chatRoomId);
 }

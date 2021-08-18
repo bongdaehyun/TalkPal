@@ -16,11 +16,11 @@ public class Review extends BaseEntity{
 	String content;
 	Long score;
 	
-    @ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY )
     @JoinColumn(name = "fromuserid")
     private User fromuserid;
 
-    @ManyToOne(fetch = FetchType.LAZY ,  cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY )
     @JoinColumn(name = "touserid")
     private User touserid;
 }
