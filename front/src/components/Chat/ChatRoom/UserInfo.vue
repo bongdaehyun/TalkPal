@@ -2,7 +2,7 @@
   <div class="d-flex justify-space-between align-center" v-if="userInfo">
     <div style="flex: 1">
       <v-btn v-if="isMobile" plain color="primary" @click="returnUserList">
-        ⬅
+        <span class="text-h4"> ⬅ </span>
       </v-btn>
     </div>
     <div class="d-flex justify-center align-center" style="flex: 2">

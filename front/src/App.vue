@@ -12,14 +12,14 @@
             {{ $t("nav_rooms") }}
           </span>
         </v-btn>
-        <v-btn tile elevation="3" :color="profileColor">
-          <span @click="goProfile">
-            {{ $t("nav_profile") }}
-          </span>
-        </v-btn>
         <v-btn tile elevation="3" :color="chatColor">
           <span @click="goChat">
             {{ $t("nav_chat") }}
+          </span>
+        </v-btn>
+        <v-btn tile elevation="3" :color="profileColor">
+          <span @click="goProfile">
+            {{ $t("nav_profile") }}
           </span>
         </v-btn>
         <v-btn tile elevation="3" color="white">
@@ -40,26 +40,30 @@
           <v-list>
             <v-list-item>
               <v-btn text>
-                <span class="mr-2" @click="goRooms">
-                  <i class="fas fa-door-open"></i>
-                  <!-- {{ $t("nav_rooms") }} -->
-                </span>
+                <v-btn icon @click="goRooms" :color="roomsColor">
+                  <v-icon>mdi-message-video</v-icon>
+                </v-btn>
               </v-btn>
             </v-list-item>
             <v-list-item>
               <v-btn text>
-                <span class="mr-2" @click="goProfile">
+                <v-btn icon @click="goChat" :color="chatColor">
+                  <v-icon>mdi-message-text</v-icon>
+                </v-btn>
+              </v-btn>
+            </v-list-item>
+            <v-list-item>
+              <v-btn text>
+                <v-btn icon @click="goProfile" :color="profileColor">
                   <v-icon>mdi-account-circle</v-icon>
-                  <!-- {{ $t("nav_profile") }} -->
-                </span>
+                </v-btn>
               </v-btn>
             </v-list-item>
             <v-list-item>
               <v-btn text>
-                <span class="mr-2" @click="onLogout">
+                <v-btn icon @click="onLogout" color="grey">
                   <v-icon>mdi-logout</v-icon>
-                  <!-- {{ $t("nav_logout") }} -->
-                </span>
+                </v-btn>
               </v-btn>
             </v-list-item>
           </v-list>
@@ -92,11 +96,13 @@
       </div>
     </v-footer>
     <AboutUsDialog ref="aboutUsDialog" />
+    <LicenseDialog ref="licenseDialog" />
   </v-app>
 </template>
 
 <script>
 import AboutUsDialog from "@/components/App/AboutUsDialog.vue";
+import LicenseDialog from "@/components/App/LicenseDialog.vue";
 
 import isMobile from "@/mixin/isMobile.js";
 import i18n from "@/i18n.js";
@@ -116,17 +122,26 @@ export default {
       if (this.$store.getters["getActiveMenu"] == "Rooms") {
         return "primary";
       }
+      if (this.isMobile) {
+        return "grey";
+      }
       return "white";
     },
     profileColor() {
       if (this.$store.getters["getActiveMenu"] == "Profile") {
         return "primary";
       }
+      if (this.isMobile) {
+        return "grey";
+      }
       return "white";
     },
     chatColor() {
       if (this.$store.getters["getActiveMenu"] == "Chat") {
         return "primary";
+      }
+      if (this.isMobile) {
+        return "grey";
       }
       return "white";
     },
@@ -151,11 +166,11 @@ export default {
   },
   methods: {
     onAboutDialog() {
-      // TODO: ABOUT US 다이얼로그
       this.$refs.aboutUsDialog.dialog = true;
     },
     onLicenseDialog() {
       // TODO: LICENSE 다이얼로그
+      this.$refs.licenseDialog.dialog = true;
     },
     goSsafy() {
       window.open("https://www.ssafy.com/", "_blank");
@@ -186,6 +201,7 @@ export default {
   },
   components: {
     AboutUsDialog,
+    LicenseDialog,
   },
 };
 </script>

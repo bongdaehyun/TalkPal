@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <v-dialog v-model="dialog" :width="dialogWidth">
+    <v-dialog v-model="dialog" width="50vw">
       <v-sheet class="d-flex flex-column" elevation="2">
         <div
           color="white"
@@ -17,11 +17,11 @@
           >
             <v-img
               class="elevation-6 mb-2"
-              src="@/assets/image/us/jeong.jpg"
+              src="@/assets/image/us/bong.jpg"
             ></v-img>
             <span class="primary--text font-weight-bold">봉대현</span>
             <span class="grey--text font-weight-bold">Leader</span>
-            <v-btn icon> <v-icon>mdi-github</v-icon> </v-btn>
+            <v-btn icon @click="goGithub"> <v-icon>mdi-github</v-icon> </v-btn>
           </v-sheet>
           <v-sheet
             class="d-flex flex-column align-center"
@@ -33,7 +33,9 @@
             ></v-img>
             <span class="primary--text font-weight-bold">정우영</span>
             <span class="grey--text font-weight-bold">Frontend</span>
-            <v-btn icon> <v-icon>mdi-github</v-icon> </v-btn>
+            <v-btn icon @click="goGithub('https://github.com/ragu6963')">
+              <v-icon>mdi-github</v-icon>
+            </v-btn>
           </v-sheet>
           <v-sheet
             class="d-flex flex-column align-center"
@@ -41,11 +43,11 @@
           >
             <v-img
               class="elevation-6 mb-2"
-              src="@/assets/image/us/jeong.jpg"
+              src="@/assets/image/us/ahn.jpg"
             ></v-img>
             <span class="primary--text font-weight-bold">안광식</span>
             <span class="grey--text font-weight-bold">Web RTC</span>
-            <v-btn icon> <v-icon>mdi-github</v-icon> </v-btn>
+            <v-btn icon @click="goGithub"> <v-icon>mdi-github</v-icon> </v-btn>
           </v-sheet>
           <v-sheet
             class="d-flex flex-column align-center"
@@ -53,11 +55,11 @@
           >
             <v-img
               class="elevation-6 mb-2"
-              src="@/assets/image/us/jeong.jpg"
+              src="@/assets/image/us/yoon.jpg"
             ></v-img>
             <span class="primary--text font-weight-bold">윤경한</span>
             <span class="grey--text font-weight-bold">Backend</span>
-            <v-btn icon> <v-icon>mdi-github</v-icon> </v-btn>
+            <v-btn icon @click="goGithub"> <v-icon>mdi-github</v-icon> </v-btn>
           </v-sheet>
         </div>
         <v-sheet class="d-flex justify-end pa-1">
@@ -78,13 +80,9 @@ export default {
       dialog: false,
     };
   },
-  computed: {
-    dialogWidth() {
-      if (this.isMobile) {
-        return "90vw";
-      } else {
-        return "50vw";
-      }
+  methods: {
+    goGithub(url) {
+      window.open(url, "_blank");
     },
   },
 };
@@ -93,9 +91,5 @@ export default {
 <style scoped>
 .title-text {
   font-size: 1.5rem;
-}
-.grayscale {
-  -webkit-filter: grayscale(100%);
-  filter: grayscale(100%);
 }
 </style>

@@ -22,7 +22,7 @@
 
 <script>
 import InfiniteLoading from "vue-infinite-loading";
-import Item from "@/components/ChatList/UserList/UserAddDialog/Item.vue";
+import Item from "@/components/Chat/UserList/UserAddDialog/Item.vue";
 
 export default {
   name: "UserListDialog",

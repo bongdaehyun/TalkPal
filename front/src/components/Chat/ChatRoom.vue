@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import UserInfo from "@/components/ChatList/ChatRoom/UserInfo";
+import UserInfo from "@/components/Chat/ChatRoom/UserInfo";
 import isMobile from "@/mixin/isMobile.js";
 
 export default {
