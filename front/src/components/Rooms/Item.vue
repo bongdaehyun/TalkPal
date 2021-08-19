@@ -100,8 +100,6 @@ export default {
       this.btnColor = "grey";
     },
   },
-
-  components: {},
 };
 </script>
 
