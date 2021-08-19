@@ -123,7 +123,6 @@ export default {
       }
     },
     leaveRoom() {
-      console.log("leaveRoom 1");
       this.$emit("onLeaveRoom");
     },
     toggleChat() {

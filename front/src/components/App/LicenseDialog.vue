@@ -11,9 +11,6 @@
           <v-img src="@/assets/image/logo.png"></v-img>
         </div>
         <div class="d-flex flex-column align-center">
-          <span style="font-weight: bold; font-size: 2rem">
-            이미지 및 아이콘 라이센스 정보
-          </span>
           <a href="http://www.freepik.com">Designed by Freepik</a>
           <a href="http://www.freepik.com">
             Designed by pikisuperstar / Freepik

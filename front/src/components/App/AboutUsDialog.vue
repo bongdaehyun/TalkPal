@@ -21,7 +21,9 @@
             ></v-img>
             <span class="primary--text font-weight-bold">봉대현</span>
             <span class="grey--text font-weight-bold">Leader</span>
-            <v-btn icon @click="goGithub"> <v-icon>mdi-github</v-icon> </v-btn>
+            <v-btn icon @click="goGithub('https://github.com/bongdaehyun')">
+              <v-icon>mdi-github</v-icon>
+            </v-btn>
           </v-sheet>
           <v-sheet
             class="d-flex flex-column align-center"
@@ -47,7 +49,9 @@
             ></v-img>
             <span class="primary--text font-weight-bold">안광식</span>
             <span class="grey--text font-weight-bold">Web RTC</span>
-            <v-btn icon @click="goGithub"> <v-icon>mdi-github</v-icon> </v-btn>
+            <v-btn icon @click="goGithub('https://github.com/pangsik')">
+              <v-icon>mdi-github</v-icon>
+            </v-btn>
           </v-sheet>
           <v-sheet
             class="d-flex flex-column align-center"
@@ -59,7 +63,9 @@
             ></v-img>
             <span class="primary--text font-weight-bold">윤경한</span>
             <span class="grey--text font-weight-bold">Backend</span>
-            <v-btn icon @click="goGithub"> <v-icon>mdi-github</v-icon> </v-btn>
+            <v-btn icon @click="goGithub('https://github.com/kyeongY1214')">
+              <v-icon>mdi-github</v-icon>
+            </v-btn>
           </v-sheet>
         </div>
         <v-sheet class="d-flex justify-end pa-1">

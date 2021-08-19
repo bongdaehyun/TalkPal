@@ -88,11 +88,11 @@
         style="width: 100vw"
         no-gutters
       >
-        <v-btn text rounded @click="onAboutDialog">ABOUT US</v-btn>
+        <v-btn text rounded @click="onAboutDialog">{{ $t("our_team") }}</v-btn>
         <v-btn class="primary--text" @click="goSsafy" text rounded>
           <strong>SSAFY D203</strong>
         </v-btn>
-        <v-btn text rounded @click="onLicenseDialog">LICENSE</v-btn>
+        <v-btn text rounded @click="onLicenseDialog">{{ $t("license") }}</v-btn>
       </div>
     </v-footer>
     <AboutUsDialog ref="aboutUsDialog" />

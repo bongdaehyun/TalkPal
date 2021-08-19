@@ -275,22 +275,22 @@ const WebRTCMixin = {
     },
 
     leaveRoom() {
-      console.log("leaveRoom 2")
       // 호스트가 방 나갈 때 방 삭제 요청
       if (this.hostId === this.userId) {
         this.$store
           .dispatch("roomStore/requestDelete", {
             roomId: this.roomId,
             header: this.$store.getters["userStore/getHeader"],
+          }).then(() => {
+            // 1. Host가 나갈 떄 Host => leaveHost 메세지 수신, Guest => leaveGeust 메세지 수신
+            // 2. Guest가 혼자 나갈 때 => 메세지 수신 X
+            let message = {
+              id: "leaveRoom",
+              hostId: this.hostId,
+            };
+            this.sendMessage(message);
           })
       }
-      // 1. Host가 나갈 떄 Host => leaveHost 메세지 수신, Guest => leaveGeust 메세지 수신
-      // 2. Guest가 혼자 나갈 때 => 메세지 수신 X
-      let message = {
-        id: "leaveRoom",
-        hostId: this.hostId,
-      };
-      this.sendMessage(message);
     },
     // 호스트 방 나가기
     leaveHost() {
@@ -306,8 +306,6 @@ const WebRTCMixin = {
       this.exitRoom();
     },
     exitRoom() {
-      console.log("leaveRoom 3")
-
       // NOTE: 카메라 기능 끄기
       const video = document.querySelector("video");
       const mediaStream = video.srcObject;
