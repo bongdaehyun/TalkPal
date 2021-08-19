@@ -291,6 +291,15 @@ const WebRTCMixin = {
             this.sendMessage(message);
           })
       }
+      else {
+        // 1. Host가 나갈 떄 Host => leaveHost 메세지 수신, Guest => leaveGeust 메세지 수신
+        // 2. Guest가 혼자 나갈 때 => 메세지 수신 X
+        let message = {
+          id: "leaveRoom",
+          hostId: this.hostId,
+        };
+        this.sendMessage(message);
+      }
     },
     // 호스트 방 나가기
     leaveHost() {
