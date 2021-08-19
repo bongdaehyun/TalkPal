@@ -68,8 +68,13 @@ export default {
       if (!this.translateText) {
         return;
       }
+
       this.Speech.text = this.translateText;
-      this.Speech.lang = this.target;
+      if (this.target === "jp") {
+        this.Speech.lang = "ja-JA";
+      } else {
+        this.Speech.lang = this.target;
+      }
       this.synth.speak(this.Speech);
     },
     translate() {
@@ -88,7 +93,7 @@ export default {
           `&query=${this.query}`,
         dataType: "json",
         headers: {
-          Authorization: "KakaoAK f60288777b84ebe97274cfc4cdffdd37",
+          Authorization: `KakaoAK ${process.env.VUE_APP_KAKAOAPIKEY}`,
         },
       }).then((res) => {
         const text = res.data.translated_text[0][0];
