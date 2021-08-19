@@ -30,10 +30,8 @@ export default {
   name: "Login",
   data() {
     return {
-      // email: "",
-      // password: "",
-      email: "test@gmail.com",
-      password: "1q2w3e4r!",
+      email: "",
+      password: "",
       label: {
         email: null,
         pwd: null,

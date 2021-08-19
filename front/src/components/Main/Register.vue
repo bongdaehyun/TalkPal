@@ -76,15 +76,10 @@ import http from "@/util/http-common";
 export default {
   data() {
     return {
-      // email: "",
-      // password: "",
-      // repeatPassword: "",
-      // nickname: "",
-      // lang: "",
-      email: "test@gmail.com",
-      password: "1q2w3e4r!",
-      repeatPassword: "1q2w3e4r!",
-      nickname: "test",
+      email: "",
+      password: "",
+      repeatPassword: "",
+      nickname: "",
       lang: "",
       label: {
         email: null,
